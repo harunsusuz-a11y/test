@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Reveal } from "@/components/animations/Reveal";
 import { brand } from "@/content/brand";
 
 const demoGallery = [
@@ -15,6 +16,7 @@ export function Community() {
 
   return (
     <section aria-labelledby="community-heading" className="mx-auto max-w-6xl px-5 py-28">
+      <Reveal>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Topluluk</p>
@@ -26,10 +28,12 @@ export function Community() {
           Örnek / Demo Galeri
         </span>
       </div>
+      </Reveal>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
         {demoGallery.map((src, i) => (
-          <div key={src} className="relative aspect-square overflow-hidden rounded-xl bg-brown/5">
+          <Reveal key={src} delay={i * 60}>
+          <div className="relative aspect-square overflow-hidden rounded-xl bg-brown/5">
             <Image
               src={src}
               alt=""
@@ -40,6 +44,7 @@ export function Community() {
             />
             {i === 0 && <span className="sr-only">Örnek topluluk görselleri galerisi</span>}
           </div>
+          </Reveal>
         ))}
       </div>
 

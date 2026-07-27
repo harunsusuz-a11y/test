@@ -12,6 +12,9 @@ import { formatPrice } from "@/lib/utils/format";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
 import { getReviewsForProduct, getAverageRating } from "@/content/reviews";
+import { Reveal } from "@/components/animations/Reveal";
+import { StatRings } from "@/components/product/StatRings";
+import { TrustBadges } from "@/components/ui/TrustBadges";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -97,8 +100,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         / {product.name}
       </p>
 
-      <div className="grid gap-10 md:grid-cols-2">
-        <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
+      <div className="grid gap-10 md:grid-cols-2 md:items-start">
+        {/* Desktop'ta galeri sabitlenir; sağ kolon içerik boyunca kayar (premium PDP deseni) */}
+        <div className="md:sticky md:top-24">
+          <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
+        </div>
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest2 text-green">{product.flavor}</p>
@@ -131,6 +137,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
           <p className="mt-4 text-brown-dark/80">{product.description}</p>
 
+          {/* İmza efekti: görünür olunca dolan protein/fındık oranı halkaları */}
+          <StatRings proteinPercent={product.proteinPercent} hazelnutPercent={product.hazelnutPercent} />
+
           {/* Neden Venti-Ate — dönüşümü destekleyen kısa vurgular */}
           <ul className="mt-6 space-y-2">
             {product.highlights.map((h) => (
@@ -151,13 +160,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </div>
             ))}
           </dl>
+
+          <TrustBadges className="mt-6" />
         </div>
       </div>
 
       {/* İçindekiler + Besin Değerleri */}
-      <section className="mt-16 grid gap-10 md:grid-cols-2">
-        <div>
-          <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">İçindekiler</h2>
+      <section className="mt-20 grid gap-10 md:grid-cols-2">
+        <Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Formül</p>
+          <h2 className="mb-4 mt-2 font-display text-2xl font-extrabold text-brown-darker">İçindekiler</h2>
           <ul className="space-y-1.5 text-sm text-brown-dark/80">
             {product.ingredients.map((ing) => (
               <li key={ing} className="flex items-center gap-2">
@@ -169,15 +181,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <p className="mt-4 text-xs text-brown-dark/45">
             İçindekiler listesi ve alerjen bilgisi ürün etiketi resmi olarak onaylanınca güncellenecektir.
           </p>
-        </div>
+        </Reveal>
 
-        <div>
-          <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">
+        <Reveal delay={120}>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Besin</p>
+          <h2 className="mb-4 mt-2 font-display text-2xl font-extrabold text-brown-darker">
             Besin Değerleri <span className="text-sm font-normal text-brown-dark/50">(100g için)</span>
           </h2>
           <dl className="divide-y divide-brown/10 rounded-2xl border border-brown/10">
             {product.nutritionPer100g.map((row) => (
-              <div key={row.label} className="flex items-center justify-between px-4 py-2.5 text-sm">
+              <div key={row.label} className="flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-brown/[0.03]">
                 <dt className="text-brown-dark/60">{row.label}</dt>
                 <dd className="font-semibold text-brown-darker">{row.value}</dd>
               </div>
@@ -186,36 +199,54 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <p className="mt-4 text-xs text-brown-dark/45">
             Bu değerler ön formülasyona dayanır; kesin besin değerleri resmi ürün etiketiyle netleşecektir.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       {/* Nasıl Tüketilir */}
-      <section className="mt-16">
-        <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
+      <section className="mt-20">
+        <Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
+          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
+        </Reveal>
         <div className="grid gap-4 sm:grid-cols-2">
           {product.usageTips.map((tip, i) => (
-            <div key={tip} className="rounded-2xl border border-brown/10 bg-brown/[0.03] p-5">
-              <span className="mb-2 block font-display text-lg font-bold text-green">{String(i + 1).padStart(2, "0")}</span>
-              <p className="text-sm text-brown-dark/80">{tip}</p>
-            </div>
+            <Reveal key={tip} delay={i * 90}>
+              <div className="group h-full rounded-2xl border border-brown/10 bg-brown/[0.03] p-6 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brown/20 hover:bg-white/70 hover:shadow-lg hover:shadow-brown-darker/10">
+                <span className="mb-2 flex items-center gap-2 font-display text-lg font-bold text-green">
+                  {String(i + 1).padStart(2, "0")}
+                  <span aria-hidden="true" className="h-1 w-1 rounded-full bg-peach opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </span>
+                <p className="text-sm text-brown-dark/80">{tip}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       {/* SSS */}
-      <section className="mt-16">
-        <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
-        <ProductFaq items={product.faq} />
+      <section className="mt-20">
+        <Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">SSS</p>
+          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
+          <ProductFaq items={product.faq} />
+        </Reveal>
       </section>
 
-      <ProductReviews reviews={reviews} averageRating={avgRating} />
+      <Reveal>
+        <ProductReviews reviews={reviews} averageRating={avgRating} />
+      </Reveal>
 
       {related.length > 0 && (
-        <section className="mt-20">
-          <h2 className="mb-6 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
+        <section className="mt-24">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-widest2 text-green">Keşfet</p>
+            <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
+          </Reveal>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((p) => (
-              <ProductCard key={p.slug} product={p} />
+            {related.map((p, i) => (
+              <Reveal key={p.slug} delay={i * 90}>
+                <ProductCard product={p} />
+              </Reveal>
             ))}
           </div>
         </section>

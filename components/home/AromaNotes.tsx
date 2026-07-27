@@ -54,12 +54,25 @@ export function AromaNotes() {
 
   return (
     <section aria-labelledby="aroma-heading" className="mx-auto max-w-6xl px-5 py-28">
-      <p className="text-xs font-bold uppercase tracking-widest2 text-green">Lezzet Notaları</p>
-      <h2 id="aroma-heading" className="mt-3 max-w-lg font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
-        Her ısırıkta farklı bir katman.
-      </h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Lezzet Notaları</p>
+        <h2 id="aroma-heading" className="mt-3 max-w-lg font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
+          Her ısırıkta farklı bir katman.
+        </h2>
+      </motion.div>
 
-      <div className="mt-10 grid gap-8 md:grid-cols-[1fr_1.2fr] md:items-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-10 grid gap-8 md:grid-cols-[1fr_1.2fr] md:items-center"
+      >
         <div className="relative aspect-square overflow-hidden rounded-3xl" aria-hidden="true">
           <AnimatePresence mode="sync">
             <motion.div
@@ -112,7 +125,7 @@ export function AromaNotes() {
             </motion.p>
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
