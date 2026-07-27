@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { mainNav } from "@/content/navigation";
 import { useCartStore } from "@/store/cart-store";
+import { useUiStore } from "@/store/ui-store";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const count = useCartStore((s) => s.count());
+  const openCartDrawer = useUiStore((s) => s.openCartDrawer);
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(!isHome);
@@ -98,14 +100,17 @@ export function Header() {
             />
           </form>
 
-          <Link
-            href="/sepet"
+          {/* Sepet artık yandan açılan çekmecede — sayfa geçişi yok */}
+          <button
+            type="button"
+            onClick={() => openCartDrawer()}
             className={`relative flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition duration-500 ${
               floating
                 ? "border-cream/30 text-cream hover:border-cream"
                 : "border-brown/20 text-brown-dark hover:border-green hover:text-green"
             }`}
             aria-label={`Sepetim, ${count} ürün`}
+            aria-haspopup="dialog"
           >
             <ShoppingBag size={18} aria-hidden="true" />
             <span className="hidden sm:inline">Sepetim</span>
@@ -114,7 +119,7 @@ export function Header() {
                 {count}
               </span>
             )}
-          </Link>
+          </button>
 
           <button
             className={`md:hidden transition-colors duration-500 ${floating ? "text-cream" : "text-brown-darker"}`}

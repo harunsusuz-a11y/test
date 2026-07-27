@@ -23,7 +23,7 @@ export default function Page() {
     <>
       <JsonLd data={faqJsonLd} />
       <PageHeader eyebrow="Yardım" title="Sıkça Sorulan Sorular" />
-      <div className="mx-auto max-w-2xl px-5 pb-10">
+      <div className="mx-auto max-w-2xl px-5 pb-10 pt-12">
         <Accordion items={faqs} />
       </div>
 

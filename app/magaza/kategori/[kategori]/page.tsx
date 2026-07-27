@@ -41,7 +41,7 @@ export default async function Page({ params }: { params: Promise<{ kategori: str
       <JsonLd data={breadcrumbData} />
       <PageHeader eyebrow="Kategori" title={category.label} description={category.description} />
       <TrustBadges className="mx-auto mb-10 max-w-3xl justify-center px-5" />
-      <div className="mx-auto max-w-6xl px-5 pb-20">
+      <div className="mx-auto max-w-6xl px-5 pb-20 pt-12">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap gap-3">
             <Link

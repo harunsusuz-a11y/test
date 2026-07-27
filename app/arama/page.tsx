@@ -26,7 +26,7 @@ export default async function Page({
         title={query ? `“${query}” için sonuçlar` : "Tüm Ürünler"}
         description={`${results.length} ürün bulundu.`}
       />
-      <div className="mx-auto max-w-6xl px-5 pb-20">
+      <div className="mx-auto max-w-6xl px-5 pb-20 pt-12">
         {results.length === 0 ? (
           <p className="text-center text-brown-dark/70">
             Aradığın kriterlere uygun ürün bulunamadı. Farklı bir kelime dener misin?

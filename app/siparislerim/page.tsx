@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <>
       <PageHeader eyebrow="Hesabım" title="Siparişlerim" />
-      <div className="mx-auto max-w-md px-5 pb-24 text-center">
+      <div className="mx-auto max-w-md px-5 pb-24 text-center pt-12">
         <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brown/5">
           <PackageSearch size={20} className="text-brown-dark/50" aria-hidden="true" />
         </span>

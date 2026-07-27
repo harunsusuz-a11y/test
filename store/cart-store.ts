@@ -14,6 +14,9 @@ export type CartLine = {
 
 type CartState = {
   lines: CartLine[];
+  /** Uygulanan kupon kodu (doğrulama cart-math'te yapılır) */
+  couponCode: string | null;
+  setCoupon: (code: string | null) => void;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (slug: string) => void;
   updateQuantity: (slug: string, quantity: number) => void;
@@ -26,6 +29,8 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       lines: [],
+      couponCode: null,
+      setCoupon: (code) => set({ couponCode: code ? code.trim().toUpperCase() : null }),
       addItem: (product, quantity = 1) => {
         set((state) => {
           const existing = state.lines.find((l) => l.slug === product.slug);
@@ -51,7 +56,7 @@ export const useCartStore = create<CartState>()(
             ? state.lines.filter((l) => l.slug !== slug)
             : state.lines.map((l) => (l.slug === slug ? { ...l, quantity } : l)),
         })),
-      clear: () => set({ lines: [] }),
+      clear: () => set({ lines: [], couponCode: null }),
       subtotal: () => get().lines.reduce((sum, l) => sum + l.price * l.quantity, 0),
       count: () => get().lines.reduce((sum, l) => sum + l.quantity, 0),
     }),

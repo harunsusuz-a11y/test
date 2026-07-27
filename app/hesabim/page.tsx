@@ -8,7 +8,7 @@ export default function Page() {
   return (
     <>
       <PageHeader eyebrow="Hesabım" title="Hesap Bilgilerim" />
-      <div className="mx-auto max-w-md px-5 pb-24">
+      <div className="mx-auto max-w-md px-5 pb-24 pt-12">
         <div className="rounded-2xl border border-brown/10 bg-white/60 p-8 text-center">
           <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brown/5">
             <Lock size={20} className="text-brown-dark/50" aria-hidden="true" />

@@ -8,6 +8,8 @@ import { z } from "zod";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils/format";
 import { TrustBadges } from "@/components/ui/TrustBadges";
+import { computeCartTotals } from "@/lib/utils/cart-math";
+import { BUNDLE_NAME, STANDARD_SHIPPING_COST } from "@/content/discounts";
 
 const schema = z.object({
   fullName: z.string().min(2, "Ad soyad gerekli."),
@@ -29,7 +31,7 @@ export function CheckoutForm() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const lines = useCartStore((s) => s.lines);
-  const subtotal = useCartStore((s) => s.subtotal());
+  const couponCode = useCartStore((s) => s.couponCode);
   const clear = useCartStore((s) => s.clear);
 
   const {
@@ -43,7 +45,11 @@ export function CheckoutForm() {
   });
 
   const shipping = watch("shipping");
-  const shippingCost = shipping === "hizli" ? 59.9 : subtotal >= 300 ? 0 : 29.9;
+  // Sepetle (drawer + /sepet) birebir aynı motor: paket + kupon + kargo.
+  // Hızlı kargo seçilirse standart yerine sabit hızlı ücret uygulanır.
+  const totals = computeCartTotals(lines, couponCode);
+  const shippingCost = shipping === "hizli" ? 59.9 : totals.shippingCost;
+  const grandTotal = totals.discountedSubtotal + shippingCost;
 
   async function onSubmit() {
     setSubmitting(true);
@@ -130,7 +136,7 @@ export function CheckoutForm() {
               <span className="flex items-center gap-2">
                 <input type="radio" value="standart" {...register("shipping")} /> Standart Kargo (2-4 iş günü)
               </span>
-              <span className="font-semibold">{subtotal >= 300 ? "Ücretsiz" : formatPrice(29.9)}</span>
+              <span className="font-semibold">{totals.freeShipping ? "Ücretsiz" : formatPrice(STANDARD_SHIPPING_COST)}</span>
             </label>
             <label className="flex items-center justify-between rounded-xl border border-brown/20 px-4 py-3 text-sm">
               <span className="flex items-center gap-2">
@@ -172,15 +178,27 @@ export function CheckoutForm() {
         <dl className="mt-4 space-y-2 border-t border-brown/10 pt-4 text-sm">
           <div className="flex justify-between">
             <dt>Ara Toplam</dt>
-            <dd className="font-semibold">{formatPrice(subtotal)}</dd>
+            <dd className="font-semibold">{formatPrice(totals.subtotal)}</dd>
           </div>
+          {totals.bundleDiscount > 0 && (
+            <div className="flex justify-between text-green">
+              <dt>{BUNDLE_NAME}</dt>
+              <dd className="font-semibold">−{formatPrice(totals.bundleDiscount)}</dd>
+            </div>
+          )}
+          {totals.couponDiscount > 0 && (
+            <div className="flex justify-between text-green">
+              <dt>Kupon ({couponCode})</dt>
+              <dd className="font-semibold">−{formatPrice(totals.couponDiscount)}</dd>
+            </div>
+          )}
           <div className="flex justify-between">
             <dt>Kargo</dt>
             <dd className="font-semibold">{shippingCost === 0 ? "Ücretsiz" : formatPrice(shippingCost)}</dd>
           </div>
           <div className="flex justify-between border-t border-brown/10 pt-2 text-base font-bold text-brown-darker">
             <dt>Genel Toplam</dt>
-            <dd>{formatPrice(subtotal + shippingCost)}</dd>
+            <dd>{formatPrice(grandTotal)}</dd>
           </div>
         </dl>
 

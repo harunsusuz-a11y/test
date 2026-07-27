@@ -15,7 +15,7 @@ export default function Page() {
   return (
     <>
       <PageHeader eyebrow="Kısa Test" title="Formunu Bul" description="4 soruda sana en uygun Venti-Ate ürününü bulalım." />
-      <div className="mx-auto mb-10 flex max-w-md flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5">
+      <div className="mx-auto mb-10 flex max-w-md flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 pt-12">
         {points.map(({ icon: Icon, label }) => (
           <span key={label} className="flex items-center gap-1.5 text-xs font-semibold text-brown-dark/60">
             <Icon size={14} className="text-green" aria-hidden="true" />

@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <>
       <PageHeader eyebrow="Son Adım" title="Ödeme" />
-      <div className="mx-auto mb-10 flex max-w-xs items-center justify-between px-5 text-xs font-semibold text-brown-dark/50">
+      <div className="mx-auto mb-10 flex max-w-xs items-center justify-between px-5 text-xs font-semibold text-brown-dark/50 pt-12">
         {steps.map((step, i) => (
           <div key={step} className="flex items-center gap-2">
             <span
