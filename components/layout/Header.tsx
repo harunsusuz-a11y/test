@@ -35,7 +35,7 @@ export function Header() {
     <header
       className={`sticky top-0 z-50 border-b transition-all duration-500 ${
         floating
-          ? "border-transparent bg-transparent"
+          ? "border-transparent bg-gradient-to-b from-black/45 via-black/15 to-transparent"
           : "border-brown/10 bg-cream/90 backdrop-blur-md"
       }`}
     >
