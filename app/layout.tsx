@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/fraunces/standard-italic.css";
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/inter";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -7,6 +10,10 @@ import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvide
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
 import { brand } from "@/content/brand";
+
+// Editorial/premium tipografi çifti — Fontsource (https://github.com/fontsource/fontsource)
+// üzerinden self-hosted: npm paketi olarak kurulur, build sırasında harici bir
+// font CDN'ine istek atılmaz (next/font/google'ın aksine tamamen offline çalışır).
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),

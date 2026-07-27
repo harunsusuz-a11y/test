@@ -10,8 +10,8 @@
   --brand-green-light: #5c7a34;
   --brand-cream: #fff6f0;
   --brand-peach: #f9c89e;
-  --font-display: "Georgia", serif;
-  --font-body: "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
 }
 
 html {

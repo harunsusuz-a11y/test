@@ -28,6 +28,7 @@ Repository: https://github.com/harunsusuz-a11y/test
 | [Lenis](https://github.com/darkroomengineering/lenis) | Yumuşak (smooth) scroll | MIT |
 | [Motion](https://github.com/motiondivision/motion) (`motion/react`) | Basit UI geçişleri, mouse parallax | MIT |
 | [Three.js](https://github.com/mrdoob/three.js) + [React Three Fiber](https://github.com/pmndrs/react-three-fiber) | Hero'daki hafif 3D fındık sahnesi (prosedürel geometri, harici model/texture yok) | MIT |
+| [Fontsource](https://github.com/fontsource/fontsource) (Fraunces + Inter) | Self-hosted editorial tipografi (Fraunces: premium serif başlıklar, Inter: gövde metni) — harici font CDN isteği yok | Fontsource: MIT · Fraunces & Inter: SIL Open Font License |
 | [Zustand](https://github.com/pmndrs/zustand) | Sepet durum yönetimi | MIT |
 | [Zod](https://github.com/colinhacks/zod) + [React Hook Form](https://github.com/react-hook-form/react-hook-form) | Form doğrulama | MIT |
 | [Lucide Icons](https://github.com/lucide-icons/lucide) | İkonlar | ISC |

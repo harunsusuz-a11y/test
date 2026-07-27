@@ -11,21 +11,21 @@ export function Header() {
   const count = useCartStore((s) => s.count());
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brown/10 bg-cream/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-brown/10 bg-cream/90 backdrop-blur-md">
       <a href="#main-content" className="skip-link">
         İçeriğe geç
       </a>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <Link href="/" className="font-display text-2xl font-bold tracking-tight text-brown">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
+        <Link href="/" className="font-display text-2xl font-semibold italic tracking-tight text-brown-darker">
           venti&#8209;ate
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Ana navigasyon">
+        <nav className="hidden items-center gap-9 md:flex" aria-label="Ana navigasyon">
           {mainNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-brown-dark transition hover:text-green"
+              className="text-[13px] font-medium uppercase tracking-wide text-brown-dark/80 transition-colors duration-300 hover:text-green"
             >
               {item.label}
             </Link>

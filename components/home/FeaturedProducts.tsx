@@ -1,19 +1,36 @@
+"use client";
+
+import { motion } from "motion/react";
 import { products } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
 export function FeaturedProducts() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-24">
-      <div className="mb-12 max-w-xl">
+    <section className="mx-auto max-w-6xl px-5 py-28">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-14 max-w-xl"
+      >
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Ürün Ailesi</p>
-        <h2 className="mt-3 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
+        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brown-darker sm:text-4xl">
           Sana uygun ateşi seç.
         </h2>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product) => (
-          <ProductCard key={product.slug} product={product} />
+      <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+        {products.map((product, i) => (
+          <motion.div
+            key={product.slug}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ProductCard product={product} />
+          </motion.div>
         ))}
       </div>
     </section>
