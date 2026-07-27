@@ -6,7 +6,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 
 export function FeaturedProducts() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-28">
+    <section id="urun-ailesi" className="mx-auto max-w-6xl px-5 py-28">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}

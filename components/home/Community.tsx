@@ -14,7 +14,7 @@ export function Community() {
   const handle = brand.social.instagram.startsWith("[") ? "@ventiate" : brand.social.instagram;
 
   return (
-    <section aria-labelledby="community-heading" className="mx-auto max-w-6xl px-5 py-24">
+    <section aria-labelledby="community-heading" className="mx-auto max-w-6xl px-5 py-28">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Topluluk</p>

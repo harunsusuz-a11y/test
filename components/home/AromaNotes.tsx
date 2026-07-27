@@ -53,7 +53,7 @@ export function AromaNotes() {
   const activeNote = notes.find((n) => n.key === active) ?? notes[0];
 
   return (
-    <section aria-labelledby="aroma-heading" className="mx-auto max-w-6xl px-5 py-24">
+    <section aria-labelledby="aroma-heading" className="mx-auto max-w-6xl px-5 py-28">
       <p className="text-xs font-bold uppercase tracking-widest2 text-green">Lezzet Notaları</p>
       <h2 id="aroma-heading" className="mt-3 max-w-lg font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
         Her ısırıkta farklı bir katman.

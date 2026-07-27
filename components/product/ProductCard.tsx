@@ -5,10 +5,19 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import type { Product } from "@/content/products";
 import { useCartStore } from "@/store/cart-store";
+import { useUiStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils/format";
 
 export function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
+  const openCartDrawer = useUiStore((s) => s.openCartDrawer);
+  // Ana görselden farklı ilk galeri karesi hover görseli olur
+  const hoverImage = product.gallery.find((src) => src !== product.image);
+
+  function handleAdd() {
+    addItem(product);
+    openCartDrawer(product.slug);
+  }
 
   return (
     <div
@@ -22,6 +31,18 @@ export function ProductCard({ product }: { product: Product }) {
           sizes="(min-width: 768px) 33vw, 100vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
         />
+        {/* Hover'da ikinci galeri görseline crossfade (lüks e-ticaret standardı).
+            İkinci görsel yoksa katman hiç render edilmez. */}
+        {hoverImage && (
+          <Image
+            src={hoverImage}
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="(min-width: 768px) 33vw, 100vw"
+            className="object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-[1.06] group-hover:opacity-100 motion-reduce:hidden"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker/15 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         {product.isDemo && (
           <span className="absolute left-3 top-3 rounded-full bg-brown-darker/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-cream backdrop-blur-sm">
@@ -55,7 +76,7 @@ export function ProductCard({ product }: { product: Product }) {
           </span>
           <button
             type="button"
-            onClick={() => addItem(product)}
+            onClick={handleAdd}
             className="flex items-center gap-1.5 rounded-full bg-brown-darker px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-cream transition-all duration-300 hover:bg-green hover:shadow-lg hover:shadow-green/20"
             aria-label={`${product.name} ürününü sepete ekle`}
           >

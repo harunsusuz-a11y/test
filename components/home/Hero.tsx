@@ -19,6 +19,7 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [scene3dReady, setScene3dReady] = useState(false);
+  const [videoOk, setVideoOk] = useState(true);
 
   // Kontrollü mouse parallax (Motion — https://github.com/motiondivision/motion)
   const mouseX = useMotionValue(0);
@@ -71,6 +72,25 @@ export function Hero() {
           sizes="100vw"
           className="object-cover opacity-70"
         />
+        {/* Opsiyonel makro çekim loop videosu (premium gıda markası standardı):
+            public/videos/hero-loop.webm eklendiğinde görselin üstünde oynar,
+            dosya yoksa onError ile sessizce gizlenir ve statik görsel kalır.
+            reduced-motion tercih edildiğinde hiç mount edilmez. */}
+        {!reducedMotion && videoOk && (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            aria-hidden="true"
+            onError={() => setVideoOk(false)}
+            className="absolute inset-0 h-full w-full object-cover opacity-70"
+          >
+            {/* Kaynak bulunamadığında error olayı <source> üzerinde tetiklenir */}
+            <source src="/videos/hero-loop.webm" type="video/webm" onError={() => setVideoOk(false)} />
+          </video>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/40 to-transparent" />
       </div>
 

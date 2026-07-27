@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Minus, Plus, Truck, ShieldCheck } from "lucide-react";
 import type { Product } from "@/content/products";
 import { useCartStore } from "@/store/cart-store";
+import { useUiStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils/format";
 
 export function AddToCartPanel({ product }: { product: Product }) {
@@ -12,9 +13,11 @@ export function AddToCartPanel({ product }: { product: Product }) {
   const [panelVisible, setPanelVisible] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
   const addItem = useCartStore((s) => s.addItem);
+  const openCartDrawer = useUiStore((s) => s.openCartDrawer);
 
   function handleAdd() {
     addItem(product, quantity);
+    openCartDrawer(product.slug);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

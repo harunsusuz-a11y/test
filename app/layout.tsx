@@ -4,6 +4,10 @@ import "@fontsource-variable/fraunces";
 import "@fontsource-variable/inter";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
+import { CartDrawer } from "@/components/commerce/CartDrawer";
+import { ExitIntentPopup } from "@/components/overlays/ExitIntentPopup";
+import { LiveActivity } from "@/components/overlays/LiveActivity";
 import { Footer } from "@/components/layout/Footer";
 import { IntroSplash } from "@/components/layout/IntroSplash";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
@@ -47,10 +51,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AmbientLayer />
         <ScrollProgress />
         <SmoothScrollProvider>
+          <AnnouncementBar />
           <Header />
           <main id="main-content">{children}</main>
           <Footer />
         </SmoothScrollProvider>
+        {/* Global overlay katmanı — scroll akışının dışında */}
+        <CartDrawer />
+        <ExitIntentPopup />
+        <LiveActivity />
       </body>
     </html>
   );
