@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 // Renk kaynağı: Venti-Ate marka kitapçığı (Color Palette — primary colors)
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./content/**/*.{ts,tsx}"],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./content/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {

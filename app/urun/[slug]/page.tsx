@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Star, Sprout, Leaf } from "lucide-react";
+import { Star, Leaf } from "lucide-react";
 import { products, getProductBySlug } from "@/content/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
-import { AddToCartPanel } from "@/components/product/AddToCartPanel";
 import { ProductCard } from "@/components/product/ProductCard";
-import { ProductReviews } from "@/components/product/ProductReviews";
 import { ProductFaq } from "@/components/product/ProductFaq";
 import { formatPrice } from "@/lib/utils/format";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -15,6 +13,15 @@ import { getReviewsForProduct, getAverageRating } from "@/content/reviews";
 import { Reveal } from "@/components/animations/Reveal";
 import { StatRings } from "@/components/product/StatRings";
 import { TrustBadges } from "@/components/ui/TrustBadges";
+import { ProductHero } from "@/components/product/ProductHero";
+import { ProductNav } from "@/components/product/ProductNav";
+import { BuyBox } from "@/components/product/BuyBox";
+import { ProductStory } from "@/components/product/ProductStory";
+import { NutritionCard } from "@/components/product/NutritionCard";
+import { TextureHotspots } from "@/components/product/TextureHotspots";
+import { ReviewsPanel } from "@/components/product/ReviewsPanel";
+import { OutlineMarquee, QuizCta } from "@/components/product/PdpBands";
+import { getProductTheme } from "@/lib/utils/product-theme";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -41,6 +48,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!product) notFound();
 
   const related = products.filter((p) => p.slug !== product.slug);
+  const theme = getProductTheme(product);
   const reviews = getReviewsForProduct(product.slug);
   const avgRating = getAverageRating(product.slug);
 
@@ -87,123 +95,117 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   ]);
 
   return (
-    <article className="mx-auto max-w-6xl px-5 py-12">
+    <article>
       {/* JSON-LD structured data — statik, güvenli içerik */}
       <JsonLd data={structuredData} />
       <JsonLd data={faqStructuredData} />
       <JsonLd data={breadcrumbData} />
 
-      <p className="mb-2 text-xs text-brown-dark/50">
-        <Link href="/magaza" className="hover:text-green">
-          Mağaza
-        </Link>{" "}
-        / {product.name}
-      </p>
+      {/* 1 — Sinematik açılış (ürüne özel renk kimliği) */}
+      <ProductHero product={product} theme={theme} />
 
-      <div className="grid gap-10 md:grid-cols-2 md:items-start">
-        {/* Desktop'ta galeri sabitlenir; sağ kolon içerik boyunca kayar (premium PDP deseni) */}
-        <div className="md:sticky md:top-24">
-          <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
-        </div>
+      {/* 2 — Scrollspy bölüm navigasyonu */}
+      <ProductNav accentBg={theme.accentBg} />
 
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest2 text-green">{product.flavor}</p>
-          <h1 className="mt-2 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">{product.name}</h1>
+      {/* 3 — Genel Bakış: sticky galeri + satın alma modülü */}
+      <section id="genel-bakis" className="mx-auto max-w-6xl scroll-mt-32 px-5 py-16">
+        <p className="mb-4 text-xs text-brown-dark/50">
+          <Link href="/magaza" className="hover:text-green">
+            Mağaza
+          </Link>{" "}
+          / {product.name}
+        </p>
 
-          {avgRating && (
-            <div className="mt-2 flex items-center gap-1.5 text-sm text-brown-dark/70">
-              <span className="flex items-center gap-0.5 text-peach">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} size={14} fill={i < Math.round(avgRating) ? "currentColor" : "none"} strokeWidth={1.5} />
-                ))}
-              </span>
-              <span>
-                {avgRating.toFixed(1)} · {reviews.length} yorum <span className="text-brown-dark/40">(demo veri)</span>
-              </span>
-            </div>
-          )}
-
-          <div className="mt-3 flex items-baseline gap-3">
-            <p className="text-2xl font-bold text-brown-darker">{formatPrice(product.price)}</p>
-            {product.compareAtPrice && (
-              <>
-                <p className="text-lg text-brown-dark/40 line-through">{formatPrice(product.compareAtPrice)}</p>
-                <span className="rounded-full bg-green/10 px-2.5 py-1 text-xs font-bold text-green">
-                  %{Math.round((1 - product.price / product.compareAtPrice) * 100)} indirim
-                </span>
-              </>
-            )}
+        <div className="grid gap-10 md:grid-cols-2 md:items-start">
+          <div className="md:sticky md:top-32">
+            <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
           </div>
 
-          <p className="mt-4 text-brown-dark/80">{product.description}</p>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest2 text-green">{product.flavor}</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">{product.name}</h2>
 
-          {/* İmza efekti: görünür olunca dolan protein/fındık oranı halkaları */}
-          <StatRings proteinPercent={product.proteinPercent} hazelnutPercent={product.hazelnutPercent} />
+            {avgRating && (
+              <a href="#yorumlar" className="mt-2 flex w-fit items-center gap-1.5 text-sm text-brown-dark/70 hover:text-brown-darker">
+                <span className="flex items-center gap-0.5 text-peach">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={14} fill={i < Math.round(avgRating) ? "currentColor" : "none"} strokeWidth={1.5} />
+                  ))}
+                </span>
+                <span>
+                  {avgRating.toFixed(1)} · {reviews.length} yorum <span className="text-brown-dark/40">(demo veri)</span>
+                </span>
+              </a>
+            )}
 
-          {/* Neden Venti-Ate — dönüşümü destekleyen kısa vurgular */}
-          <ul className="mt-6 space-y-2">
-            {product.highlights.map((h) => (
-              <li key={h} className="flex items-start gap-2.5 text-sm text-brown-dark/85">
-                <Leaf size={15} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
-                {h}
-              </li>
-            ))}
-          </ul>
+            <div className="mt-3 flex items-baseline gap-3">
+              <p className="text-2xl font-bold text-brown-darker">{formatPrice(product.price)}</p>
+              {product.compareAtPrice && (
+                <>
+                  <p className="text-lg text-brown-dark/40 line-through">{formatPrice(product.compareAtPrice)}</p>
+                  <span className="rounded-full bg-green/10 px-2.5 py-1 text-xs font-bold text-green">
+                    %{Math.round((1 - product.price / product.compareAtPrice) * 100)} indirim
+                  </span>
+                </>
+              )}
+            </div>
 
-          <AddToCartPanel product={product} />
+            <p className="mt-4 text-brown-dark/80">{product.description}</p>
 
-          <dl className="mt-10 divide-y divide-brown/10 border-y border-brown/10">
-            {product.attributes.map((attr) => (
-              <div key={attr.label} className="flex items-center justify-between py-3 text-sm">
-                <dt className="text-brown-dark/60">{attr.label}</dt>
-                <dd className="font-semibold text-brown-darker">{attr.value}</dd>
-              </div>
-            ))}
-          </dl>
+            <ul className="mt-6 space-y-2">
+              {product.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2.5 text-sm text-brown-dark/85">
+                  <Leaf size={15} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
+                  {h}
+                </li>
+              ))}
+            </ul>
 
-          <TrustBadges className="mt-6" />
+            {/* Cam kart: adet + tek seferlik/abonelik toggle'ı */}
+            <BuyBox product={product} theme={theme} />
+
+            <StatRings proteinPercent={product.proteinPercent} hazelnutPercent={product.hazelnutPercent} />
+
+            <dl className="mt-8 divide-y divide-brown/10 border-y border-brown/10">
+              {product.attributes.map((attr) => (
+                <div key={attr.label} className="flex items-center justify-between py-3 text-sm">
+                  <dt className="text-brown-dark/60">{attr.label}</dt>
+                  <dd className="font-semibold text-brown-darker">{attr.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <TrustBadges className="mt-6" />
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* İçindekiler + Besin Değerleri */}
-      <section className="mt-20 grid gap-10 md:grid-cols-2">
+      {/* 4 — Dev outline tipografi şeridi */}
+      <OutlineMarquee text={product.flavor} theme={theme} />
+
+      {/* 5 — Scroll-driven ürün hikâyesi */}
+      <section id="hikaye" className="scroll-mt-32">
+        <ProductStory product={product} theme={theme} />
+      </section>
+
+      {/* 6 — Besin etiketi + içindekiler + doku hotspot'ları */}
+      <section id="besin" className="mx-auto max-w-6xl scroll-mt-32 px-5 py-20">
         <Reveal>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Formül</p>
-          <h2 className="mb-4 mt-2 font-display text-2xl font-extrabold text-brown-darker">İçindekiler</h2>
-          <ul className="space-y-1.5 text-sm text-brown-dark/80">
-            {product.ingredients.map((ing) => (
-              <li key={ing} className="flex items-center gap-2">
-                <Sprout size={14} className="text-green" aria-hidden="true" />
-                {ing}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 text-xs text-brown-dark/45">
-            İçindekiler listesi ve alerjen bilgisi ürün etiketi resmi olarak onaylanınca güncellenecektir.
-          </p>
-        </Reveal>
-
-        <Reveal delay={120}>
-          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Besin</p>
-          <h2 className="mb-4 mt-2 font-display text-2xl font-extrabold text-brown-darker">
-            Besin Değerleri <span className="text-sm font-normal text-brown-dark/50">(100g için)</span>
+          <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+            Etikette ne varsa, burada da o var.
           </h2>
-          <dl className="divide-y divide-brown/10 rounded-2xl border border-brown/10">
-            {product.nutritionPer100g.map((row) => (
-              <div key={row.label} className="flex items-center justify-between px-4 py-2.5 text-sm transition-colors hover:bg-brown/[0.03]">
-                <dt className="text-brown-dark/60">{row.label}</dt>
-                <dd className="font-semibold text-brown-darker">{row.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-4 text-xs text-brown-dark/45">
-            Bu değerler ön formülasyona dayanır; kesin besin değerleri resmi ürün etiketiyle netleşecektir.
-          </p>
+        </Reveal>
+        <Reveal delay={100}>
+          <NutritionCard product={product} theme={theme} />
+        </Reveal>
+        <Reveal delay={150} className="mt-10">
+          <TextureHotspots product={product} theme={theme} />
         </Reveal>
       </section>
 
-      {/* Nasıl Tüketilir */}
-      <section className="mt-20">
+      {/* 7 — Nasıl Tüketilir */}
+      <section className="mx-auto max-w-6xl px-5 pb-20">
         <Reveal>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
           <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
@@ -223,8 +225,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </div>
       </section>
 
-      {/* SSS */}
-      <section className="mt-20">
+      {/* 8 — Yorumlar */}
+      <section id="yorumlar" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-20">
+        <Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Yorumlar</p>
+          <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+            İlk ısıranlar ne dedi?
+          </h2>
+          <ReviewsPanel reviews={reviews} averageRating={avgRating} theme={theme} />
+        </Reveal>
+      </section>
+
+      {/* 9 — SSS */}
+      <section id="sss" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-24">
         <Reveal>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">SSS</p>
           <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
@@ -232,12 +245,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </Reveal>
       </section>
 
-      <Reveal>
-        <ProductReviews reviews={reviews} averageRating={avgRating} />
-      </Reveal>
+      {/* 10 — Quiz CTA bandı */}
+      <QuizCta theme={theme} />
 
+      {/* 11 — Benzer Ürünler */}
       {related.length > 0 && (
-        <section className="mt-24">
+        <section className="mx-auto max-w-6xl px-5 py-20">
           <Reveal>
             <p className="text-xs font-bold uppercase tracking-widest2 text-green">Keşfet</p>
             <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
