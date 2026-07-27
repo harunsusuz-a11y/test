@@ -1,9 +1,11 @@
 import { z } from "zod";
 
+export const SUBSCRIPTION_DISCOUNT = 0.1; // %10 abonelik indirimi
+
 export const subscriptionFrequencies = [
-  { value: "haftalik", label: "Haftalık" },
-  { value: "iki-haftalik", label: "15 Günde Bir" },
-  { value: "aylik", label: "Aylık" },
+  { value: "haftalik", label: "Haftalık", description: "Her hafta kapına gelsin — yoğun antrenman dönemleri için." },
+  { value: "iki-haftalik", label: "15 Günde Bir", description: "En dengeli seçim — çoğu üyemizin tercihi.", popular: true },
+  { value: "aylik", label: "Aylık", description: "Aylık düzenli tüketim için." },
 ] as const;
 
 export const subscriptionDeliverySchema = z.object({
