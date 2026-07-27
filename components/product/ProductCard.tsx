@@ -29,6 +29,11 @@ export function ProductCard({ product }: { product: Product }) {
             Demo İçerik
           </span>
         )}
+        {product.compareAtPrice && (
+          <span className="absolute right-3 top-3 rounded-full bg-green px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-cream">
+            %{Math.round((1 - product.price / product.compareAtPrice) * 100)} İndirim
+          </span>
+        )}
       </Link>
 
       <div className="flex flex-1 flex-col p-6">
@@ -41,8 +46,13 @@ export function ProductCard({ product }: { product: Product }) {
         <p className="mt-2.5 text-sm leading-relaxed text-brown-dark/75">{product.shortDescription}</p>
 
         <div className="mt-5 flex items-center justify-between border-t border-brown/10 pt-5">
-          <span className="font-display text-lg font-semibold text-brown-darker">
-            {formatPrice(product.price)}
+          <span className="flex items-baseline gap-2">
+            <span className="font-display text-lg font-semibold text-brown-darker">
+              {formatPrice(product.price)}
+            </span>
+            {product.compareAtPrice && (
+              <span className="text-xs text-brown-dark/40 line-through">{formatPrice(product.compareAtPrice)}</span>
+            )}
           </span>
           <button
             type="button"

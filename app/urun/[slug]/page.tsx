@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Star, Sprout, Leaf } from "lucide-react";
 import { products, getProductBySlug } from "@/content/products";
+import { ProductGallery } from "@/components/product/ProductGallery";
 import { AddToCartPanel } from "@/components/product/AddToCartPanel";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import { ProductFaq } from "@/components/product/ProductFaq";
 import { formatPrice } from "@/lib/utils/format";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
@@ -61,6 +64,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           },
         }
       : {}),
+    // SSS için de FAQPage structured data — gerçek, sitede görünen sorulardan üretiliyor.
+  };
+
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: product.faq.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
 
   const breadcrumbData = getBreadcrumbJsonLd([
@@ -73,41 +87,59 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     <article className="mx-auto max-w-6xl px-5 py-12">
       {/* JSON-LD structured data — statik, güvenli içerik */}
       <JsonLd data={structuredData} />
+      <JsonLd data={faqStructuredData} />
       <JsonLd data={breadcrumbData} />
 
       <p className="mb-2 text-xs text-brown-dark/50">
-        <a href="/magaza" className="hover:text-green">
+        <Link href="/magaza" className="hover:text-green">
           Mağaza
-        </a>{" "}
+        </Link>{" "}
         / {product.name}
       </p>
 
       <div className="grid gap-10 md:grid-cols-2">
-        <div>
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-brown/5">
-            <Image src={product.image} alt={product.name} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" priority />
-            {product.isDemo && (
-              <span className="absolute left-4 top-4 rounded-full bg-brown-darker/80 px-3 py-1 text-xs font-bold uppercase tracking-wide text-cream">
-                Demo İçerik
-              </span>
-            )}
-          </div>
-          {product.gallery.length > 1 && (
-            <div className="mt-3 grid grid-cols-3 gap-3">
-              {product.gallery.map((src) => (
-                <div key={src} className="relative aspect-square overflow-hidden rounded-xl bg-brown/5">
-                  <Image src={src} alt="" fill sizes="200px" className="object-cover" />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest2 text-green">{product.flavor}</p>
           <h1 className="mt-2 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">{product.name}</h1>
-          <p className="mt-3 text-2xl font-bold text-brown-darker">{formatPrice(product.price)}</p>
+
+          {avgRating && (
+            <div className="mt-2 flex items-center gap-1.5 text-sm text-brown-dark/70">
+              <span className="flex items-center gap-0.5 text-peach">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} size={14} fill={i < Math.round(avgRating) ? "currentColor" : "none"} strokeWidth={1.5} />
+                ))}
+              </span>
+              <span>
+                {avgRating.toFixed(1)} · {reviews.length} yorum <span className="text-brown-dark/40">(demo veri)</span>
+              </span>
+            </div>
+          )}
+
+          <div className="mt-3 flex items-baseline gap-3">
+            <p className="text-2xl font-bold text-brown-darker">{formatPrice(product.price)}</p>
+            {product.compareAtPrice && (
+              <>
+                <p className="text-lg text-brown-dark/40 line-through">{formatPrice(product.compareAtPrice)}</p>
+                <span className="rounded-full bg-green/10 px-2.5 py-1 text-xs font-bold text-green">
+                  %{Math.round((1 - product.price / product.compareAtPrice) * 100)} indirim
+                </span>
+              </>
+            )}
+          </div>
+
           <p className="mt-4 text-brown-dark/80">{product.description}</p>
+
+          {/* Neden Venti-Ate — dönüşümü destekleyen kısa vurgular */}
+          <ul className="mt-6 space-y-2">
+            {product.highlights.map((h) => (
+              <li key={h} className="flex items-start gap-2.5 text-sm text-brown-dark/85">
+                <Leaf size={15} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
+                {h}
+              </li>
+            ))}
+          </ul>
 
           <AddToCartPanel product={product} />
 
@@ -121,6 +153,60 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </dl>
         </div>
       </div>
+
+      {/* İçindekiler + Besin Değerleri */}
+      <section className="mt-16 grid gap-10 md:grid-cols-2">
+        <div>
+          <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">İçindekiler</h2>
+          <ul className="space-y-1.5 text-sm text-brown-dark/80">
+            {product.ingredients.map((ing) => (
+              <li key={ing} className="flex items-center gap-2">
+                <Sprout size={14} className="text-green" aria-hidden="true" />
+                {ing}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-brown-dark/45">
+            İçindekiler listesi ve alerjen bilgisi ürün etiketi resmi olarak onaylanınca güncellenecektir.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">
+            Besin Değerleri <span className="text-sm font-normal text-brown-dark/50">(100g için)</span>
+          </h2>
+          <dl className="divide-y divide-brown/10 rounded-2xl border border-brown/10">
+            {product.nutritionPer100g.map((row) => (
+              <div key={row.label} className="flex items-center justify-between px-4 py-2.5 text-sm">
+                <dt className="text-brown-dark/60">{row.label}</dt>
+                <dd className="font-semibold text-brown-darker">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-4 text-xs text-brown-dark/45">
+            Bu değerler ön formülasyona dayanır; kesin besin değerleri resmi ürün etiketiyle netleşecektir.
+          </p>
+        </div>
+      </section>
+
+      {/* Nasıl Tüketilir */}
+      <section className="mt-16">
+        <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {product.usageTips.map((tip, i) => (
+            <div key={tip} className="rounded-2xl border border-brown/10 bg-brown/[0.03] p-5">
+              <span className="mb-2 block font-display text-lg font-bold text-green">{String(i + 1).padStart(2, "0")}</span>
+              <p className="text-sm text-brown-dark/80">{tip}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SSS */}
+      <section className="mt-16">
+        <h2 className="mb-4 font-display text-xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
+        <ProductFaq items={product.faq} />
+      </section>
 
       <ProductReviews reviews={reviews} averageRating={avgRating} />
 
