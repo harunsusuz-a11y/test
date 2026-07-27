@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils/format";
+import { TrustBadges } from "@/components/ui/TrustBadges";
 
 const schema = z.object({
   fullName: z.string().min(2, "Ad soyad gerekli."),
@@ -186,10 +187,12 @@ export function CheckoutForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-6 w-full rounded-full bg-brown px-7 py-3.5 text-sm font-bold text-cream transition hover:bg-green disabled:opacity-60"
+          className="mt-6 w-full rounded-full bg-brown px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-[1.02] hover:bg-green disabled:opacity-60"
         >
           {submitting ? "İşleniyor…" : "Siparişi Tamamla (Demo)"}
         </button>
+
+        <TrustBadges className="mt-6 justify-center gap-x-4 gap-y-2" />
       </div>
     </form>
   );

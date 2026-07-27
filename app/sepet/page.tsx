@@ -7,6 +7,9 @@ import { Minus, Plus, X } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils/format";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { TrustBadges } from "@/components/ui/TrustBadges";
+import { ProductCard } from "@/components/product/ProductCard";
+import { products } from "@/content/products";
 
 const FREE_SHIPPING_THRESHOLD = 300;
 
@@ -20,6 +23,8 @@ export default function CartPage() {
 
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+  const cartSlugs = new Set(lines.map((l) => l.slug));
+  const crossSell = products.filter((p) => !cartSlugs.has(p.slug));
 
   function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
@@ -31,13 +36,27 @@ export default function CartPage() {
     return (
       <>
         <PageHeader eyebrow="Sepetim" title="Sepetin boş" description="Ürünleri keşfetmeye ne dersin?" />
-        <div className="pb-20 text-center">
-          <Link
-            href="/magaza"
-            className="inline-block rounded-full bg-brown px-7 py-3.5 text-sm font-bold text-cream transition hover:bg-green"
-          >
-            Mağazaya Git
-          </Link>
+        <div className="mx-auto max-w-6xl px-5 pb-20">
+          <div className="mb-12 text-center">
+            <Link
+              href="/magaza"
+              className="inline-block rounded-full bg-brown px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-105 hover:bg-green"
+            >
+              Mağazaya Git
+            </Link>
+          </div>
+          {products.length > 0 && (
+            <div>
+              <h2 className="mb-6 text-center font-display text-xl font-extrabold text-brown-darker">
+                Sana Uygun Ateşi Seç
+              </h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {products.map((p) => (
+                  <ProductCard key={p.slug} product={p} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </>
     );
@@ -102,6 +121,17 @@ export default function CartPage() {
                 </div>
               </div>
             ))}
+
+            {crossSell.length > 0 && (
+              <div className="pt-6">
+                <h2 className="mb-4 font-display text-lg font-bold text-brown-darker">Bunları da beğenebilirsin</h2>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {crossSell.map((p) => (
+                    <ProductCard key={p.slug} product={p} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="h-fit rounded-2xl bg-white/60 p-6">
@@ -141,10 +171,12 @@ export default function CartPage() {
 
             <Link
               href="/odeme"
-              className="mt-6 block rounded-full bg-brown px-7 py-3.5 text-center text-sm font-bold text-cream transition hover:bg-green"
+              className="mt-6 block rounded-full bg-brown px-7 py-3.5 text-center text-sm font-bold text-cream transition hover:scale-[1.02] hover:bg-green"
             >
               Ödemeye Geç
             </Link>
+
+            <TrustBadges className="mt-6 justify-start gap-x-4 gap-y-2" />
           </div>
         </div>
       </div>
