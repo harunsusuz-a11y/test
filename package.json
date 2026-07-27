@@ -12,29 +12,34 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@hookform/resolvers": "3.10.0",
+    "@react-three/fiber": "^9.6.1",
+    "clsx": "2.1.1",
+    "gsap": "3.12.5",
+    "lenis": "^1.1.18",
+    "lucide-react": "0.469.0",
+    "motion": "^11.15.0",
     "next": "16.2.12",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "gsap": "3.12.5",
-    "zustand": "5.0.2",
-    "zod": "3.24.1",
     "react-hook-form": "7.54.2",
-    "@hookform/resolvers": "3.10.0",
-    "lucide-react": "0.469.0",
-    "clsx": "2.1.1"
+    "three": "^0.171.0",
+    "zod": "3.24.1",
+    "zustand": "5.0.2"
   },
   "devDependencies": {
-    "typescript": "5.7.3",
+    "@playwright/test": "1.56.0",
+    "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
-    "@types/node": "22.10.7",
-    "tailwindcss": "3.4.17",
-    "postcss": "8.5.1",
+    "@types/three": "^0.171.0",
     "autoprefixer": "10.4.20",
     "eslint": "9.18.0",
     "eslint-config-next": "16.2.12",
-    "vitest": "3.0.4",
     "jsdom": "25.0.1",
-    "@playwright/test": "1.56.0"
+    "postcss": "8.5.1",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.7.3",
+    "vitest": "3.0.4"
   }
 }

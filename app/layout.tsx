@@ -3,6 +3,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { IntroSplash } from "@/components/layout/IntroSplash";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
 import { brand } from "@/content/brand";
@@ -34,9 +35,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={getOrganizationJsonLd()} />
         <JsonLd data={getWebsiteJsonLd()} />
         <IntroSplash />
-        <Header />
-        <main id="main-content">{children}</main>
-        <Footer />
+        <SmoothScrollProvider>
+          <Header />
+          <main id="main-content">{children}</main>
+          <Footer />
+        </SmoothScrollProvider>
       </body>
     </html>
   );

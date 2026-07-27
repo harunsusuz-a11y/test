@@ -2,15 +2,38 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+
+// Three.js/R3F sahnesi yalnızca istemcide, sadece Hero görünür olduğunda
+// mount edilir — SSR'da hiç yüklenmez, ilk sayfa yükünü etkilemez.
+const HazelnutScene = dynamic(
+  () => import("@/components/three/HazelnutScene").then((m) => m.HazelnutScene),
+  { ssr: false }
+);
 
 export function Hero() {
   const imgRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [scene3dReady, setScene3dReady] = useState(false);
+
+  // Kontrollü mouse parallax (Motion — https://github.com/motiondivision/motion)
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+  const headlineX = useTransform(springX, [-0.5, 0.5], [-10, 10]);
+  const headlineY = useTransform(springY, [-0.5, 0.5], [-6, 6]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches || !imgRef.current) return;
+    setReducedMotion(mq.matches);
+    const idle = requestAnimationFrame(() => setScene3dReady(!mq.matches));
+
+    if (mq.matches || !imgRef.current) return () => cancelAnimationFrame(idle);
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -19,11 +42,26 @@ export function Hero() {
         { scale: 1, opacity: 1, duration: 1.4, ease: "power3.out" }
       );
     });
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      cancelAnimationFrame(idle);
+    };
   }, []);
 
+  function handlePointerMove(e: React.PointerEvent<HTMLElement>) {
+    if (reducedMotion) return;
+    const rect = sectionRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  }
+
   return (
-    <section className="relative flex min-h-[92vh] items-end overflow-hidden bg-brown-darker text-cream">
+    <section
+      ref={sectionRef}
+      onPointerMove={handlePointerMove}
+      className="relative flex min-h-[92vh] items-end overflow-hidden bg-brown-darker text-cream"
+    >
       <div ref={imgRef} className="absolute inset-0">
         <Image
           src="/images/hero-bars.jpg"
@@ -36,34 +74,72 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/40 to-transparent" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-6xl px-5 pb-16 pt-32 sm:pb-20">
-        <p className="mb-4 text-xs font-bold uppercase tracking-widest2 text-peach">
+      {/* Three.js (react-three-fiber) — hafif dönen fındık sahnesi, imza görsel katmanı */}
+      {scene3dReady && (
+        <div className="pointer-events-none absolute inset-0 opacity-80 mix-blend-screen">
+          <HazelnutScene />
+        </div>
+      )}
+
+      {/* İnce film grain — SVG fractalNoise, ek asset indirmeden üretilir */}
+      <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.05]">
+        <filter id="hero-grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#hero-grain)" />
+      </svg>
+
+      <motion.div
+        style={reducedMotion ? undefined : { x: headlineX, y: headlineY }}
+        className="relative mx-auto w-full max-w-6xl px-5 pb-16 pt-32 sm:pb-20"
+      >
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="mb-4 text-xs font-bold uppercase tracking-widest2 text-peach"
+        >
           Giresun Fındığından · %25 Protein
-        </p>
-        <h1 className="max-w-2xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-2xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl"
+        >
           Fındığın
           <br />
           rafine hali.
-        </h1>
-        <p className="mt-6 max-w-md text-lg text-cream/80">
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="mt-6 max-w-md text-lg text-cream/80"
+        >
           Gerçek Giresun fındığı ve gerçek protein — sporcu çantasının yeni klasiği.
-        </p>
+        </motion.p>
 
-        <div className="mt-10 flex flex-wrap gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.65 }}
+          className="mt-10 flex flex-wrap gap-4"
+        >
           <Link
             href="/magaza"
-            className="rounded-full bg-peach px-7 py-3.5 text-sm font-bold text-brown-darker transition hover:bg-cream"
+            className="rounded-full bg-peach px-7 py-3.5 text-sm font-bold text-brown-darker transition hover:scale-105 hover:bg-cream"
           >
             Ürünleri Keşfet
           </Link>
           <Link
             href="/hakkimizda"
-            className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream transition hover:border-cream"
+            className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-105 hover:border-cream"
           >
             Hikayemizi Keşfet
           </Link>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
