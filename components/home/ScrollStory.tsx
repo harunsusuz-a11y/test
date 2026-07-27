@@ -134,7 +134,7 @@ export function ScrollStory() {
         style={{ height: `${scenes.length * 100}vh` }}
         className="relative"
       >
-        <div ref={pinRef} data-cursor-text="Kaydır" className="h-screen w-full overflow-hidden bg-brown-darker">
+        <div ref={pinRef} className="h-screen w-full overflow-hidden bg-brown-darker">
           {scenes.map((scene, i) => (
             <div
               key={scene.image}

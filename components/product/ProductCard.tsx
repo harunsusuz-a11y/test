@@ -12,7 +12,6 @@ export function ProductCard({ product }: { product: Product }) {
 
   return (
     <div
-      data-cursor-text="İncele"
       className="group flex flex-col overflow-hidden rounded-3xl border border-brown/10 bg-white/70 shadow-sm transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brown/20 hover:shadow-xl hover:shadow-brown-darker/10"
     >
       <Link href={`/urun/${product.slug}`} className="relative block aspect-square overflow-hidden bg-brown/5">
