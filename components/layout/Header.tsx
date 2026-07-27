@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { mainNav } from "@/content/navigation";
 import { useCartStore } from "@/store/cart-store";
 
@@ -33,6 +33,20 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
+          <form action="/arama" className="hidden items-center gap-2 rounded-full border border-brown/20 px-4 py-2 lg:flex">
+            <Search size={16} className="text-brown-dark/60" aria-hidden="true" />
+            <label htmlFor="site-search" className="sr-only">
+              Ürün ara
+            </label>
+            <input
+              id="site-search"
+              name="q"
+              type="search"
+              placeholder="Ürün ara"
+              className="w-32 bg-transparent text-sm outline-none placeholder:text-brown-dark/50"
+            />
+          </form>
+
           <Link
             href="/sepet"
             className="relative flex items-center gap-2 rounded-full border border-brown/20 px-4 py-2 text-sm font-medium text-brown-dark transition hover:border-green hover:text-green"
