@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { mainNav } from "@/content/navigation";
 import { useCartStore } from "@/store/cart-store";
@@ -9,32 +10,80 @@ import { useCartStore } from "@/store/cart-store";
 export function Header() {
   const [open, setOpen] = useState(false);
   const count = useCartStore((s) => s.count());
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const [scrolled, setScrolled] = useState(!isHome);
+
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
+    function onScroll() {
+      setScrolled(window.scrollY > 80);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  // Ana sayfada, hero üzerindeyken header transparan + kontrast metin;
+  // scroll sonrası veya diğer sayfalarda krem/blur zemine geçer.
+  const floating = isHome && !scrolled;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brown/10 bg-cream/90 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 border-b transition-all duration-500 ${
+        floating
+          ? "border-transparent bg-transparent"
+          : "border-brown/10 bg-cream/90 backdrop-blur-md"
+      }`}
+    >
       <a href="#main-content" className="skip-link">
         İçeriğe geç
       </a>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-        <Link href="/" className="font-display text-2xl font-semibold italic tracking-tight text-brown-darker">
+        <Link
+          href="/"
+          className={`font-display text-2xl font-semibold italic tracking-tight transition-colors duration-500 ${
+            floating ? "text-cream" : "text-brown-darker"
+          }`}
+        >
           venti&#8209;ate
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex" aria-label="Ana navigasyon">
-          {mainNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-[13px] font-medium uppercase tracking-wide text-brown-dark/80 transition-colors duration-300 hover:text-green"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {mainNav.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`group relative text-[13px] font-medium uppercase tracking-wide transition-colors duration-300 ${
+                  floating ? "text-cream/85 hover:text-cream" : "text-brown-dark/80 hover:text-green"
+                }`}
+              >
+                {item.label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100 ${
+                    floating ? "bg-cream" : "bg-green"
+                  } ${active ? "scale-x-100" : ""}`}
+                  aria-hidden="true"
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-4">
-          <form action="/arama" className="hidden items-center gap-2 rounded-full border border-brown/20 px-4 py-2 lg:flex">
-            <Search size={16} className="text-brown-dark/60" aria-hidden="true" />
+          <form
+            action="/arama"
+            className={`hidden items-center gap-2 rounded-full border px-4 py-2 lg:flex transition-colors duration-500 ${
+              floating ? "border-cream/30" : "border-brown/20"
+            }`}
+          >
+            <Search size={16} className={floating ? "text-cream/70" : "text-brown-dark/60"} aria-hidden="true" />
             <label htmlFor="site-search" className="sr-only">
               Ürün ara
             </label>
@@ -43,13 +92,19 @@ export function Header() {
               name="q"
               type="search"
               placeholder="Ürün ara"
-              className="w-32 bg-transparent text-sm outline-none placeholder:text-brown-dark/50"
+              className={`w-32 bg-transparent text-sm outline-none ${
+                floating ? "text-cream placeholder:text-cream/50" : "placeholder:text-brown-dark/50"
+              }`}
             />
           </form>
 
           <Link
             href="/sepet"
-            className="relative flex items-center gap-2 rounded-full border border-brown/20 px-4 py-2 text-sm font-medium text-brown-dark transition hover:border-green hover:text-green"
+            className={`relative flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition duration-500 ${
+              floating
+                ? "border-cream/30 text-cream hover:border-cream"
+                : "border-brown/20 text-brown-dark hover:border-green hover:text-green"
+            }`}
             aria-label={`Sepetim, ${count} ürün`}
           >
             <ShoppingBag size={18} aria-hidden="true" />
@@ -62,7 +117,7 @@ export function Header() {
           </Link>
 
           <button
-            className="md:hidden"
+            className={`md:hidden transition-colors duration-500 ${floating ? "text-cream" : "text-brown-darker"}`}
             aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}

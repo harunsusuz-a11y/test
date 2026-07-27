@@ -24,6 +24,7 @@ export function AromaNotes() {
 
       <div className="mt-10 grid gap-8 md:grid-cols-[1fr_1.2fr] md:items-center">
         <div
+          data-cursor-text="Keşfet"
           className="relative flex aspect-square items-center justify-center overflow-hidden rounded-3xl transition-colors duration-500"
           style={{ backgroundColor: activeNote.accent }}
           aria-hidden="true"
