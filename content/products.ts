@@ -69,3 +69,24 @@ export const products: Product[] = [
 export function getProductBySlug(slug: string) {
   return products.find((p) => p.slug === slug);
 }
+
+export const categories: { slug: "protein-bar" | "findik-kremasi"; label: string; description: string }[] = [
+  {
+    slug: "protein-bar",
+    label: "Protein Barlar",
+    description: "Antrenman öncesi ve sonrası için, %25 protein oranıyla çıtır atıştırmalıklar.",
+  },
+  {
+    slug: "findik-kremasi",
+    label: "Fındık Kremaları",
+    description: "Yüksek fındık oranıyla, sabah sofrasının ya da antrenman sonrasının klasiği.",
+  },
+];
+
+export function getCategoryBySlug(slug: string) {
+  return categories.find((c) => c.slug === slug);
+}
+
+export function getProductsByCategory(slug: string) {
+  return products.filter((p) => p.category === slug);
+}

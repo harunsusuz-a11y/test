@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
-import { products } from "@/content/products";
+import { products, categories } from "@/content/products";
 
 const staticRoutes = [
   "",
   "/magaza",
+  "/abonelik",
   "/hakkimizda",
   "/formunu-bul",
   "/sepet",
@@ -30,5 +31,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  return [...staticEntries, ...productEntries];
+  const categoryEntries = categories.map((c) => ({
+    url: `${base}/magaza/kategori/${c.slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticEntries, ...productEntries, ...categoryEntries];
 }

@@ -1,5 +1,6 @@
 export const mainNav = [
   { label: "Mağaza", href: "/magaza" },
+  { label: "Abonelik", href: "/abonelik" },
   { label: "Formunu Bul", href: "/formunu-bul" },
   { label: "Hakkımızda", href: "/hakkimizda" },
 ];
@@ -9,6 +10,7 @@ export const footerNav = [
     title: "Alışveriş",
     links: [
       { label: "Mağaza", href: "/magaza" },
+      { label: "Abonelik", href: "/abonelik" },
       { label: "Sepetim", href: "/sepet" },
     ],
   },

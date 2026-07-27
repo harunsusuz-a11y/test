@@ -1,33 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { quizQuestions, quizResultCopy } from "@/content/quiz";
+import { quizQuestions, quizResultCopy, type QuizOption } from "@/content/quiz";
 import { products } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
+import { addAnswer, resolveWinner, emptyScores, type QuizScores } from "@/lib/utils/quiz";
 
-type CategoryKey = "protein-bar" | "findik-kremasi";
-
-export function CoffeeQuiz() {
+export function FormunuBulQuiz() {
   const [step, setStep] = useState(0);
-  const [scores, setScores] = useState<Record<CategoryKey, number>>({ "protein-bar": 0, "findik-kremasi": 0 });
+  const [scores, setScores] = useState<QuizScores>(emptyScores);
 
   const finished = step >= quizQuestions.length;
 
-  function answer(points: Record<CategoryKey, number>) {
-    setScores((prev) => ({
-      "protein-bar": prev["protein-bar"] + points["protein-bar"],
-      "findik-kremasi": prev["findik-kremasi"] + points["findik-kremasi"],
-    }));
+  function answer(option: QuizOption) {
+    setScores((prev) => addAnswer(prev, option));
     setStep((s) => s + 1);
   }
 
   function restart() {
     setStep(0);
-    setScores({ "protein-bar": 0, "findik-kremasi": 0 });
+    setScores(emptyScores);
   }
 
   if (finished) {
-    const winner: CategoryKey = scores["protein-bar"] >= scores["findik-kremasi"] ? "protein-bar" : "findik-kremasi";
+    const winner = resolveWinner(scores);
     const recommended = products.filter((p) => p.category === winner);
     const copy = quizResultCopy[winner];
 
@@ -74,7 +70,7 @@ export function CoffeeQuiz() {
           <button
             key={opt.label}
             type="button"
-            onClick={() => answer(opt.points)}
+            onClick={() => answer(opt)}
             className="w-full rounded-xl border border-brown/20 bg-white/60 px-5 py-4 text-left font-medium text-brown-darker transition hover:border-green hover:bg-green/10"
           >
             {opt.label}

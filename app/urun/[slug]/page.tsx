@@ -4,7 +4,11 @@ import { notFound } from "next/navigation";
 import { products, getProductBySlug } from "@/content/products";
 import { AddToCartPanel } from "@/components/product/AddToCartPanel";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ProductReviews } from "@/components/product/ProductReviews";
 import { formatPrice } from "@/lib/utils/format";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
+import { getReviewsForProduct, getAverageRating } from "@/content/reviews";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
@@ -31,6 +35,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!product) notFound();
 
   const related = products.filter((p) => p.slug !== product.slug);
+  const reviews = getReviewsForProduct(product.slug);
+  const avgRating = getAverageRating(product.slug);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -44,12 +50,30 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       price: product.price,
       availability: "https://schema.org/InStock",
     },
+    // Yorumlar demo/örnek içerik olduğu için gerçek bir aggregateRating uydurulmaz;
+    // yalnızca gerçek demo veri seti varsa (isDemo işaretli) hesaplanan değer eklenir.
+    ...(avgRating
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: avgRating.toFixed(1),
+            reviewCount: reviews.length,
+          },
+        }
+      : {}),
   };
+
+  const breadcrumbData = getBreadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "Mağaza", path: "/magaza" },
+    { name: product.name, path: `/urun/${product.slug}` },
+  ]);
 
   return (
     <article className="mx-auto max-w-6xl px-5 py-12">
       {/* JSON-LD structured data — statik, güvenli içerik */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      <JsonLd data={structuredData} />
+      <JsonLd data={breadcrumbData} />
 
       <p className="mb-2 text-xs text-brown-dark/50">
         <a href="/magaza" className="hover:text-green">
@@ -97,6 +121,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </dl>
         </div>
       </div>
+
+      <ProductReviews reviews={reviews} averageRating={avgRating} />
 
       {related.length > 0 && (
         <section className="mt-20">

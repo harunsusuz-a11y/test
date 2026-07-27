@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { IntroSplash } from "@/components/layout/IntroSplash";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
 import { brand } from "@/content/brand";
 
 export const metadata: Metadata = {
@@ -28,6 +31,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="tr">
       <body className="font-body antialiased">
+        <JsonLd data={getOrganizationJsonLd()} />
+        <JsonLd data={getWebsiteJsonLd()} />
+        <IntroSplash />
         <Header />
         <main id="main-content">{children}</main>
         <Footer />
