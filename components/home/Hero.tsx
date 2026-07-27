@@ -74,9 +74,11 @@ export function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/40 to-transparent" />
       </div>
 
-      {/* Three.js (react-three-fiber) — hafif dönen fındık sahnesi, imza görsel katmanı */}
+      {/* Three.js (react-three-fiber) — hafif dönen fındık sahnesi.
+          Bilinçli olarak sadece sağ yarıda gösterilir (metin bloğu sol-altta),
+          böylece hiçbir zaman başlık/CTA okunabilirliğini bozmaz. */}
       {scene3dReady && (
-        <div className="pointer-events-none absolute inset-0 opacity-80 mix-blend-screen">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 opacity-90 sm:block">
           <HazelnutScene />
         </div>
       )}

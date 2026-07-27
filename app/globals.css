@@ -15,7 +15,12 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* NOT: scroll-behavior:smooth kasıtlı olarak KULLANILMIYOR.
+     Lenis (JS tabanlı smooth scroll) zaten scroll'u yönetiyor;
+     native CSS smooth scroll ile aynı anda çalışırsa ikisi
+     scroll kontrolü için yarışır ve özellikle Chrome'da
+     belirgin takılma/gecikmeye yol açar. */
+  scroll-behavior: auto;
 }
 
 body {
