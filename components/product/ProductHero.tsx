@@ -81,7 +81,7 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
             )}
             <Link
               href="#genel-bakis"
-              className={`rounded-full px-7 py-3.5 text-sm font-bold text-brown-darker transition hover:scale-105 ${theme.accentBg}`}
+              className={`btn-signature px-7 py-3.5 text-sm font-bold text-brown-darker transition ${theme.accentBg}`}
             >
               Satın Al
             </Link>

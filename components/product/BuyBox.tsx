@@ -48,10 +48,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
 
   return (
     <>
-      <div
-        ref={panelRef}
-        className="mt-8 rounded-3xl border border-white/60 bg-white/50 p-6 shadow-lg shadow-brown-darker/5 backdrop-blur-md"
-      >
+      <div ref={panelRef} className="card-solid mt-8 rounded-2xl p-6">
         {/* Satın alma tipi toggle'ı */}
         <div className="grid grid-cols-2 gap-2 rounded-2xl bg-brown/5 p-1.5" role="radiogroup" aria-label="Satın alma tipi">
           <button
@@ -87,7 +84,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
         </div>
 
         <div className="mt-5 flex items-center gap-4">
-          <div className="flex items-center rounded-full border border-brown/20 bg-white/70">
+          <div className="flex items-center rounded-lg border border-brown/20 bg-white">
             <button type="button" aria-label="Adedi azalt" className="p-3" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
               <Minus size={16} />
             </button>
@@ -103,7 +100,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
             <button
               type="button"
               onClick={handleAdd}
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brown-darker px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-[1.02] hover:bg-green active:scale-95"
+              className="btn-signature flex flex-1 items-center justify-center gap-2 bg-brown-darker px-7 py-3.5 text-sm font-bold text-cream transition hover:bg-green active:scale-[0.98]"
             >
               <ShoppingBag size={15} aria-hidden="true" />
               {added ? "Sepete eklendi ✓" : `Sepete Ekle — ${formatPrice(total)}`}
@@ -111,7 +108,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
           ) : (
             <Link
               href="/abonelik"
-              className="flex flex-1 items-center justify-center gap-2 rounded-full bg-green px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-[1.02] hover:bg-brown-darker active:scale-95"
+              className="btn-signature flex flex-1 items-center justify-center gap-2 bg-green px-7 py-3.5 text-sm font-bold text-cream transition hover:bg-brown-darker active:scale-[0.98]"
             >
               <RefreshCw size={15} aria-hidden="true" />
               Aboneliği Başlat — {formatPrice(total)}
@@ -147,7 +144,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
           <button
             type="button"
             onClick={handleAdd}
-            className={`shrink-0 rounded-full px-5 py-2.5 text-xs font-bold text-brown-darker transition ${theme.accentBg}`}
+            className={`btn-signature shrink-0 px-5 py-2.5 text-xs font-bold text-brown-darker transition ${theme.accentBg}`}
           >
             {added ? "Eklendi ✓" : "Sepete Ekle"}
           </button>

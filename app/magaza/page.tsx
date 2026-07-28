@@ -36,25 +36,23 @@ export default function Page() {
 
       <div className="mx-auto max-w-6xl px-5 pb-24 pt-12">
         {/* Filtreler */}
-        <Reveal>
-          <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-3">
-              <span className="rounded-full border border-brown-darker bg-brown-darker px-5 py-2 text-sm font-semibold text-cream">
-                Tüm Ürünler
-              </span>
-              {categories.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/magaza/kategori/${c.slug}`}
-                  className="rounded-full border border-brown/20 px-5 py-2 text-sm font-semibold text-brown-dark transition hover:border-green hover:text-green"
-                >
-                  {c.label}
-                </Link>
-              ))}
-            </div>
-            <p className="text-sm text-brown-dark/50">{products.length} ürün</p>
+        <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-3">
+            <span className="rounded-full border border-brown-darker bg-brown-darker px-5 py-2 text-sm font-semibold text-cream">
+              Tüm Ürünler
+            </span>
+            {categories.map((c) => (
+              <Link
+                key={c.slug}
+                href={`/magaza/kategori/${c.slug}`}
+                className="rounded-full border border-brown/20 px-5 py-2 text-sm font-semibold text-brown-dark transition hover:border-green hover:text-green"
+              >
+                {c.label}
+              </Link>
+            ))}
           </div>
-        </Reveal>
+          <p className="text-sm text-brown-dark/50">{products.length} ürün</p>
+        </div>
 
         <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
           {/* Öne çıkan ürün — geniş editorial kare */}

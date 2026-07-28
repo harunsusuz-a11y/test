@@ -190,26 +190,20 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
       {/* 6 — Besin etiketi + içindekiler + doku hotspot'ları */}
       <section id="besin" className="mx-auto max-w-6xl scroll-mt-32 px-5 py-20">
-        <Reveal>
-          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Formül</p>
-          <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
-            Etikette ne varsa, burada da o var.
-          </h2>
-        </Reveal>
-        <Reveal delay={100}>
-          <NutritionCard product={product} theme={theme} />
-        </Reveal>
-        <Reveal delay={150} className="mt-10">
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Formül</p>
+        <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+          Etikette ne varsa, burada da o var.
+        </h2>
+        <NutritionCard product={product} theme={theme} />
+        <div className="mt-10">
           <TextureHotspots product={product} theme={theme} />
-        </Reveal>
+        </div>
       </section>
 
       {/* 7 — Nasıl Tüketilir */}
       <section className="mx-auto max-w-6xl px-5 pb-20">
-        <Reveal>
-          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
-          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
-        </Reveal>
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
+        <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {product.usageTips.map((tip, i) => (
             <Reveal key={tip} delay={i * 90}>
@@ -227,22 +221,18 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
       {/* 8 — Yorumlar */}
       <section id="yorumlar" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-20">
-        <Reveal>
-          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Yorumlar</p>
-          <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
-            İlk ısıranlar ne dedi?
-          </h2>
-          <ReviewsPanel reviews={reviews} averageRating={avgRating} theme={theme} />
-        </Reveal>
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Yorumlar</p>
+        <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+          İlk ısıranlar ne dedi?
+        </h2>
+        <ReviewsPanel reviews={reviews} averageRating={avgRating} theme={theme} />
       </section>
 
       {/* 9 — SSS */}
       <section id="sss" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-24">
-        <Reveal>
-          <p className="text-xs font-bold uppercase tracking-widest2 text-green">SSS</p>
-          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
-          <ProductFaq items={product.faq} />
-        </Reveal>
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">SSS</p>
+        <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
+        <ProductFaq items={product.faq} />
       </section>
 
       {/* 10 — Quiz CTA bandı */}
@@ -251,10 +241,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {/* 11 — Benzer Ürünler */}
       {related.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 py-20">
-          <Reveal>
-            <p className="text-xs font-bold uppercase tracking-widest2 text-green">Keşfet</p>
-            <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
-          </Reveal>
+          <p className="text-xs font-bold uppercase tracking-widest2 text-green">Keşfet</p>
+          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p, i) => (
               <Reveal key={p.slug} delay={i * 90}>

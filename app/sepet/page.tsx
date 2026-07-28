@@ -75,19 +75,17 @@ export default function CartPage() {
       <PageHeader eyebrow="Sepetim" title="Neredeyse hazır." description="Paket indirimi ve kupon kodun burada uygulanır." />
       <div className="mx-auto max-w-6xl px-5 pb-24 pt-12">
         {/* Ücretsiz kargo ilerlemesi */}
-        <Reveal>
-          <div className="mb-10 rounded-2xl border border-brown/10 bg-white/60 p-5">
-            <p className="flex items-center gap-2 text-sm font-semibold text-brown-darker">
-              <Truck size={15} className="text-green" aria-hidden="true" />
-              {totals.freeShipping
-                ? "Ücretsiz kargo hakkı kazandın"
-                : `Ücretsiz kargoya ${formatPrice(totals.remainingForFreeShipping)} kaldı`}
-            </p>
-            <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-brown/10" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Ücretsiz kargo ilerlemesi">
-              <div className="h-full rounded-full bg-green transition-all duration-500" style={{ width: `${progress}%` }} />
-            </div>
+        <div className="mb-10 rounded-2xl border border-brown/10 bg-white/60 p-5">
+          <p className="flex items-center gap-2 text-sm font-semibold text-brown-darker">
+            <Truck size={15} className="text-green" aria-hidden="true" />
+            {totals.freeShipping
+              ? "Ücretsiz kargo hakkı kazandın"
+              : `Ücretsiz kargoya ${formatPrice(totals.remainingForFreeShipping)} kaldı`}
+          </p>
+          <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-brown/10" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Ücretsiz kargo ilerlemesi">
+            <div className="h-full rounded-full bg-green transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
-        </Reveal>
+        </div>
 
         <div className="grid gap-10 lg:grid-cols-3">
           {/* Satırlar */}
@@ -179,7 +177,7 @@ export default function CartPage() {
 
           {/* Özet */}
           <Reveal delay={150} className="h-fit lg:sticky lg:top-28">
-            <div className="rounded-3xl border border-white/60 bg-white/50 p-7 shadow-lg shadow-brown-darker/5 backdrop-blur-md">
+            <div className="card-solid rounded-2xl p-7">
               <h2 className="font-display text-xl font-extrabold text-brown-darker">Sipariş Özeti</h2>
 
               {totals.couponValid && couponCode ? (
@@ -244,7 +242,7 @@ export default function CartPage() {
 
               <Link
                 href="/odeme"
-                className="mt-6 block rounded-full bg-brown-darker px-7 py-3.5 text-center text-sm font-bold text-cream transition hover:scale-[1.02] hover:bg-green"
+                className="btn-signature mt-6 block bg-brown-darker px-7 py-3.5 text-center text-sm font-bold text-cream transition hover:bg-green"
               >
                 Ödemeye Geç
               </Link>

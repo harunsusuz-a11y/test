@@ -46,7 +46,7 @@ export function QuizCta({ theme }: { theme: ProductTheme }) {
         </div>
         <Link
           href="/formunu-bul"
-          className={`group flex shrink-0 items-center gap-2 rounded-full px-8 py-4 text-sm font-bold text-brown-darker transition hover:scale-105 ${theme.accentBg}`}
+          className={`btn-signature group flex shrink-0 items-center gap-2 px-8 py-4 text-sm font-bold text-brown-darker transition ${theme.accentBg}`}
         >
           Formunu Bul
           <ArrowRight size={16} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
