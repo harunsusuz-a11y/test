@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Gift, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TrustBadges } from "@/components/ui/TrustBadges";
+import { HazelnutMark } from "@/components/brand/HazelnutMark";
 import { products, categories } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/animations/Reveal";
@@ -73,7 +74,10 @@ export default function Page() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/30 to-transparent" />
                 <div className="relative p-8">
-                  <p className="text-xs font-bold uppercase tracking-widest2 text-peach">Öne Çıkan · {featured.flavor}</p>
+                  <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 text-peach">
+                    <HazelnutMark size={14} />
+                    Öne Çıkan · {featured.flavor}
+                  </p>
                   <h2 className="mt-2 font-display text-3xl font-extrabold sm:text-4xl">{featured.name}</h2>
                   <p className="mt-2 max-w-md text-sm text-cream/75">{featured.shortDescription}</p>
                   <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-peach">
@@ -118,7 +122,7 @@ export default function Page() {
           )}
 
           {rest.map((product, i) => (
-            <Reveal key={product.slug} delay={i * 90}>
+            <Reveal key={product.slug} delay={i * 90} className={i === 0 ? "sm:mt-8" : undefined}>
               <ProductCard product={product} />
             </Reveal>
           ))}

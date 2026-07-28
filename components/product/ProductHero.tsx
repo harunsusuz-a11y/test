@@ -7,6 +7,9 @@ import { ChevronDown } from "lucide-react";
 import type { Product } from "@/content/products";
 import type { ProductTheme } from "@/lib/utils/product-theme";
 import { formatPrice } from "@/lib/utils/format";
+import { OrganicFrame } from "@/components/brand/OrganicFrame";
+import { HazelnutMark } from "@/components/brand/HazelnutMark";
+import { Scribble } from "@/components/brand/Scribble";
 
 /**
  * PDP'nin sinematik açılışı: ürüne özel koyu zemin, dev Fraunces ürün adı,
@@ -40,8 +43,9 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className={`text-xs font-bold uppercase tracking-widest2 ${theme.accentText}`}
+            className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 ${theme.accentText}`}
           >
+            <HazelnutMark size={15} />
             {product.flavor} · {product.category === "protein-bar" ? "Protein Bar" : "Fındık Kreması"}
           </motion.p>
           <motion.h1
@@ -50,7 +54,11 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="mt-4 max-w-xl font-display text-4xl font-extrabold leading-[1.02] tracking-tight sm:text-6xl"
           >
-            {product.name}
+            <span className="relative inline-block">
+              {product.name.split(" ")[0]}
+              <Scribble className={theme.accentText} />
+            </span>{" "}
+            {product.name.split(" ").slice(1).join(" ")}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 12 }}
@@ -84,17 +92,19 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
           initial={{ opacity: 0, scale: 1.06 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl shadow-black/40"
+          className="relative md:-mt-6 md:translate-x-4"
         >
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            priority
-            sizes="(min-width: 768px) 45vw, 100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+          <OrganicFrame variant={1} rotate={3} className="relative aspect-[4/5] shadow-2xl shadow-black/40">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              priority
+              sizes="(min-width: 768px) 45vw, 100vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
+          </OrganicFrame>
           {product.isDemo && (
             <span className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-cream backdrop-blur-sm">
               Demo İçerik

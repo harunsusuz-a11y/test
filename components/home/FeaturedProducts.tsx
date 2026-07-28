@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import { products } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
+import { HazelnutMark } from "@/components/brand/HazelnutMark";
 
 export function FeaturedProducts() {
   return (
@@ -14,8 +15,11 @@ export function FeaturedProducts() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="mb-14 max-w-xl"
       >
-        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Ürün Ailesi</p>
-        <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-brown-darker sm:text-4xl">
+        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 text-green">
+          <HazelnutMark size={15} />
+          Ürün Ailesi
+        </p>
+        <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-brown-darker sm:text-4xl">
           Sana uygun ateşi seç.
         </h2>
       </motion.div>
@@ -28,6 +32,8 @@ export function FeaturedProducts() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            // İkinci üründe hafif düşey ofset — mükemmel hizalı ızgarayı kasıtlı kırar
+            className={i === 1 ? "lg:mt-10" : undefined}
           >
             <ProductCard product={product} />
           </motion.div>

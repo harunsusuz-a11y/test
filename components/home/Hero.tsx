@@ -6,6 +6,9 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { OrganicFrame } from "@/components/brand/OrganicFrame";
+import { HazelnutMark } from "@/components/brand/HazelnutMark";
+import { Scribble } from "@/components/brand/Scribble";
 
 // Three.js/R3F sahnesi yalnızca istemcide, sadece Hero görünür olduğunda
 // mount edilir — SSR'da hiç yüklenmez, ilk sayfa yükünü etkilemez.
@@ -70,7 +73,7 @@ export function Hero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-70"
+          className="object-cover opacity-40"
         />
         {/* Opsiyonel makro çekim loop videosu (premium gıda markası standardı):
             public/videos/hero-loop.webm eklendiğinde görselin üstünde oynar,
@@ -92,6 +95,21 @@ export function Hero() {
           </video>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/40 to-transparent" />
+      </div>
+
+      {/* İmza organik çerçeve: mükemmel dikdörtgen yerine düzensiz kenarlı,
+          hafif döndürülmüş ikinci görsel katmanı. Grid'i kasıtlı olarak kırar —
+          sağ kenardan taşar, metin sütununu hafifçe keser. */}
+      <div className="pointer-events-none absolute -right-10 top-[8%] hidden w-[34%] max-w-md sm:block lg:right-4">
+        <OrganicFrame variant={0} rotate={-4} className="relative aspect-[4/5] shadow-2xl shadow-black/40">
+          <Image
+            src="/images/hand-bars.jpg"
+            alt=""
+            fill
+            sizes="34vw"
+            className="object-cover"
+          />
+        </OrganicFrame>
       </div>
 
       {/* Three.js (react-three-fiber) — hafif dönen fındık sahnesi.
@@ -119,8 +137,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mb-4 text-xs font-bold uppercase tracking-widest2 text-peach"
+          className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 text-peach"
         >
+          <HazelnutMark size={15} />
           Giresun Fındığından · %25 Protein
         </motion.p>
         <motion.h1
@@ -131,7 +150,11 @@ export function Hero() {
         >
           Fındığın
           <br />
-          rafine hali.
+          <span className="relative inline-block">
+            rafine
+            <Scribble className="text-peach/80" />
+          </span>{" "}
+          hali.
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}

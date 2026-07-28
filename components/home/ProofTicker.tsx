@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { HazelnutMark } from "@/components/brand/HazelnutMark";
 
 /**
  * Hero'nun hemen altında yavaşça akan marka rozeti şeridi.
@@ -31,7 +32,7 @@ export function ProofTicker() {
                 }`}
               >
                 {badge}
-                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-peach" />
+                <HazelnutMark className="text-peach" size={13} />
               </span>
             ))}
           </Fragment>

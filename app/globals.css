@@ -12,6 +12,18 @@
   --brand-peach: #f9c89e;
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
   --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* İmza aksan fontu: tüm eyebrow/etiket/nav metinlerinde kullanılır (bkz. .tracking-widest2).
+     Fraunces+Inter ikilisi artık "premium startup" klişesi haline geldiği için üçüncü,
+     daha az yaygın bir karakter eklendi: Bricolage Grotesque — hafif tuhaf, düzensiz
+     grotesk formu sitenin küçük dokunuşlarında ayırt edici bir imza yaratır. */
+  --font-accent: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* tracking-widest2 sitede TÜM eyebrow/etiket metinlerinin ortak sınıfıdır (30+ kullanım).
+   Tek bir kuralla tüm siteye yeni bir tipografik imza kazandırır. */
+.tracking-widest2 {
+  font-family: var(--font-accent);
+  font-weight: 800;
 }
 
 html {
