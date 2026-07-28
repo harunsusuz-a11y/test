@@ -81,7 +81,7 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
             )}
             <Link
               href="#genel-bakis"
-              className={`btn-signature px-7 py-3.5 text-sm font-bold text-brown-darker transition ${theme.accentBg}`}
+              className={`btn-signature px-8 py-4 text-sm font-bold text-brown-darker transition hover:brightness-95 active:scale-[0.98] ${theme.accentBg}`}
             >
               Satın Al
             </Link>
@@ -106,7 +106,7 @@ export function ProductHero({ product, theme }: { product: Product; theme: Produ
             <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent" />
           </OrganicFrame>
           {product.isDemo && (
-            <span className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-cream backdrop-blur-sm">
+            <span className="absolute left-4 top-4 rounded-full bg-black/50 px-4 py-2 text-xs font-bold uppercase tracking-wide text-cream backdrop-blur-sm">
               Demo İçerik
             </span>
           )}

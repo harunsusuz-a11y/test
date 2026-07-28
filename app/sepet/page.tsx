@@ -242,7 +242,7 @@ export default function CartPage() {
 
               <Link
                 href="/odeme"
-                className="btn-signature mt-6 block bg-brown-darker px-7 py-3.5 text-center text-sm font-bold text-cream transition hover:bg-green"
+                className="btn-signature mt-6 block bg-brown-darker px-8 py-4 text-center text-sm font-bold text-cream transition hover:bg-green"
               >
                 Ödemeye Geç
               </Link>

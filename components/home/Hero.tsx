@@ -173,13 +173,13 @@ export function Hero() {
         >
           <Link
             href="/magaza"
-            className="btn-signature bg-peach px-7 py-3.5 text-sm font-bold text-brown-darker transition hover:bg-cream"
+            className="btn-signature bg-peach px-8 py-4 text-sm font-bold text-brown-darker transition hover:bg-cream"
           >
             Ürünleri Keşfet
           </Link>
           <Link
             href="/hakkimizda"
-            className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream transition hover:scale-105 hover:border-cream"
+            className="rounded-full border border-cream/30 px-8 py-4 text-sm font-bold text-cream transition hover:scale-105 hover:border-cream"
           >
             Hikayemizi Keşfet
           </Link>

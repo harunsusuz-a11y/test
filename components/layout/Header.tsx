@@ -54,7 +54,7 @@ export function Header() {
           venti&#8209;ate
         </Link>
 
-        <nav className="hidden items-center gap-9 md:flex" aria-label="Ana navigasyon">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Ana navigasyon">
           {mainNav.map((item) => {
             const active = pathname === item.href;
             return (
