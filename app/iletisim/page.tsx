@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Clock, Instagram, ArrowRight } from "lucide-react";
+import { Instagram, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
@@ -9,10 +9,10 @@ import { brand } from "@/content/brand";
 export const metadata: Metadata = { title: "İletişim" };
 
 const contactItems = [
-  { icon: Mail, label: "E-posta", value: brand.contact.email },
-  { icon: Phone, label: "Telefon", value: brand.contact.phone },
-  { icon: MapPin, label: "Adres", value: brand.contact.address },
-  { icon: Clock, label: "Yanıt Süresi", value: "[ORTALAMA YANIT SÜRESİ EKLENECEK] (demo)" },
+  { label: "E-posta", value: brand.contact.email },
+  { label: "Telefon", value: brand.contact.phone },
+  { label: "Adres", value: brand.contact.address },
+  { label: "Yanıt Süresi", value: "[ORTALAMA YANIT SÜRESİ EKLENECEK] (demo)" },
 ];
 
 /**
@@ -45,16 +45,11 @@ export default function Page() {
                   İlk ısırıktan sonra aklına takılan her şey.
                 </h2>
 
-                <div className="mt-8 space-y-5">
-                  {contactItems.map(({ icon: Icon, label, value }) => (
-                    <div key={label} className="flex items-start gap-4">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-peach/15">
-                        <Icon size={16} className="text-peach" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold uppercase tracking-widest2 text-cream/50">{label}</p>
-                        <p className="mt-0.5 break-words text-sm font-medium text-cream/90">{value}</p>
-                      </div>
+                <div className="mt-8 divide-y divide-cream/10 border-t border-cream/10">
+                  {contactItems.map(({ label, value }) => (
+                    <div key={label} className="flex items-baseline justify-between gap-4 py-3.5">
+                      <p className="shrink-0 text-[11px] font-bold uppercase tracking-widest2 text-cream/45">{label}</p>
+                      <p className="break-words text-right text-sm font-medium text-cream/90">{value}</p>
                     </div>
                   ))}
                 </div>

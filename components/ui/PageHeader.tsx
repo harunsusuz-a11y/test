@@ -5,8 +5,6 @@
  * Bu bileşeni kullanan TÜM sayfalar (mağaza, sepet, iletişim, abonelik, SSS,
  * hukuki sayfalar...) otomatik olarak bu açılışı alır.
  */
-import { HazelnutMark } from "@/components/brand/HazelnutMark";
-
 export function PageHeader({
   eyebrow,
   title,
@@ -35,12 +33,7 @@ export function PageHeader({
       </svg>
 
       <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-24 sm:pb-16 sm:pt-28">
-        {eyebrow && (
-          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 text-peach">
-            <HazelnutMark size={15} />
-            {eyebrow}
-          </p>
-        )}
+        {eyebrow && <p className="text-xs font-bold uppercase tracking-widest2 text-peach">{eyebrow}</p>}
         <h1 className="mt-3 max-w-3xl -translate-x-0.5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:translate-x-2 sm:text-6xl">
           {title}
         </h1>

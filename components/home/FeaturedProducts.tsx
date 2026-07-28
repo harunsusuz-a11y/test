@@ -3,7 +3,6 @@
 import { motion } from "motion/react";
 import { products } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
-import { HazelnutMark } from "@/components/brand/HazelnutMark";
 
 export function FeaturedProducts() {
   return (
@@ -15,10 +14,7 @@ export function FeaturedProducts() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className="mb-14 max-w-xl"
       >
-        <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 text-green">
-          <HazelnutMark size={15} />
-          Ürün Ailesi
-        </p>
+        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Ürün Ailesi</p>
         <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-brown-darker sm:text-4xl">
           Sana uygun ateşi seç.
         </h2>

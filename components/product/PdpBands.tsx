@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { HazelnutMark } from "@/components/brand/HazelnutMark";
 import type { ProductTheme } from "@/lib/utils/product-theme";
 
 /**
@@ -39,10 +38,7 @@ export function QuizCta({ theme }: { theme: ProductTheme }) {
     <section className={`${theme.heroBg} text-cream`}>
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-5 py-16 sm:flex-row sm:items-center">
         <div>
-          <p className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest2 ${theme.accentText}`}>
-            <HazelnutMark size={15} />
-            Kararsız mısın?
-          </p>
+          <p className={`text-xs font-bold uppercase tracking-widest2 ${theme.accentText}`}>Kararsız mısın?</p>
           <h2 className="mt-2 font-display text-3xl font-extrabold sm:text-4xl">Hangi aroma sana göre?</h2>
           <p className="mt-2 max-w-md text-cream/70">
             1 dakikalık Formunu Bul testiyle antrenman ritmine ve damak zevkine uygun ürünü bul.

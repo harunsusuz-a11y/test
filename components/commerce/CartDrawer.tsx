@@ -121,7 +121,7 @@ export function CartDrawer() {
               <p className="flex items-center gap-2 text-xs font-semibold text-brown-dark/80">
                 <Truck size={14} className="text-green" aria-hidden="true" />
                 {totals.freeShipping
-                  ? "Kargon ücretsiz 🎉"
+                  ? "Kargon ücretsiz"
                   : `Ücretsiz kargoya ${formatPrice(totals.remainingForFreeShipping)} kaldı`}
               </p>
               <div

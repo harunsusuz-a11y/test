@@ -80,7 +80,7 @@ export default function CartPage() {
             <p className="flex items-center gap-2 text-sm font-semibold text-brown-darker">
               <Truck size={15} className="text-green" aria-hidden="true" />
               {totals.freeShipping
-                ? "Ücretsiz kargo hakkı kazandın 🎉"
+                ? "Ücretsiz kargo hakkı kazandın"
                 : `Ücretsiz kargoya ${formatPrice(totals.remainingForFreeShipping)} kaldı`}
             </p>
             <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-brown/10" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100} aria-label="Ücretsiz kargo ilerlemesi">
