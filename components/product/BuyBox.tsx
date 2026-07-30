@@ -7,6 +7,7 @@ import type { Product } from "@/content/products";
 import type { ProductTheme } from "@/lib/utils/product-theme";
 import { useCartStore } from "@/store/cart-store";
 import { useUiStore } from "@/store/ui-store";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/RadioGroup";
 import { formatPrice } from "@/lib/utils/format";
 
 /** Abonelik sayfasındaki oranla aynı: abonelikte %10 indirim. */
@@ -50,24 +51,23 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
     <>
       <div ref={panelRef} className="card-solid mt-8 rounded-2xl p-6">
         {/* Satın alma tipi toggle'ı */}
-        <div className="grid grid-cols-2 gap-2 rounded-2xl bg-brown/5 p-2" role="radiogroup" aria-label="Satın alma tipi">
-          <button
-            type="button"
-            role="radio"
-            aria-checked={mode === "once"}
-            onClick={() => setMode("once")}
+        <RadioGroup
+          value={mode}
+          onValueChange={(v) => setMode(v as "once" | "subscribe")}
+          className="grid grid-cols-2 gap-2 rounded-2xl bg-brown/5 p-2"
+          aria-label="Satın alma tipi"
+        >
+          <RadioGroupItem
+            value="once"
             className={`rounded-xl px-4 py-3 text-left transition-all duration-300 ${
               mode === "once" ? "bg-white shadow-sm" : "opacity-60 hover:opacity-100"
             }`}
           >
             <span className="block text-sm font-bold text-brown-darker">Tek Seferlik</span>
             <span className="mt-0.5 block text-xs text-brown-dark/60">{formatPrice(product.price)}</span>
-          </button>
-          <button
-            type="button"
-            role="radio"
-            aria-checked={mode === "subscribe"}
-            onClick={() => setMode("subscribe")}
+          </RadioGroupItem>
+          <RadioGroupItem
+            value="subscribe"
             className={`relative rounded-xl px-4 py-3 text-left transition-all duration-300 ${
               mode === "subscribe" ? "bg-white shadow-sm" : "opacity-60 hover:opacity-100"
             }`}
@@ -80,8 +80,8 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
               {formatPrice(product.price * (1 - SUBSCRIPTION_DISCOUNT))}{" "}
               <span className="font-bold text-green">%10 indirimli</span>
             </span>
-          </button>
-        </div>
+          </RadioGroupItem>
+        </RadioGroup>
 
         <div className="mt-5 flex items-center gap-4">
           <div className="flex items-center rounded-lg border border-brown/20 bg-white">

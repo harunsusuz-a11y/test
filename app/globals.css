@@ -11,7 +11,8 @@
   --brand-cream: #fff6f0;
   --brand-peach: #f9c89e;
   --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
-  --font-body: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  /* gpt-taste kuralı: Inter, LLM tasarımlarının varsayılan/nötr fontu — bilinçli olarak Outfit'e geçildi. */
+  --font-body: "Outfit Variable", ui-sans-serif, system-ui, sans-serif;
   /* İmza aksan fontu: tüm eyebrow/etiket/nav metinlerinde kullanılır (bkz. .tracking-widest2).
      Fraunces+Inter ikilisi artık "premium startup" klişesi haline geldiği için üçüncü,
      daha az yaygın bir karakter eklendi: Bricolage Grotesque — hafif tuhaf, düzensiz

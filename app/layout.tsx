@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/fraunces/standard-italic.css";
 import "@fontsource-variable/fraunces";
-import "@fontsource-variable/inter";
+import "@fontsource-variable/outfit";
 import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";

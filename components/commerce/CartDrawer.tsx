@@ -9,6 +9,7 @@ import { useUiStore } from "@/store/ui-store";
 import { products, getProductBySlug } from "@/content/products";
 import { formatPrice } from "@/lib/utils/format";
 import { computeCartTotals } from "@/lib/utils/cart-math";
+import { Progress } from "@/components/ui/Progress";
 import { BUNDLE_NAME } from "@/content/discounts";
 
 /**
@@ -124,19 +125,11 @@ export function CartDrawer() {
                   ? "Kargon ücretsiz"
                   : `Ücretsiz kargoya ${formatPrice(totals.remainingForFreeShipping)} kaldı`}
               </p>
-              <div
-                className="mt-2 h-1.5 overflow-hidden rounded-full bg-brown/10"
-                role="progressbar"
-                aria-valuenow={Math.round(totals.freeShipping ? 100 : progress)}
-                aria-valuemin={0}
-                aria-valuemax={100}
+              <Progress
+                value={totals.freeShipping ? 100 : progress}
                 aria-label="Ücretsiz kargo ilerlemesi"
-              >
-                <div
-                  className="h-full rounded-full bg-green transition-all duration-500"
-                  style={{ width: `${totals.freeShipping ? 100 : progress}%` }}
-                />
-              </div>
+                className="mt-2 h-1.5"
+              />
             </div>
 
             {/* Satırlar */}

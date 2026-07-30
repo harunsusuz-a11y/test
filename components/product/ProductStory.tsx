@@ -21,19 +21,19 @@ function buildScenes(product: Product): Scene[] {
   const isBar = product.category === "protein-bar";
   return [
     {
-      eyebrow: "01 — Kaynak",
+      eyebrow: "Kaynak",
       title: "Giresun'dan geliyor.",
       text: "Her parti, gerçek Giresun fındığıyla başlar — aroması ve yağ profiliyle dünyanın referans fındığı.",
       image: product.gallery[1] ?? product.image,
     },
     {
-      eyebrow: "02 — Formül",
+      eyebrow: "Formül",
       title: isBar ? `%${product.proteinPercent} protein, gerçek içerik.` : `%${product.hazelnutPercent} fındık, sade içerik.`,
       text: product.description,
       image: product.image,
     },
     {
-      eyebrow: "03 — Doku",
+      eyebrow: "Doku",
       title: isBar ? "Çıtır katman, gerçek parçalar." : "Pürüzsüz, sürülebilir kıvam.",
       text: product.highlights[0] ?? product.shortDescription,
       image: product.gallery[2] ?? product.gallery[1] ?? product.image,

@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/animations/Reveal";
+import { Progress } from "@/components/ui/Progress";
 import { products, getProductBySlug } from "@/content/products";
 
 /**

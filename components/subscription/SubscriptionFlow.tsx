@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Star } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/RadioGroup";
 import { products } from "@/content/products";
 import { formatPrice } from "@/lib/utils/format";
 import {
@@ -124,12 +125,16 @@ export function SubscriptionFlow() {
         {step === 1 && (
           <div>
             <h2 className="mb-5 font-display text-xl font-extrabold text-brown-darker">Sıklığını ve miktarını belirle</h2>
-            <div className="mb-6 grid gap-3 sm:grid-cols-3">
+            <RadioGroup
+              value={frequency}
+              onValueChange={(v) => setFrequency(v as (typeof subscriptionFrequencies)[number]["value"])}
+              className="mb-6 grid gap-3 sm:grid-cols-3"
+              aria-label="Teslimat sıklığı"
+            >
               {subscriptionFrequencies.map((f) => (
-                <button
+                <RadioGroupItem
                   key={f.value}
-                  type="button"
-                  onClick={() => setFrequency(f.value)}
+                  value={f.value}
                   className={`relative rounded-2xl border p-4 text-left transition ${
                     frequency === f.value ? "border-green bg-green/10" : "border-brown/20 hover:border-green/40"
                   }`}
@@ -141,9 +146,9 @@ export function SubscriptionFlow() {
                   )}
                   <p className="font-display font-bold text-brown-darker">{f.label}</p>
                   <p className="mt-1 text-xs text-brown-dark/60">{f.description}</p>
-                </button>
+                </RadioGroupItem>
               ))}
-            </div>
+            </RadioGroup>
 
             <label className="mb-1 block text-sm font-semibold text-brown-dark" htmlFor="quantity">
               Miktar
