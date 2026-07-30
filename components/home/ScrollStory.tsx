@@ -27,37 +27,37 @@ const scenes: Scene[] = [
   {
     image: "/images/hero-bars.jpg",
     alt: "Kesilmiş Venti-Ate protein barları, içindeki gerçek fındık parçaları görünür şekilde",
-    eyebrow: "01 · Kaynak",
+    eyebrow: "Kaynak",
     caption: "Gerçek Giresun fındığıyla başlar.",
   },
   {
     image: "/images/hand-bars.jpg",
     alt: "Elde tutulan kavrulmuş Venti-Ate protein barları",
-    eyebrow: "02 · Kavurma",
+    eyebrow: "Kavurma",
     caption: "Karakteri kavurmayla açığa çıkar.",
   },
   {
     image: "/images/boxes-left.jpg",
     alt: "Venti-Ate ambalajları, iç yapı detayları görünür şekilde",
-    eyebrow: "03 · Kırılma",
+    eyebrow: "Kırılma",
     caption: "Her parça, gerçek fındığın izini taşır.",
   },
   {
     image: "/images/cream-pour.jpg",
     alt: "Venti-Ate fındık kreması kavanozdan dökülürken",
-    eyebrow: "04 · Krema",
+    eyebrow: "Krema",
     caption: "%50 fındık oranıyla krema olur.",
   },
   {
     image: "/images/boxes-right.jpg",
     alt: "Venti-Ate protein bar ambalajı, %25 protein etiketi görünür şekilde",
-    eyebrow: "05 · Protein Bar",
+    eyebrow: "Protein Bar",
     caption: "Gerçek fındık. Gerçek protein.",
   },
   {
     image: "/images/lifestyle-waffle.jpg",
     alt: "Venti-Ate ürünü günlük yaşamda, kahvaltı sofrasında kullanılırken",
-    eyebrow: "06 · Kullanım",
+    eyebrow: "Kullanım",
     caption: "Çantana, antrenmana, güne katılır.",
   },
 ];
