@@ -119,11 +119,11 @@ export default function CartPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center rounded-full border border-brown/20 bg-white/70">
-                          <button type="button" aria-label="Adedi azalt" className="p-2.5" onClick={() => updateQuantity(line.slug, line.quantity - 1)}>
+                          <button type="button" aria-label="Adedi azalt" className="flex h-11 w-11 items-center justify-center" onClick={() => updateQuantity(line.slug, line.quantity - 1)}>
                             <Minus size={14} />
                           </button>
                           <span className="w-7 text-center text-sm font-bold" aria-live="polite">{line.quantity}</span>
-                          <button type="button" aria-label="Adedi artır" className="p-2.5" onClick={() => updateQuantity(line.slug, line.quantity + 1)}>
+                          <button type="button" aria-label="Adedi artır" className="flex h-11 w-11 items-center justify-center" onClick={() => updateQuantity(line.slug, line.quantity + 1)}>
                             <Plus size={14} />
                           </button>
                         </div>
@@ -186,7 +186,7 @@ export default function CartPage() {
                     <BadgePercent size={14} className="text-green" aria-hidden="true" />
                     {couponCode} <span className="font-normal text-brown-dark/50">(demo)</span>
                   </span>
-                  <button type="button" onClick={() => setCoupon(null)} aria-label="Kuponu kaldır" className="rounded-full p-1 text-brown-dark/50 hover:text-brown-darker">
+                  <button type="button" onClick={() => setCoupon(null)} aria-label="Kuponu kaldır" className="flex h-8 w-8 items-center justify-center rounded-full text-brown-dark/50 hover:text-brown-darker">
                     <X size={13} aria-hidden="true" />
                   </button>
                 </p>

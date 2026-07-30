@@ -81,7 +81,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <form
             action="/arama"
-            className={`hidden items-center gap-2 rounded-full border px-4 py-2 lg:flex transition-colors duration-500 ${
+            className={`hidden items-center gap-2 rounded-full border px-4 py-2 transition-colors duration-500 focus-within:border-green lg:flex ${
               floating ? "border-cream/30" : "border-brown/20"
             }`}
           >

@@ -53,7 +53,7 @@ export function SubscriptionToast({ observeId = "urun-ailesi" }: { observeId?: s
         type="button"
         onClick={() => setVisible(false)}
         aria-label="Bildirimi kapat"
-        className="absolute right-2.5 top-2.5 rounded-full p-1 text-brown-dark/50 transition hover:text-brown-darker"
+        className="absolute right-0.5 top-0.5 flex h-11 w-11 items-center justify-center rounded-full text-brown-dark/50 transition hover:text-brown-darker"
       >
         <X size={14} aria-hidden="true" />
       </button>

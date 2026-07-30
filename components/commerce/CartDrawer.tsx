@@ -96,7 +96,7 @@ export function CartDrawer() {
             type="button"
             onClick={closeCartDrawer}
             aria-label="Kapat"
-            className="rounded-full p-2 text-brown-dark/60 transition hover:bg-brown/5 hover:text-brown-darker"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-brown-dark/60 transition hover:bg-brown/5 hover:text-brown-darker"
           >
             <X size={18} aria-hidden="true" />
           </button>
@@ -181,7 +181,7 @@ export function CartDrawer() {
                               type="button"
                               aria-label={`${line.name} adedini azalt`}
                               onClick={() => updateQuantity(line.slug, line.quantity - 1)}
-                              className="rounded-full border border-brown/20 p-1.5 transition hover:border-brown/40"
+                              className="flex h-9 w-9 items-center justify-center rounded-full border border-brown/20 transition hover:border-brown/40"
                             >
                               <Minus size={12} aria-hidden="true" />
                             </button>
@@ -192,7 +192,7 @@ export function CartDrawer() {
                               type="button"
                               aria-label={`${line.name} adedini artır`}
                               onClick={() => updateQuantity(line.slug, line.quantity + 1)}
-                              className="rounded-full border border-brown/20 p-1.5 transition hover:border-brown/40"
+                              className="flex h-9 w-9 items-center justify-center rounded-full border border-brown/20 transition hover:border-brown/40"
                             >
                               <Plus size={12} aria-hidden="true" />
                             </button>
@@ -256,7 +256,7 @@ export function CartDrawer() {
                       type="button"
                       onClick={() => setCoupon(null)}
                       aria-label="Kuponu kaldır"
-                      className="rounded-full p-1 text-brown-dark/50 hover:text-brown-darker"
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-brown-dark/50 hover:text-brown-darker"
                     >
                       <X size={13} aria-hidden="true" />
                     </button>

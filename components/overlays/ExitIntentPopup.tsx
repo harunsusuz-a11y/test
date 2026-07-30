@@ -153,7 +153,7 @@ export function ExitIntentPopup() {
           type="button"
           onClick={close}
           aria-label="Kapat"
-          className="absolute right-4 top-4 rounded-full bg-brown-darker/60 p-2 text-cream backdrop-blur-sm transition hover:bg-brown-darker"
+          className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-brown-darker/60 text-cream backdrop-blur-sm transition hover:bg-brown-darker"
         >
           <X size={16} aria-hidden="true" />
         </button>

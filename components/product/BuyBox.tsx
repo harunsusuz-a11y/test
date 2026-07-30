@@ -85,13 +85,13 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
 
         <div className="mt-5 flex items-center gap-4">
           <div className="flex items-center rounded-lg border border-brown/20 bg-white">
-            <button type="button" aria-label="Adedi azalt" className="p-3" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
+            <button type="button" aria-label="Adedi azalt" className="flex h-11 w-11 items-center justify-center" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
               <Minus size={16} />
             </button>
             <span className="w-8 text-center font-bold" aria-live="polite">
               {quantity}
             </span>
-            <button type="button" aria-label="Adedi artır" className="p-3" onClick={() => setQuantity((q) => q + 1)}>
+            <button type="button" aria-label="Adedi artır" className="flex h-11 w-11 items-center justify-center" onClick={() => setQuantity((q) => q + 1)}>
               <Plus size={16} />
             </button>
           </div>

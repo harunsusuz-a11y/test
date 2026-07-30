@@ -15,7 +15,7 @@ export function Accordion({ items }: { items: readonly { question: string; answe
 
   return (
     <div>
-      <div className="mb-6 flex items-center gap-2 rounded-full border border-brown/20 bg-white/60 px-4 py-2.5">
+      <div className="mb-6 flex items-center gap-2 rounded-full border border-brown/20 bg-white/60 px-4 py-2.5 transition-colors focus-within:border-green">
         <Search size={16} className="text-brown-dark/50" aria-hidden="true" />
         <label htmlFor="faq-search" className="sr-only">
           Sorularda ara

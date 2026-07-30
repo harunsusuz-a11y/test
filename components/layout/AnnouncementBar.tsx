@@ -44,7 +44,7 @@ export function AnnouncementBar() {
         type="button"
         onClick={dismiss}
         aria-label="Duyuruyu kapat"
-        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-cream/70 transition hover:text-cream"
+        className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-cream/70 transition hover:text-cream"
       >
         <X size={14} aria-hidden="true" />
       </button>
