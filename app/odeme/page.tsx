@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CheckoutForm } from "@/components/forms/CheckoutForm";
+import { Reveal } from "@/components/animations/Reveal";
 
 export const metadata: Metadata = { title: "Ödeme" };
 
@@ -9,7 +10,7 @@ export default function Page() {
   return (
     <>
       <PageHeader eyebrow="Son Adım" title="Ödeme" />
-      <div className="mx-auto mb-10 flex max-w-xs items-center justify-between px-5 text-xs font-semibold text-brown-dark/50 pt-12">
+      <div className="mx-auto mb-12 flex max-w-xs items-center justify-between px-5 text-xs font-semibold text-brown-dark/50 pt-14">
         {steps.map((step, i) => (
           <div key={step} className="flex items-center gap-2">
             <span
@@ -24,8 +25,10 @@ export default function Page() {
           </div>
         ))}
       </div>
-      <div className="mx-auto max-w-4xl px-5 pb-20">
-        <CheckoutForm />
+      <div className="mx-auto max-w-4xl px-5 pb-24">
+        <Reveal>
+          <CheckoutForm />
+        </Reveal>
       </div>
     </>
   );

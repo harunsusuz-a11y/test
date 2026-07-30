@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sprout, Leaf, Flame, Wind } from "lucide-react";
 import { brand } from "@/content/brand";
+import { Reveal } from "@/components/animations/Reveal";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
@@ -41,6 +42,7 @@ export default function Page() {
 
       {/* Editorial 2 kolon: sol sticky görsel şeridi, sağ hikaye metni */}
       <div className="mx-auto max-w-6xl px-5 py-20">
+        <Reveal>
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="hidden lg:block">
             <div className="sticky top-24 space-y-4">
@@ -64,34 +66,42 @@ export default function Page() {
             ))}
           </div>
         </div>
+        </Reveal>
 
-        <h2 className="mt-20 font-display text-2xl font-extrabold text-brown-darker">Değerlerimiz</h2>
-        <ul className="mt-6 grid gap-6 sm:grid-cols-2">
+        <Reveal>
+          <p className="mt-20 text-xs font-bold uppercase tracking-widest2 text-green">İlkelerimiz</p>
+          <h2 className="mt-2 font-display text-2xl font-extrabold text-brown-darker">Değerlerimiz</h2>
+        </Reveal>
+        <ul className="mt-6 divide-y divide-brown/10 border-y border-brown/10">
           {brand.values.map((v, i) => {
             const Icon = valueIcons[i % valueIcons.length];
             return (
-              <li key={v.title} className="rounded-2xl border border-brown/10 bg-white/60 p-6">
-                <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-green/10">
-                  <Icon size={18} className="text-green" aria-hidden="true" />
-                </span>
-                <p className="font-display font-bold text-brown-darker">{v.title}</p>
-                <p className="mt-1.5 text-sm text-brown-dark/70">{v.description}</p>
-              </li>
+              <Reveal key={v.title} delay={i * 45}>
+                <li className="flex items-start gap-4 py-5">
+                  <Icon size={17} className="mt-0.5 shrink-0 text-green" aria-hidden="true" />
+                  <div>
+                    <p className="font-display font-bold text-brown-darker">{v.title}</p>
+                    <p className="mt-1 text-sm text-brown-dark/70">{v.description}</p>
+                  </div>
+                </li>
+              </Reveal>
             );
           })}
         </ul>
 
-        <div className="mt-20 rounded-3xl bg-brown-darker px-8 py-12 text-center sm:px-16">
-          <p className="font-display text-2xl font-extrabold text-cream sm:text-3xl">
-            Hikayemizin bir parçası olmaya hazır mısın?
-          </p>
-          <Link
-            href="/magaza"
-            className="mt-6 inline-block rounded-full bg-peach px-8 py-3.5 text-sm font-bold text-brown-darker transition hover:scale-105 hover:bg-cream"
-          >
-            Ürünleri Keşfet
-          </Link>
-        </div>
+        <Reveal>
+          <div className="mt-20 rounded-3xl bg-brown-darker px-8 py-12 text-center sm:px-16">
+            <p className="font-display text-2xl font-extrabold text-cream sm:text-3xl">
+              Hikayemizin bir parçası olmaya hazır mısın?
+            </p>
+            <Link
+              href="/magaza"
+              className="btn-signature mt-6 inline-block bg-peach px-8 py-4 text-sm font-bold text-brown-darker transition hover:bg-cream active:scale-[0.98]"
+            >
+              Ürünleri Keşfet
+            </Link>
+          </div>
+        </Reveal>
       </div>
     </article>
   );

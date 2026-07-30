@@ -32,7 +32,7 @@ export function Community() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
         {demoGallery.map((src, i) => (
-          <Reveal key={src} delay={i * 60}>
+          <Reveal key={src} delay={i * 45}>
           <div className="relative aspect-square overflow-hidden rounded-xl bg-brown/5">
             <Image
               src={src}

@@ -15,14 +15,27 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(!isHome);
+  // Scroll yönüne duyarlı header: aşağı kaydırınca gizlenir, yukarı kaydırınca
+  // (veya en üste dönünce) hemen belirir — premium-frontend-ui'nin "fluid
+  // navigation" ilkesi. Menü açıkken veya en üstteyken asla gizlenmez.
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     if (!isHome) {
       setScrolled(true);
-      return;
     }
+    let lastY = window.scrollY;
     function onScroll() {
-      setScrolled(window.scrollY > 80);
+      const y = window.scrollY;
+      if (isHome) setScrolled(y > 80);
+      if (y < 120) {
+        setHidden(false);
+      } else if (y > lastY + 4) {
+        setHidden(true); // aşağı kaydırma
+      } else if (y < lastY - 4) {
+        setHidden(false); // yukarı kaydırma
+      }
+      lastY = y;
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -35,7 +48,9 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-all duration-500 ${
+      className={`sticky top-0 z-50 border-b transition-all duration-500 motion-reduce:!translate-y-0 ${
+        hidden && !open ? "-translate-y-full" : "translate-y-0"
+      } ${
         floating
           ? "border-transparent bg-gradient-to-b from-black/45 via-black/15 to-transparent"
           : "border-brown/10 bg-cream/90 backdrop-blur-md"

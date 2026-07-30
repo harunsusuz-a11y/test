@@ -9,6 +9,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { OrganicFrame } from "@/components/brand/OrganicFrame";
 import { HazelnutMark } from "@/components/brand/HazelnutMark";
 import { Scribble } from "@/components/brand/Scribble";
+import { MagneticButton } from "@/components/brand/MagneticButton";
 
 // Three.js/R3F sahnesi yalnızca istemcide, sadece Hero görünür olduğunda
 // mount edilir — SSR'da hiç yüklenmez, ilk sayfa yükünü etkilemez.
@@ -143,18 +144,40 @@ export function Hero() {
           Giresun Fındığından · %25 Protein
         </motion.p>
         <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { delayChildren: 0.3, staggerChildren: reducedMotion ? 0 : 0.045 } },
+          }}
           className="max-w-2xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl"
         >
-          Fındığın
+          {/* Kelime bazlı giriş: her kelime kendi payında yukarı+fade ile belirir
+              (premium-frontend-ui "typography engine" ilkesi). Stagger 45ms —
+              12-principles-of-animation'ın "max 50ms/öğe" kuralına uyumlu. */}
+          <motion.span
+            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-block"
+          >
+            Fındığın
+          </motion.span>
           <br />
-          <span className="relative inline-block">
+          <motion.span
+            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="relative inline-block"
+          >
             rafine
             <Scribble className="text-peach/80" />
-          </span>{" "}
-          hali.
+          </motion.span>{" "}
+          <motion.span
+            variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-block"
+          >
+            hali.
+          </motion.span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -171,12 +194,14 @@ export function Hero() {
           transition={{ duration: 0.7, delay: 0.65 }}
           className="mt-10 flex flex-wrap gap-4"
         >
-          <Link
-            href="/magaza"
-            className="btn-signature bg-peach px-8 py-4 text-sm font-bold text-brown-darker transition hover:bg-cream"
-          >
-            Ürünleri Keşfet
-          </Link>
+          <MagneticButton>
+            <Link
+              href="/magaza"
+              className="btn-signature bg-peach px-8 py-4 text-sm font-bold text-brown-darker transition hover:bg-cream active:scale-[0.98]"
+            >
+              Ürünleri Keşfet
+            </Link>
+          </MagneticButton>
           <Link
             href="/hakkimizda"
             className="rounded-full border border-cream/30 px-8 py-4 text-sm font-bold text-cream transition hover:scale-105 hover:border-cream"

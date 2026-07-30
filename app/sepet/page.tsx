@@ -61,7 +61,7 @@ export default function CartPage() {
         <div className="mx-auto max-w-6xl px-5 pb-24 pt-14">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((p, i) => (
-              <Reveal key={p.slug} delay={i * 90}>
+              <Reveal key={p.slug} delay={i * 45}>
                 <ProductCard product={p} />
               </Reveal>
             ))}
@@ -94,7 +94,7 @@ export default function CartPage() {
             {lines.map((line, i) => {
               const product = getProductBySlug(line.slug);
               return (
-                <Reveal key={line.slug} delay={i * 70}>
+                <Reveal key={line.slug} delay={i * 45}>
                   <div className="flex gap-5 rounded-3xl border border-brown/10 bg-white/60 p-4 transition-shadow hover:shadow-lg hover:shadow-brown-darker/5">
                     <Link href={`/urun/${line.slug}`} className="relative h-28 w-28 shrink-0 overflow-hidden rounded-2xl bg-brown/5">
                       <Image src={line.image} alt={line.name} fill sizes="7rem" className="object-cover transition-transform duration-500 hover:scale-105" />
@@ -243,7 +243,7 @@ export default function CartPage() {
 
               <Link
                 href="/odeme"
-                className="btn-signature mt-6 block bg-brown-darker px-8 py-4 text-center text-sm font-bold text-cream transition hover:bg-green"
+                className="btn-signature mt-6 block bg-brown-darker px-8 py-4 text-center text-sm font-bold text-cream transition hover:bg-green active:scale-[0.98]"
               >
                 Ödemeye Geç
               </Link>

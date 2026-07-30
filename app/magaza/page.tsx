@@ -116,7 +116,7 @@ export default function Page() {
           )}
 
           {rest.map((product, i) => (
-            <Reveal key={product.slug} delay={i * 90} className={i === 0 ? "sm:mt-8" : undefined}>
+            <Reveal key={product.slug} delay={i * 45} className={i === 0 ? "sm:mt-8" : undefined}>
               <ProductCard product={product} />
             </Reveal>
           ))}

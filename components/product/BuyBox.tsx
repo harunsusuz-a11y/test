@@ -144,7 +144,7 @@ export function BuyBox({ product, theme }: { product: Product; theme: ProductThe
           <button
             type="button"
             onClick={handleAdd}
-            className={`btn-signature shrink-0 px-5 py-2 text-xs font-bold text-brown-darker transition hover:brightness-95 ${theme.accentBg}`}
+            className={`btn-signature shrink-0 px-5 py-2 text-xs font-bold text-brown-darker transition hover:brightness-95 active:scale-[0.98] ${theme.accentBg}`}
           >
             {added ? "Eklendi ✓" : "Sepete Ekle"}
           </button>

@@ -27,7 +27,7 @@ export function FeaturedProducts() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, delay: i * 0.045, ease: [0.16, 1, 0.3, 1] }}
             // İkinci üründe hafif düşey ofset — mükemmel hizalı ızgarayı kasıtlı kırar
             className={i === 1 ? "lg:mt-10" : undefined}
           >

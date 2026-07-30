@@ -206,7 +206,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {product.usageTips.map((tip, i) => (
-            <Reveal key={tip} delay={i * 90}>
+            <Reveal key={tip} delay={i * 45}>
               <div className="group h-full rounded-2xl border border-brown/10 bg-brown/[0.03] p-6 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brown/20 hover:bg-white/70 hover:shadow-lg hover:shadow-brown-darker/10">
                 <span className="mb-2 flex items-center gap-2 font-display text-lg font-bold text-green">
                   {String(i + 1).padStart(2, "0")}
@@ -245,7 +245,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p, i) => (
-              <Reveal key={p.slug} delay={i * 90}>
+              <Reveal key={p.slug} delay={i * 45}>
                 <ProductCard product={p} />
               </Reveal>
             ))}
