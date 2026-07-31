@@ -8,5 +8,11 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <AdminShell>{children}</AdminShell>;
+  return (
+    <html lang="tr">
+      <body style={{ margin: 0, padding: 0, background: "#09090b" }}>
+        <AdminShell>{children}</AdminShell>
+      </body>
+    </html>
+  );
 }
