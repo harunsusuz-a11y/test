@@ -3,110 +3,99 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
 const NAV = [
   {
     section: "Genel",
     items: [
-      { label: "Dashboard",   href: "/admin",             icon: <IconGrid />,   count: null },
-      { label: "Analytics",   href: "/admin/analytics",   icon: <IconChart />,  count: null },
+      { label: "Dashboard",    href: "/admin",             icon: <IGrid />,   count: null },
+      { label: "Analytics",   href: "/admin/analytics",   icon: <IChart />,  count: null },
     ],
   },
   {
     section: "Katalog",
     items: [
-      { label: "Ürünler",     href: "/admin/urunler",     icon: <IconBox />,    count: null },
-      { label: "Siparişler",  href: "/admin/siparisler",  icon: <IconBag />,    count: "12" },
-      { label: "Kuponlar",    href: "/admin/kuponlar",    icon: <IconTag />,    count: null },
+      { label: "Ürünler",     href: "/admin/urunler",     icon: <IBox />,    count: null },
+      { label: "Siparişler",  href: "/admin/siparisler",  icon: <IBag />,    count: "5" },
+      { label: "Kuponlar",    href: "/admin/kuponlar",    icon: <ITag />,    count: null },
     ],
   },
   {
     section: "İçerik",
     items: [
-      { label: "İçerik & SEO", href: "/admin/icerik",   icon: <IconDoc />,    count: null },
+      { label: "İçerik & SEO", href: "/admin/icerik",    icon: <IDoc />,    count: null },
     ],
   },
   {
     section: "Sistem",
     items: [
-      { label: "Ayarlar",     href: "/admin/ayarlar",    icon: <IconGear />,   count: null },
+      { label: "Ayarlar",     href: "/admin/ayarlar",    icon: <IGear />,   count: null },
     ],
   },
 ];
 
+const ROUTE_LABELS: Record<string, string> = {
+  "/admin": "Dashboard",
+  "/admin/urunler": "Ürünler",
+  "/admin/siparisler": "Siparişler",
+  "/admin/kuponlar": "Kuponlar",
+  "/admin/icerik": "İçerik & SEO",
+  "/admin/ayarlar": "Ayarlar",
+  "/admin/analytics": "Analytics",
+};
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    const tick = () => setTime(new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }));
+    const tick = () =>
+      setTime(new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }));
     tick();
     const id = setInterval(tick, 30000);
     return () => clearInterval(id);
   }, []);
 
   function isActive(href: string) {
-    if (href === "/admin") return pathname === "/admin";
-    return pathname.startsWith(href);
+    return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
   }
 
+  const pageLabel = ROUTE_LABELS[pathname] ?? "Admin";
+
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "var(--adm-bg)" }}>
+    <div className="adm-root" style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       {/* ── Sidebar ── */}
-      <aside style={{
-        width: sidebarOpen ? "var(--adm-sidebar-w)" : "52px",
-        flexShrink: 0,
-        background: "var(--adm-surface)",
-        borderRight: "1px solid var(--adm-border)",
-        display: "flex",
-        flexDirection: "column",
-        transition: "width 0.2s ease",
-        overflow: "hidden",
-      }}>
+      <aside className={`adm-sidebar${collapsed ? " adm-sidebar--collapsed" : ""}`}>
         {/* Logo */}
-        <div style={{
-          height: "var(--adm-header-h)",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 12px",
-          borderBottom: "1px solid var(--adm-border)",
-          gap: "8px",
-          flexShrink: 0,
-        }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: 6, flexShrink: 0,
-            background: "linear-gradient(135deg, var(--adm-accent) 0%, var(--adm-accent-2) 100%)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 13, fontWeight: 700, color: "#000",
-          }}>V</div>
-          {sidebarOpen && (
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--adm-text)", lineHeight: 1.2 }}>Venti-Ate</div>
-              <div style={{ fontSize: 10, color: "var(--adm-text-3)", marginTop: 1 }}>Admin Panel</div>
+        <div className="adm-sidebar-logo">
+          <div className="adm-logo-mark">V</div>
+          {!collapsed && (
+            <div className="adm-logo-text">
+              <div className="adm-logo-text__name">Venti-Ate</div>
+              <div className="adm-logo-text__sub">Admin Panel</div>
             </div>
           )}
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, overflowY: "auto", padding: "8px 6px" }}>
+        <nav className="adm-nav">
           {NAV.map((group) => (
-            <div key={group.section} style={{ marginBottom: 4 }}>
-              {sidebarOpen && (
-                <div className="adm-label" style={{ padding: "10px 6px 4px" }}>{group.section}</div>
+            <div key={group.section} className="adm-nav-section">
+              {!collapsed && (
+                <span className="adm-nav-section-label">{group.section}</span>
               )}
-              {!sidebarOpen && <div style={{ height: 12 }} />}
+              {collapsed && <div style={{ height: 10 }} />}
               {group.items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`adm-nav-item${isActive(item.href) ? " active" : ""}`}
-                  title={!sidebarOpen ? item.label : undefined}
-                  style={!sidebarOpen ? { justifyContent: "center", padding: "7px" } : {}}
+                  title={collapsed ? item.label : undefined}
+                  style={collapsed ? { justifyContent: "center", padding: "8px" } : {}}
                 >
                   <span className="adm-nav-icon">{item.icon}</span>
-                  {sidebarOpen && <span style={{ flex: 1 }}>{item.label}</span>}
-                  {sidebarOpen && item.count && (
+                  {!collapsed && <span style={{ flex: 1 }}>{item.label}</span>}
+                  {!collapsed && item.count && (
                     <span className="adm-nav-count">{item.count}</span>
                   )}
                 </Link>
@@ -115,13 +104,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        {/* Bottom */}
-        {sidebarOpen && (
-          <div style={{ padding: "10px 12px", borderTop: "1px solid var(--adm-border)", flexShrink: 0 }}>
+        {/* Footer */}
+        {!collapsed && (
+          <div className="adm-sidebar-footer">
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div className="adm-live-dot" />
-              <span style={{ fontSize: 11, color: "var(--adm-text-3)" }}>Canlı · {time}</span>
-              <a href="/" target="_blank" style={{ marginLeft: "auto", fontSize: 11, color: "var(--adm-accent)", textDecoration: "none" }}>Siteye git →</a>
+              <span className="adm-text-sm adm-text-muted">Canlı · {time}</span>
+              <a
+                href="/"
+                target="_blank"
+                className="adm-ml-auto adm-text-sm adm-text-accent"
+                style={{ textDecoration: "none" }}
+              >
+                Siteye git ↗
+              </a>
             </div>
           </div>
         )}
@@ -129,38 +125,51 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
       {/* ── Main ── */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        {/* Top header */}
-        <header style={{
-          height: "var(--adm-header-h)",
-          borderBottom: "1px solid var(--adm-border)",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 20px",
-          gap: 12,
-          flexShrink: 0,
-          background: "var(--adm-surface)",
-        }}>
+        {/* Header */}
+        <header className="adm-header">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={() => setCollapsed(!collapsed)}
             className="adm-btn adm-btn--ghost adm-btn--icon"
-            title="Sidebar'ı gizle/göster"
+            title="Sidebar"
           >
-            <IconMenu />
+            <IMenu />
           </button>
-          <Breadcrumb pathname={pathname} />
+
+          {/* Breadcrumb */}
+          <div className="adm-breadcrumb">
+            <span>Admin</span>
+            {pageLabel !== "Dashboard" && (
+              <>
+                <span className="adm-breadcrumb__sep">/</span>
+                <span className="adm-breadcrumb__current">{pageLabel}</span>
+              </>
+            )}
+          </div>
+
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Notification dot */}
+            <button className="adm-btn adm-btn--ghost adm-btn--icon" style={{ position: "relative" }}>
+              <IBell />
+              <span style={{
+                position: "absolute", top: 5, right: 5,
+                width: 5, height: 5, borderRadius: "50%",
+                background: "var(--adm-accent)",
+              }} />
+            </button>
+            {/* Avatar */}
             <div style={{
               width: 28, height: 28, borderRadius: "50%",
               background: "var(--adm-accent-dim)",
-              border: "1px solid rgba(200,162,107,0.3)",
+              border: "1px solid rgba(200,162,107,0.25)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 11, fontWeight: 600, color: "var(--adm-accent)",
+              fontSize: 11, fontWeight: 700, color: "var(--adm-accent)",
+              cursor: "pointer",
             }}>M</div>
           </div>
         </header>
 
         {/* Content */}
-        <main style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
+        <main style={{ flex: 1, overflowY: "auto", padding: "24px 28px" }}>
           {children}
         </main>
       </div>
@@ -168,52 +177,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Breadcrumb({ pathname }: { pathname: string }) {
-  const MAP: Record<string, string> = {
-    "/admin": "Dashboard",
-    "/admin/urunler": "Ürünler",
-    "/admin/siparisler": "Siparişler",
-    "/admin/kuponlar": "Kuponlar",
-    "/admin/icerik": "İçerik & SEO",
-    "/admin/ayarlar": "Ayarlar",
-    "/admin/analytics": "Analytics",
-  };
-  const label = MAP[pathname] ?? "Admin";
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--adm-text-3)" }}>
-      <span>Admin</span>
-      {label !== "Dashboard" && (
-        <>
-          <span style={{ opacity: 0.4 }}>/</span>
-          <span style={{ color: "var(--adm-text)" }}>{label}</span>
-        </>
-      )}
-    </div>
-  );
-}
-
-// ── SVG Icons ─────────────────────────────────────────────
-function IconGrid() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>;
-}
-function IconChart() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="1,12 5,7 9,9 15,3"/><line x1="15" y1="3" x2="15" y2="8"/><line x1="15" y1="3" x2="10" y2="3"/></svg>;
-}
-function IconBox() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1L14 4.5V11.5L8 15L2 11.5V4.5L8 1Z"/><line x1="8" y1="1" x2="8" y2="15"/><line x1="2" y1="4.5" x2="14" y2="4.5"/></svg>;
-}
-function IconBag() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4H14L13 14H3L2 4Z"/><path d="M5 4V3C5 1.9 6.3 1 8 1s3 .9 3 2v1"/></svg>;
-}
-function IconTag() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1H14V7L8 13 3 8 9 2 8 1Z"/><circle cx="11.5" cy="4.5" r="1"/></svg>;
-}
-function IconDoc() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="1" width="9" height="14" rx="1.5"/><path d="M11 1h1a2 2 0 012 2v9.5"/><line x1="5" y1="5" x2="9" y2="5"/><line x1="5" y1="8" x2="9" y2="8"/><line x1="5" y1="11" x2="7" y2="11"/></svg>;
-}
-function IconGear() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3 3l1 1M12 12l1 1M3 13l1-1M12 4l1-1"/></svg>;
-}
-function IconMenu() {
-  return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg>;
-}
+// ── Icons ──────────────────────────────────────────────────────────────────
+function IGrid()  { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>; }
+function IChart() { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="1,13 5,8 9,10 15,3"/><polyline points="11,3 15,3 15,7"/></svg>; }
+function IBox()   { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1L14 4.5v7L8 15 2 11.5v-7L8 1z"/><line x1="8" y1="1" x2="8" y2="15"/><line x1="2" y1="4.5" x2="14" y2="4.5"/></svg>; }
+function IBag()   { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 4h12l-1 10H3L2 4z"/><path d="M5 4V3a3 3 0 016 0v1"/></svg>; }
+function ITag()   { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 2h6l6 6-6 6-6-6V2z"/><circle cx="5.5" cy="5.5" r="1"/></svg>; }
+function IDoc()   { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="2" y="1" width="10" height="14" rx="1.5"/><path d="M12 1h1a2 2 0 012 2v10"/><line x1="5" y1="5" x2="9" y2="5"/><line x1="5" y1="8" x2="9" y2="8"/><line x1="5" y1="11" x2="7" y2="11"/></svg>; }
+function IGear()  { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.2 3.2l1.1 1.1M11.7 11.7l1.1 1.1M3.2 12.8l1.1-1.1M11.7 4.3l1.1-1.1"/></svg>; }
+function IMenu()  { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="10" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/></svg>; }
+function IBell()  { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="15" height="15"><path d="M8 1a5 5 0 015 5v3l1 2H2l1-2V6a5 5 0 015-5z"/><path d="M6 13a2 2 0 004 0"/></svg>; }

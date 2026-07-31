@@ -1,227 +1,248 @@
 "use client";
 import React, { useState } from "react";
 
-type OrderStatus = "hazırlanıyor" | "kargoda" | "teslim" | "iptal";
+type Status = "hazırlanıyor" | "kargoda" | "teslim" | "iptal";
 
-type Order = {
-  id: string;
-  customer: string;
-  email: string;
-  phone: string;
-  address: string;
-  items: { name: string; qty: number; price: number }[];
-  total: number;
-  status: OrderStatus;
-  date: string;
-  note?: string;
-};
+interface Order {
+  id: string; customer: string; email: string; phone: string;
+  address: string; items: { name: string; qty: number; price: number }[];
+  total: number; status: Status; date: string; cargo?: string; note?: string;
+}
 
-const DEMO_ORDERS: Order[] = [
-  {
-    id: "#1024", customer: "Elif Kaya", email: "elif@example.com", phone: "0532 111 22 33",
-    address: "Bağcılar Mah. No:12/4, Bursa",
-    items: [{ name: "Tiramisu Fındıklı Protein Bar", qty: 3, price: 39.9 }],
-    total: 119.7, status: "kargoda", date: "31 Tem 2026", note: "Kapıda zil çalma",
-  },
-  {
-    id: "#1023", customer: "Mehmet Tunç", email: "mtunc@example.com", phone: "0541 222 33 44",
-    address: "Çankaya, Ankara",
-    items: [{ name: "Sade Fındık Kreması", qty: 2, price: 94.9 }],
-    total: 189.8, status: "teslim", date: "30 Tem 2026",
-  },
-  {
-    id: "#1022", customer: "Ayşe Şahin", email: "aysesahin@example.com", phone: "0555 333 44 55",
-    address: "Kadıköy, İstanbul",
-    items: [
-      { name: "Tiramisu Bar", qty: 2, price: 39.9 },
-      { name: "Fındık Kreması", qty: 1, price: 94.9 },
-    ],
-    total: 229.5, status: "hazırlanıyor", date: "30 Tem 2026",
-  },
-  {
-    id: "#1021", customer: "Deniz Çelik", email: "dcelik@example.com", phone: "0506 444 55 66",
-    address: "Konak, İzmir",
-    items: [{ name: "Tiramisu Bar", qty: 5, price: 39.9 }],
-    total: 199.5, status: "iptal", date: "29 Tem 2026", note: "Müşteri iptal etti",
-  },
-  {
-    id: "#1020", customer: "Selin Yıldız", email: "selin@example.com", phone: "0533 555 66 77",
-    address: "Nilüfer, Bursa",
-    items: [{ name: "Kakao Fındıklı Bar", qty: 2, price: 39.9 }],
-    total: 79.8, status: "teslim", date: "29 Tem 2026",
-  },
-  {
-    id: "#1019", customer: "Burak Arslan", email: "barslan@example.com", phone: "0545 666 77 88",
-    address: "Pendik, İstanbul",
-    items: [{ name: "Fındık Kreması", qty: 1, price: 94.9 }],
-    total: 124.8, status: "kargoda", date: "28 Tem 2026",
-  },
+const ORDERS: Order[] = [
+  { id: "#1024", customer: "Elif Kaya",     email: "elif@example.com",   phone: "0532 111 22 33", address: "Bağcılar Mah. No:12/4, Bursa",   items: [{ name: "Tiramisu Fındıklı Protein Bar", qty: 3, price: 39.9 }], total: 119.70, status: "kargoda",      date: "31 Tem 2026", cargo: "MNG / 1234567890", note: "Kapıda zil çalma" },
+  { id: "#1023", customer: "Mehmet Tunç",   email: "mtunc@example.com",  phone: "0541 222 33 44", address: "Çankaya, Ankara",                 items: [{ name: "Sade Fındık Kreması", qty: 2, price: 94.9 }],          total: 189.80, status: "teslim",      date: "30 Tem 2026" },
+  { id: "#1022", customer: "Ayşe Şahin",   email: "ayse@example.com",   phone: "0555 333 44 55", address: "Kadıköy, İstanbul",               items: [{ name: "Tiramisu Protein Bar", qty: 1, price: 39.9 }, { name: "Sade Fındık Kreması", qty: 1, price: 94.9 }], total: 134.80, status: "hazırlanıyor", date: "30 Tem 2026" },
+  { id: "#1021", customer: "Derya Çelik",  email: "derya@example.com",  phone: "0544 444 55 66", address: "Konak, İzmir",                   items: [{ name: "Tiramisu Fındıklı Protein Bar", qty: 5, price: 39.9 }], total: 199.50, status: "iptal",       date: "29 Tem 2026" },
+  { id: "#1020", customer: "Selin Yıldız", email: "selin@example.com",  phone: "0533 555 66 77", address: "Nilüfer, Bursa",                  items: [{ name: "Kakao Fındıklı Protein Bar", qty: 2, price: 39.9 }],   total:  79.80, status: "teslim",      date: "29 Tem 2026" },
+  { id: "#1019", customer: "Can Arslan",   email: "can@example.com",    phone: "0546 666 77 88", address: "Keçiören, Ankara",                items: [{ name: "Fındık Kreması Jumbo", qty: 1, price: 149.9 }],         total: 149.90, status: "kargoda",     date: "28 Tem 2026", cargo: "Yurtiçi / 9876543" },
+  { id: "#1018", customer: "Nur Demir",   email: "nurd@example.com",   phone: "0537 777 88 99", address: "Bornova, İzmir",                   items: [{ name: "Kakao Bar", qty: 3, price: 39.9 }, { name: "Tiramisu Bar", qty: 2, price: 39.9 }], total: 199.50, status: "hazırlanıyor", date: "28 Tem 2026" },
 ];
 
-const STATUS_MAP: Record<OrderStatus, string> = {
-  kargoda: "adm-badge--blue",
-  teslim: "adm-badge--green",
-  hazırlanıyor: "adm-badge--yellow",
-  iptal: "adm-badge--red",
-};
-
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  hazırlanıyor: "Hazırlanıyor",
-  kargoda: "Kargoda",
-  teslim: "Teslim Edildi",
-  iptal: "İptal",
-};
+const STATUS_MAP: Record<Status, string>  = { hazırlanıyor: "adm-badge--yellow", kargoda: "adm-badge--blue", teslim: "adm-badge--green", iptal: "adm-badge--red" };
+const STATUS_NEXT: Record<Status, Status | null> = { hazırlanıyor: "kargoda", kargoda: "teslim", teslim: null, iptal: null };
+const ALL_STATUSES: Status[] = ["hazırlanıyor", "kargoda", "teslim", "iptal"];
 
 export default function AdminSiparisler() {
-  const [orders, setOrders] = useState<Order[]>(DEMO_ORDERS);
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "tümü">("tümü");
-  const [search, setSearch] = useState("");
+  const [orders, setOrders]   = useState<Order[]>(ORDERS);
+  const [filter, setFilter]   = useState<Status | "tümü">("tümü");
+  const [search, setSearch]   = useState("");
   const [selected, setSelected] = useState<Order | null>(null);
 
-  const filtered = orders.filter((o) => {
-    const matchStatus = statusFilter === "tümü" || o.status === statusFilter;
-    const matchSearch = o.id.includes(search) || o.customer.toLowerCase().includes(search.toLowerCase());
-    return matchStatus && matchSearch;
+  const filtered = orders.filter(o => {
+    const ms = filter === "tümü" || o.status === filter;
+    const mq = o.id.includes(search) || o.customer.toLowerCase().includes(search.toLowerCase());
+    return ms && mq;
   });
 
-  function updateStatus(id: string, status: OrderStatus) {
-    setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
-    if (selected?.id === id) setSelected((s) => s ? { ...s, status } : s);
+  function advance(id: string) {
+    setOrders(prev => prev.map(o => {
+      if (o.id !== id) return o;
+      const next = STATUS_NEXT[o.status];
+      return next ? { ...o, status: next } : o;
+    }));
+    if (selected?.id === id) {
+      const next = STATUS_NEXT[selected.status];
+      if (next) setSelected({ ...selected, status: next });
+    }
   }
 
+  function cancel(id: string) {
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: "iptal" } : o));
+    if (selected?.id === id) setSelected({ ...selected, status: "iptal" });
+  }
+
+  const counts = {
+    tümü: orders.length,
+    hazırlanıyor: orders.filter(o => o.status === "hazırlanıyor").length,
+    kargoda: orders.filter(o => o.status === "kargoda").length,
+    teslim: orders.filter(o => o.status === "teslim").length,
+    iptal: orders.filter(o => o.status === "iptal").length,
+  };
+
   return (
-    <div style={{ display: "flex", gap: 16, height: "calc(100vh - 52px - 48px)" }}>
-      {/* Sol liste */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
-        <div className="adm-page-header">
-          <div>
-            <div className="adm-page-title">Siparişler</div>
-            <div className="adm-page-sub">{orders.length} toplam sipariş</div>
-          </div>
-          <button className="adm-btn adm-btn--secondary" onClick={() => alert("Export CSV yakında…")}>↓ CSV Export</button>
+    <div>
+      <div className="adm-page-header">
+        <div>
+          <div className="adm-page-title">Siparişler</div>
+          <div className="adm-page-sub">{orders.length} sipariş · {filtered.length} gösteriliyor</div>
         </div>
-
-        <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
-          <div className="adm-tabs">
-            {(["tümü", "hazırlanıyor", "kargoda", "teslim", "iptal"] as const).map((s) => (
-              <button key={s} className={`adm-tab${statusFilter === s ? " active" : ""}`} onClick={() => setStatusFilter(s)}>
-                {s === "tümü" ? "Tümü" : STATUS_LABELS[s as OrderStatus]}
-              </button>
-            ))}
-          </div>
-          <div className="adm-search" style={{ maxWidth: 220 }}>
-            <span className="adm-search__icon">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="6.5" cy="6.5" r="5"/><line x1="11" y1="11" x2="15" y2="15"/></svg>
-            </span>
-            <input className="adm-input" placeholder="Sipariş / müşteri…" value={search} onChange={(e) => setSearch(e.target.value)} />
-          </div>
-        </div>
-
-        <div className="adm-card" style={{ flex: 1, overflow: "auto" }}>
-          <table className="adm-table">
-            <thead>
-              <tr><th>Sipariş</th><th>Müşteri</th><th>Tutar</th><th>Durum</th><th>Tarih</th><th></th></tr>
-            </thead>
-            <tbody>
-              {filtered.map((o) => (
-                <tr key={o.id} style={{ cursor: "pointer" }} onClick={() => setSelected(o)}>
-                  <td><span style={{ fontFamily: "var(--adm-mono)", fontSize: 12, color: "var(--adm-accent)" }}>{o.id}</span></td>
-                  <td>
-                    <div style={{ fontWeight: 500, fontSize: 12 }}>{o.customer}</div>
-                    <div style={{ fontSize: 10, color: "var(--adm-text-3)" }}>{o.email}</div>
-                  </td>
-                  <td style={{ fontWeight: 500 }}>₺{o.total.toFixed(2)}</td>
-                  <td><span className={`adm-badge ${STATUS_MAP[o.status]}`}>{STATUS_LABELS[o.status]}</span></td>
-                  <td style={{ color: "var(--adm-text-3)", fontSize: 11 }}>{o.date}</td>
-                  <td>
-                    <select
-                      className="adm-input adm-select"
-                      style={{ width: 130, padding: "3px 24px 3px 6px", fontSize: 11 }}
-                      value={o.status}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => { e.stopPropagation(); updateStatus(o.id, e.target.value as OrderStatus); }}
-                    >
-                      {(Object.keys(STATUS_LABELS) as OrderStatus[]).map((s) => (
-                        <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="adm-btn adm-btn--secondary">↓ Dışa aktar</button>
         </div>
       </div>
 
-      {/* Sağ detay */}
-      {selected && (
-        <div className="adm-card" style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", marginTop: 54 }}>
-          <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--adm-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontWeight: 600 }}>Sipariş {selected.id}</span>
-            <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setSelected(null)}>
-              <svg width="13" height="13" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="2" fill="none"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      {/* Filters */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+        <div className="adm-tabs">
+          {(["tümü", ...ALL_STATUSES] as const).map(s => (
+            <button key={s} className={`adm-tab${filter === s ? " active" : ""}`} onClick={() => setFilter(s)}>
+              {s.charAt(0).toUpperCase() + s.slice(1)}
+              <span style={{ marginLeft: 5, fontSize: 10, opacity: 0.7 }}>({counts[s]})</span>
             </button>
-          </div>
-          <div style={{ padding: 16, flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 16 }}>
-            {/* Müşteri */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Müşteri</div>
-              <div style={{ fontSize: 13, fontWeight: 500 }}>{selected.customer}</div>
-              <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginTop: 2 }}>{selected.email}</div>
-              <div style={{ fontSize: 11, color: "var(--adm-text-3)" }}>{selected.phone}</div>
-            </div>
-            <div className="adm-divider" style={{ margin: 0 }} />
-            {/* Adres */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Teslimat Adresi</div>
-              <div style={{ fontSize: 12, color: "var(--adm-text-2)", lineHeight: 1.6 }}>{selected.address}</div>
-            </div>
-            <div className="adm-divider" style={{ margin: 0 }} />
-            {/* Ürünler */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Ürünler</div>
-              {selected.items.map((item, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 12 }}>{item.name} <span style={{ color: "var(--adm-text-3)" }}>× {item.qty}</span></div>
-                  <div style={{ fontSize: 12, fontWeight: 500 }}>₺{(item.price * item.qty).toFixed(2)}</div>
-                </div>
-              ))}
-              <div className="adm-divider" style={{ margin: "8px 0" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 600 }}>
-                <span>Toplam</span>
-                <span style={{ color: "var(--adm-accent)" }}>₺{selected.total.toFixed(2)}</span>
-              </div>
-            </div>
-            {selected.note && (
-              <>
-                <div className="adm-divider" style={{ margin: 0 }} />
-                <div>
-                  <div className="adm-label" style={{ marginBottom: 4 }}>Not</div>
-                  <div style={{ fontSize: 12, color: "var(--adm-text-2)", fontStyle: "italic" }}>{selected.note}</div>
-                </div>
-              </>
-            )}
-            <div className="adm-divider" style={{ margin: 0 }} />
-            {/* Durum değiştir */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Durumu Güncelle</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {(Object.keys(STATUS_LABELS) as OrderStatus[]).map((s) => (
-                  <button
-                    key={s}
-                    className={`adm-btn adm-btn--${selected.status === s ? "primary" : "secondary"} adm-btn--sm`}
-                    style={{ justifyContent: "flex-start" }}
-                    onClick={() => updateStatus(selected.id, s)}
-                  >
-                    <span className={`adm-badge ${STATUS_MAP[s]}`} style={{ fontSize: 9, padding: "1px 5px" }}>●</span>
-                    {STATUS_LABELS[s]}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
+        <div className="adm-search" style={{ flex: 1, maxWidth: 280 }}>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
+          <input className="adm-input" placeholder="Sipariş veya müşteri ara…" value={search} onChange={e => setSearch(e.target.value)} />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="adm-card">
+        <table className="adm-table">
+          <thead>
+            <tr>
+              <th>Sipariş No</th>
+              <th>Müşteri</th>
+              <th>Ürünler</th>
+              <th>Toplam</th>
+              <th>Durum</th>
+              <th>Tarih</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(o => (
+              <tr key={o.id} style={{ cursor: "pointer" }} onClick={() => setSelected(o)}>
+                <td className="adm-td--mono">{o.id}</td>
+                <td>
+                  <div style={{ fontWeight: 500, color: "var(--adm-text)" }}>{o.customer}</div>
+                  <div style={{ fontSize: 10, color: "var(--adm-text-4)" }}>{o.email}</div>
+                </td>
+                <td style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {o.items.map(i => `${i.name} ×${i.qty}`).join(", ")}
+                </td>
+                <td className="adm-td--strong" style={{ fontFamily: "var(--adm-mono)" }}>₺{o.total.toFixed(2)}</td>
+                <td><span className={`adm-badge ${STATUS_MAP[o.status]}`}>{o.status}</span></td>
+                <td className="adm-text-muted">{o.date}</td>
+                <td onClick={e => e.stopPropagation()}>
+                  <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
+                    {STATUS_NEXT[o.status] && (
+                      <button className="adm-btn adm-btn--secondary adm-btn--sm" onClick={() => advance(o.id)}>
+                        → {STATUS_NEXT[o.status]}
+                      </button>
+                    )}
+                    {o.status !== "iptal" && o.status !== "teslim" && (
+                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => cancel(o.id)}>İptal</button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <div className="adm-empty">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M2 4h12l-1 10H3L2 4z"/><path d="M5 4V3a3 3 0 016 0v1"/></svg>
+            <div className="adm-empty__title">Sipariş bulunamadı</div>
+          </div>
+        )}
+      </div>
+
+      {/* Drawer — Order Detail */}
+      {selected && (
+        <>
+          <div className="adm-overlay" style={{ justifyContent: "flex-end", padding: 0, alignItems: "stretch" }} onClick={() => setSelected(null)} />
+          <div className="adm-drawer">
+            <div className="adm-drawer-header">
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--adm-text)" }}>Sipariş {selected.id}</div>
+                <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginTop: 2 }}>{selected.date}</div>
+              </div>
+              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setSelected(null)}>✕</button>
+            </div>
+            <div className="adm-drawer-body">
+              {/* Status */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                <span className={`adm-badge ${STATUS_MAP[selected.status]}`} style={{ fontSize: 11, padding: "4px 12px" }}>
+                  {selected.status}
+                </span>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {STATUS_NEXT[selected.status] && (
+                    <button className="adm-btn adm-btn--primary adm-btn--sm" onClick={() => advance(selected.id)}>
+                      → {STATUS_NEXT[selected.status]}
+                    </button>
+                  )}
+                  {selected.status !== "iptal" && selected.status !== "teslim" && (
+                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => cancel(selected.id)}>İptal Et</button>
+                  )}
+                </div>
+              </div>
+
+              {/* Customer */}
+              <div className="adm-card" style={{ marginBottom: 12 }}>
+                <div className="adm-card-header"><span className="adm-card-title">Müşteri Bilgileri</span></div>
+                <div className="adm-card-body">
+                  <Row label="Ad Soyad" value={selected.customer} />
+                  <Row label="E-posta"  value={selected.email} />
+                  <Row label="Telefon"  value={selected.phone} />
+                  <Row label="Adres"    value={selected.address} />
+                  {selected.note && <Row label="Not" value={selected.note} accent />}
+                </div>
+              </div>
+
+              {/* Items */}
+              <div className="adm-card" style={{ marginBottom: 12 }}>
+                <div className="adm-card-header"><span className="adm-card-title">Ürünler</span></div>
+                <div>
+                  {selected.items.map((item, i) => (
+                    <div key={i} style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                      padding: "10px 14px",
+                      borderBottom: i < selected.items.length - 1 ? "1px solid var(--adm-border)" : "none",
+                    }}>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 500, color: "var(--adm-text-2)" }}>{item.name}</div>
+                        <div style={{ fontSize: 11, color: "var(--adm-text-4)" }}>× {item.qty} adet</div>
+                      </div>
+                      <span style={{ fontFamily: "var(--adm-mono)", fontWeight: 600, color: "var(--adm-text)" }}>
+                        ₺{(item.qty * item.price).toFixed(2)}
+                      </span>
+                    </div>
+                  ))}
+                  <div style={{
+                    display: "flex", justifyContent: "space-between",
+                    padding: "10px 14px",
+                    borderTop: "1px solid var(--adm-border-2)",
+                    fontWeight: 700, color: "var(--adm-text)",
+                    fontFamily: "var(--adm-mono)",
+                  }}>
+                    <span>Toplam</span>
+                    <span style={{ color: "var(--adm-accent)" }}>₺{selected.total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cargo */}
+              {selected.cargo && (
+                <div className="adm-card">
+                  <div className="adm-card-header"><span className="adm-card-title">Kargo</span></div>
+                  <div className="adm-card-body">
+                    <Row label="Takip" value={selected.cargo} mono />
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="adm-drawer-footer">
+              <button className="adm-btn adm-btn--secondary" onClick={() => setSelected(null)}>Kapat</button>
+            </div>
+          </div>
+        </>
       )}
+    </div>
+  );
+}
+
+function Row({ label, value, accent, mono }: { label: string; value: string; accent?: boolean; mono?: boolean }) {
+  return (
+    <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
+      <span style={{ fontSize: 11, color: "var(--adm-text-4)", width: 70, flexShrink: 0, paddingTop: 1 }}>{label}</span>
+      <span style={{
+        fontSize: 12, color: accent ? "var(--adm-yellow)" : "var(--adm-text-2)",
+        fontFamily: mono ? "var(--adm-mono)" : undefined,
+        flex: 1,
+      }}>{value}</span>
     </div>
   );
 }

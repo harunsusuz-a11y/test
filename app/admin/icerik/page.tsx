@@ -1,67 +1,52 @@
 "use client";
 import React, { useState } from "react";
 
-type Tab = "announcement" | "sss" | "seo" | "footer";
+const TABS = ["Anasayfa", "Hakkımızda", "Ürünler", "SSS", "Blog"] as const;
+type Tab = typeof TABS[number];
 
-const TABS = [
-  { key: "announcement", label: "Duyuru Barı" },
-  { key: "sss", label: "SSS" },
-  { key: "seo", label: "SEO" },
-  { key: "footer", label: "Footer" },
-] as const;
+const HOMEPAGE = {
+  heroTitle:    "Giresun'dan Gelen\nGerçek Lezzet",
+  heroSubtitle: "Fındık bazlı protein bar ve fındık kreması — doğal, besleyici, gerçek.",
+  heroCta:      "Alışverişe Başla",
+  announcementBar: "Tüm siparişlerde VENTI10 koduyla %10 indirim · Ücretsiz kargo ₺300+",
+  featuredTitle: "Öne Çıkan Ürünler",
+  aboutSnippet: "Giresun fındığını modern protein ihtiyacıyla buluşturuyoruz.",
+};
 
-const INITIAL_SSS = [
-  { id: "1", q: "Ürünleriniz gerçekten %100 Giresun fındığı içeriyor mu?", a: "Evet, tüm ürünlerimizde kullandığımız fındıklar doğrudan Giresun üreticilerinden temin edilmektedir." },
-  { id: "2", q: "Kaç günde kargoya veriyorsunuz?", a: "Siparişiniz iş günü 14:00'e kadar verilmişse aynı gün, sonrasında ertesi iş günü kargoya verilir." },
-  { id: "3", q: "Abonelik sistemini nasıl iptal edebilirim?", a: "Hesabım sayfanızdan abonelik ayarlarına girerek istediğiniz zaman iptal edebilirsiniz." },
+const FAQS_INIT = [
+  { id: 1, q: "Ürünler doğal mı?", a: "Evet, tüm ürünlerimiz katkısız ve doğal hammaddelerle üretilmektedir." },
+  { id: 2, q: "Kargo ne kadar sürer?", a: "Siparişler 1-3 iş günü içinde kargoya verilir. İstanbul içi 1 günde teslim." },
+  { id: 3, q: "İade politikanız nedir?", a: "Ürün tesliminden itibaren 14 gün içinde iade hakkınız bulunmaktadır." },
 ];
 
-type SSSItem = { id: string; q: string; a: string };
+const BLOG_POSTS_INIT = [
+  { id: 1, title: "Fındık Proteini: Neden Önemli?", slug: "findik-proteini", status: "yayında", date: "28 Tem 2026" },
+  { id: 2, title: "Antrenman Sonrası En İyi Atıştırmalıklar", slug: "antrenman-sonrasi", status: "taslak", date: "25 Tem 2026" },
+  { id: 3, title: "Protein Bar vs Protein Tozu", slug: "bar-vs-toz", status: "yayında", date: "20 Tem 2026" },
+];
 
 export default function AdminIcerik() {
-  const [tab, setTab] = useState<Tab>("announcement");
-  const [announcement, setAnnouncement] = useState("🥜 VENTI10 koduyla ilk siparişinde %10 indirim · Ücretsiz kargo ₺300 ve üzeri");
-  const [announcementActive, setAnnouncementActive] = useState(true);
-  const [sss, setSss] = useState<SSSItem[]>(INITIAL_SSS);
-  const [editingSss, setEditingSss] = useState<SSSItem | null>(null);
-  const [sssModal, setSssModal] = useState(false);
-  const [seo, setSeo] = useState({
-    siteTitle: "Venti-Ate",
-    tagline: "Giresun'dan Gelen Güç",
-    description: "Gerçek Giresun fındığıyla üretilmiş protein barlar ve fındık kremaları. Antrenman öncesi ve sonrası için tasarlandı.",
-    keywords: "protein bar, fındık kreması, Giresun fındığı, sağlıklı atıştırmalık",
-    ogImage: "/images/og-default.jpg",
-  });
-  const [footerText, setFooterText] = useState("© 2026 Venti-Ate. Tüm hakları saklıdır. Giresun fındığından üretilmiştir.");
+  const [tab, setTab] = useState<Tab>("Anasayfa");
+  const [home, setHome] = useState(HOMEPAGE);
+  const [faqs, setFaqs] = useState(FAQS_INIT);
+  const [posts, setPosts] = useState(BLOG_POSTS_INIT);
+  const [faqModal, setFaqModal] = useState<{ id?: number; q: string; a: string } | null>(null);
   const [saved, setSaved] = useState(false);
 
-  function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  function handleSave() { setSaved(true); setTimeout(() => setSaved(false), 2000); }
+
+  function saveFaq() {
+    if (!faqModal) return;
+    if (faqModal.id) {
+      setFaqs(prev => prev.map(f => f.id === faqModal.id ? { ...f, q: faqModal.q, a: faqModal.a } : f));
+    } else {
+      setFaqs(prev => [...prev, { id: Date.now(), q: faqModal.q, a: faqModal.a }]);
+    }
+    setFaqModal(null);
   }
 
-  function openNewSss() {
-    setEditingSss({ id: Date.now().toString(), q: "", a: "" });
-    setSssModal(true);
-  }
-
-  function openEditSss(item: SSSItem) {
-    setEditingSss({ ...item });
-    setSssModal(true);
-  }
-
-  function saveSss() {
-    if (!editingSss?.q.trim()) return;
-    setSss((prev) => {
-      const idx = prev.findIndex((s) => s.id === editingSss.id);
-      if (idx >= 0) { const next = [...prev]; next[idx] = editingSss; return next; }
-      return [...prev, editingSss];
-    });
-    setSssModal(false); setEditingSss(null);
-  }
-
-  function removeSss(id: string) {
-    setSss((prev) => prev.filter((s) => s.id !== id));
+  function togglePostStatus(id: number) {
+    setPosts(prev => prev.map(p => p.id === id ? { ...p, status: p.status === "yayında" ? "taslak" : "yayında" } : p));
   }
 
   return (
@@ -69,100 +54,102 @@ export default function AdminIcerik() {
       <div className="adm-page-header">
         <div>
           <div className="adm-page-title">İçerik & SEO</div>
-          <div className="adm-page-sub">Site içeriği, SSS ve arama motoru ayarları</div>
+          <div className="adm-page-sub">Site içeriklerini buradan yönet</div>
         </div>
-        <button className="adm-btn adm-btn--primary" onClick={handleSave}>
-          {saved ? "✓ Kaydedildi" : "Kaydet"}
-        </button>
+        <button className="adm-btn adm-btn--primary" onClick={handleSave}>{saved ? "✓ Kaydedildi" : "Kaydet"}</button>
       </div>
 
-      {/* Tabs */}
+      {/* Tab Bar */}
       <div className="adm-tabs" style={{ marginBottom: 20 }}>
-        {TABS.map((t) => (
-          <button key={t.key} className={`adm-tab${tab === t.key ? " active" : ""}`} onClick={() => setTab(t.key as Tab)}>
-            {t.label}
-          </button>
+        {TABS.map(t => (
+          <button key={t} className={`adm-tab${tab === t ? " active" : ""}`} onClick={() => setTab(t)}>{t}</button>
         ))}
       </div>
 
-      {/* Duyuru */}
-      {tab === "announcement" && (
-        <div className="adm-card" style={{ padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Duyuru Barı</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <label className="adm-toggle">
-                <input type="checkbox" checked={announcementActive} onChange={(e) => setAnnouncementActive(e.target.checked)} />
-                <span className="adm-toggle__track" />
-              </label>
-              <span style={{ fontSize: 13, color: "var(--adm-text-2)" }}>Duyuru barını göster</span>
+      {/* Anasayfa */}
+      {tab === "Anasayfa" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="adm-card">
+            <div className="adm-card-header"><span className="adm-card-title">Hero Bölümü</span></div>
+            <div className="adm-card-body">
+              <F label="Başlık">
+                <textarea className="adm-textarea" rows={2} value={home.heroTitle} onChange={e => setHome({ ...home, heroTitle: e.target.value })} />
+              </F>
+              <F label="Alt Başlık">
+                <input className="adm-input" value={home.heroSubtitle} onChange={e => setHome({ ...home, heroSubtitle: e.target.value })} />
+              </F>
+              <F label="CTA Butonu">
+                <input className="adm-input" value={home.heroCta} onChange={e => setHome({ ...home, heroCta: e.target.value })} />
+              </F>
             </div>
-            <div className="adm-field">
-              <label>Duyuru Metni</label>
-              <input className="adm-input" value={announcement} onChange={(e) => setAnnouncement(e.target.value)} />
-              <span className="adm-field-hint">Emoji kullanabilirsiniz. Kupon kodunu burada duyurun.</span>
+          </div>
+          <div className="adm-card">
+            <div className="adm-card-header"><span className="adm-card-title">Duyuru Barı</span></div>
+            <div className="adm-card-body">
+              <F label="Metin">
+                <input className="adm-input" value={home.announcementBar} onChange={e => setHome({ ...home, announcementBar: e.target.value })} />
+              </F>
+              <div style={{ padding: "10px 14px", background: "var(--adm-surface-2)", borderRadius: 6, marginTop: 8 }}>
+                <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginBottom: 5 }}>Önizleme</div>
+                <div style={{ fontSize: 12, color: "var(--adm-accent)", textAlign: "center" }}>{home.announcementBar}</div>
+              </div>
             </div>
-            {/* Preview */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Önizleme</div>
-              <div style={{
-                padding: "10px 16px", background: "#56312d", color: "#fff",
-                borderRadius: 6, textAlign: "center", fontSize: 13,
-                opacity: announcementActive ? 1 : 0.4,
-              }}>{announcement}</div>
+          </div>
+          <div className="adm-card">
+            <div className="adm-card-header"><span className="adm-card-title">Hakkımızda Snippet</span></div>
+            <div className="adm-card-body">
+              <F label="Kısa Metin">
+                <input className="adm-input" value={home.aboutSnippet} onChange={e => setHome({ ...home, aboutSnippet: e.target.value })} />
+              </F>
             </div>
           </div>
         </div>
       )}
 
       {/* SSS */}
-      {tab === "sss" && (
+      {tab === "SSS" && (
         <div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-            <button className="adm-btn adm-btn--primary" onClick={openNewSss}>+ Soru Ekle</button>
+            <button className="adm-btn adm-btn--secondary" onClick={() => setFaqModal({ q: "", a: "" })}>+ Yeni SSS</button>
           </div>
           <div className="adm-card">
-            <table className="adm-table">
-              <thead><tr><th>Soru</th><th>Cevap</th><th style={{ textAlign: "right" }}>İşlem</th></tr></thead>
-              <tbody>
-                {sss.map((item) => (
-                  <tr key={item.id}>
-                    <td style={{ maxWidth: 200, fontWeight: 500, fontSize: 12 }}>{item.q}</td>
-                    <td style={{ color: "var(--adm-text-2)", fontSize: 12, maxWidth: 300 }}>{item.a.slice(0, 80)}{item.a.length > 80 ? "…" : ""}</td>
-                    <td style={{ textAlign: "right" }}>
-                      <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
-                        <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => openEditSss(item)}>Düzenle</button>
-                        <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => removeSss(item.id)}>Sil</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {faqs.length === 0 && <div className="adm-empty"><div className="adm-empty__title">Henüz SSS yok</div></div>}
+            {faqs.map((f, i) => (
+              <div key={f.id} style={{
+                padding: "14px 16px",
+                borderBottom: i < faqs.length - 1 ? "1px solid var(--adm-border)" : "none",
+              }}>
+                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: "var(--adm-text)", marginBottom: 4 }}>{f.q}</div>
+                    <div style={{ fontSize: 12, color: "var(--adm-text-3)", lineHeight: 1.6 }}>{f.a}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                    <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setFaqModal({ id: f.id, q: f.q, a: f.a })}>Düzenle</button>
+                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => setFaqs(prev => prev.filter(x => x.id !== f.id))}>Sil</button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-
-          {sssModal && editingSss && (
-            <div className="adm-overlay" onClick={(e) => e.target === e.currentTarget && setSssModal(false)}>
-              <div className="adm-modal">
-                <div className="adm-modal__header">
-                  <span style={{ fontWeight: 600 }}>SSS Düzenle</span>
-                  <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setSssModal(false)}>
-                    <svg width="14" height="14" viewBox="0 0 16 16" stroke="currentColor" strokeWidth="2" fill="none"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
-                  </button>
+          {faqModal && (
+            <div className="adm-overlay" onClick={() => setFaqModal(null)}>
+              <div className="adm-modal" onClick={e => e.stopPropagation()}>
+                <div className="adm-modal-header">
+                  <span className="adm-modal-title">{faqModal.id ? "SSS Düzenle" : "Yeni SSS"}</span>
+                  <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setFaqModal(null)}>✕</button>
                 </div>
-                <div className="adm-modal__body" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  <div className="adm-field">
-                    <label>Soru</label>
-                    <input className="adm-input" value={editingSss.q} onChange={(e) => setEditingSss({ ...editingSss, q: e.target.value })} />
-                  </div>
-                  <div className="adm-field">
-                    <label>Cevap</label>
-                    <textarea className="adm-input adm-textarea" value={editingSss.a} onChange={(e) => setEditingSss({ ...editingSss, a: e.target.value })} style={{ minHeight: 100 }} />
-                  </div>
+                <div className="adm-modal-body">
+                  <F label="Soru">
+                    <input className="adm-input" value={faqModal.q} onChange={e => setFaqModal({ ...faqModal, q: e.target.value })} placeholder="Soru metni" />
+                  </F>
+                  <F label="Cevap">
+                    <textarea className="adm-textarea" rows={4} value={faqModal.a} onChange={e => setFaqModal({ ...faqModal, a: e.target.value })} placeholder="Cevap metni" />
+                  </F>
                 </div>
-                <div className="adm-modal__footer">
-                  <button className="adm-btn adm-btn--secondary" onClick={() => setSssModal(false)}>İptal</button>
-                  <button className="adm-btn adm-btn--primary" onClick={saveSss}>Kaydet</button>
+                <div className="adm-modal-footer">
+                  <button className="adm-btn adm-btn--secondary" onClick={() => setFaqModal(null)}>İptal</button>
+                  <button className="adm-btn adm-btn--primary" onClick={saveFaq}>Kaydet</button>
                 </div>
               </div>
             </div>
@@ -170,57 +157,55 @@ export default function AdminIcerik() {
         </div>
       )}
 
-      {/* SEO */}
-      {tab === "seo" && (
-        <div className="adm-card" style={{ padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16 }}>SEO Ayarları</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div className="adm-grid-2">
-              <div className="adm-field">
-                <label>Site Başlığı</label>
-                <input className="adm-input" value={seo.siteTitle} onChange={(e) => setSeo({ ...seo, siteTitle: e.target.value })} />
-              </div>
-              <div className="adm-field">
-                <label>Slogan</label>
-                <input className="adm-input" value={seo.tagline} onChange={(e) => setSeo({ ...seo, tagline: e.target.value })} />
-              </div>
-            </div>
-            <div className="adm-field">
-              <label>Meta Açıklaması</label>
-              <textarea className="adm-input adm-textarea" value={seo.description} onChange={(e) => setSeo({ ...seo, description: e.target.value })} />
-              <span className="adm-field-hint">{seo.description.length}/160 karakter</span>
-            </div>
-            <div className="adm-field">
-              <label>Anahtar Kelimeler</label>
-              <input className="adm-input" value={seo.keywords} onChange={(e) => setSeo({ ...seo, keywords: e.target.value })} />
-            </div>
-            <div className="adm-field">
-              <label>OG Görseli</label>
-              <input className="adm-input" value={seo.ogImage} onChange={(e) => setSeo({ ...seo, ogImage: e.target.value })} />
-            </div>
-            {/* Preview */}
-            <div>
-              <div className="adm-label" style={{ marginBottom: 8 }}>Google Önizleme</div>
-              <div style={{ background: "var(--adm-surface-2)", padding: 14, borderRadius: 8, maxWidth: 500 }}>
-                <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginBottom: 2 }}>ventiate.com</div>
-                <div style={{ fontSize: 16, color: "#60a5fa", fontWeight: 500, marginBottom: 4 }}>{seo.siteTitle} — {seo.tagline}</div>
-                <div style={{ fontSize: 12, color: "var(--adm-text-2)", lineHeight: 1.5 }}>{seo.description.slice(0, 155)}</div>
-              </div>
-            </div>
+      {/* Blog */}
+      {tab === "Blog" && (
+        <div>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
+            <button className="adm-btn adm-btn--primary">+ Yeni Yazı</button>
+          </div>
+          <div className="adm-card">
+            <table className="adm-table">
+              <thead><tr><th>Başlık</th><th>Slug</th><th>Tarih</th><th>Durum</th><th /></tr></thead>
+              <tbody>
+                {posts.map(p => (
+                  <tr key={p.id}>
+                    <td className="adm-td--strong">{p.title}</td>
+                    <td className="adm-mono adm-text-muted">{p.slug}</td>
+                    <td className="adm-text-muted">{p.date}</td>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div className={`adm-toggle${p.status === "yayında" ? " on" : ""}`} onClick={() => togglePostStatus(p.id)} />
+                        <span className={`adm-badge ${p.status === "yayında" ? "adm-badge--green" : "adm-badge--muted"}`}>{p.status}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
+                        <button className="adm-btn adm-btn--ghost adm-btn--sm">Düzenle</button>
+                        <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => setPosts(prev => prev.filter(x => x.id !== p.id))}>Sil</button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
 
-      {/* Footer */}
-      {tab === "footer" && (
-        <div className="adm-card" style={{ padding: 20 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 16 }}>Footer Ayarları</div>
-          <div className="adm-field">
-            <label>Copyright Metni</label>
-            <input className="adm-input" value={footerText} onChange={(e) => setFooterText(e.target.value)} />
+      {/* Placeholder tabs */}
+      {(tab === "Hakkımızda" || tab === "Ürünler") && (
+        <div className="adm-card">
+          <div className="adm-empty">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" width="32" height="32"><rect x="2" y="1" width="10" height="14" rx="1.5"/><line x1="5" y1="5" x2="9" y2="5"/><line x1="5" y1="8" x2="9" y2="8"/><line x1="5" y1="11" x2="7" y2="11"/></svg>
+            <div className="adm-empty__title">{tab} içeriği</div>
+            Bu bölüm yakında aktif olacak.
           </div>
         </div>
       )}
     </div>
   );
+}
+
+function F({ label, children }: { label: string; children: React.ReactNode }) {
+  return <div className="adm-field"><label className="adm-label-text">{label}</label>{children}</div>;
 }
