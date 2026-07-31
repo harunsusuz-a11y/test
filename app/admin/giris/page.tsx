@@ -1,4 +1,5 @@
 import { LoginForm } from './LoginForm'
+import '../../admin/admin.css'
 
 export default function AdminLoginPage() {
   return (
