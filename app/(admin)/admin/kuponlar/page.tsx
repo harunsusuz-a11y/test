@@ -29,9 +29,9 @@ export default function AdminKuponlar() {
     const { data: { user } } = await supabase.auth.getUser();
     const payload = {
       code: editing.code.toUpperCase(), type:editing.type, value:Number(editing.value),
-      min_cart:Number(editing.min_cart), max_discount:editing.max_discount?Number(editing.max_discount):null,
+      min_order_amount:Number(editing.min_cart), max_discount:editing.max_discount?Number(editing.max_discount):null,
       usage_limit:editing.usage_limit?Number(editing.usage_limit):null,
-      per_user_limit:Number(editing.per_user_limit),
+      user_usage_limit:Number(editing.per_user_limit),
       is_active:editing.is_active, starts_at:editing.starts_at||null, ends_at:editing.ends_at||null,
       created_by:user?.id,
     };

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-interface Setting { key:string; value:any; group_name:string; label:string|null; }
+interface Setting { key:string; value:any; setting_group:string; label:string|null; }
 
 const SECTIONS = [
   { id:"general", label:"Site Bilgileri" },
@@ -56,7 +56,7 @@ export default function AdminAyarlar() {
     const { data:{user} } = await supabase.auth.getUser();
     const upserts = Object.entries(settings).map(([key,value]) => ({
       key, value: JSON.stringify(value),
-      group_name: getGroup(key), label:key, updated_by:user?.id,
+      setting_group: getGroup(key), label:key, updated_by:user?.id,
       updated_at:new Date().toISOString(),
     }));
     await supabase.from("settings").upsert(upserts, { onConflict:"key" });
