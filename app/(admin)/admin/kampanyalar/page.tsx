@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 
 interface Campaign {
   id: string; name: string; description: string | null; type: string;
-  value: number; min_cart: number; max_discount: number | null;
+  value: number; min_cart_amount: number; max_discount: number | null;
   usage_limit: number | null; used_count: number;
   starts_at: string | null; ends_at: string | null;
   is_active: boolean; priority: number;
@@ -79,7 +79,7 @@ export default function AdminKampanyalar() {
                   <td><div className="adm-td--strong">{c.name}</div>{c.description && <div style={{ fontSize: 10, color: "var(--adm-text-4)" }}>{c.description}</div>}</td>
                   <td><span className="adm-badge adm-badge--accent">{TYPE_LABELS[c.type]||c.type}</span></td>
                   <td className="adm-mono adm-font-500">{c.type==="percent" ? `%${c.value}` : `₺${c.value}`}</td>
-                  <td className="adm-mono adm-text-muted">{c.min_cart > 0 ? `₺${c.min_cart}` : "—"}</td>
+                  <td className="adm-mono adm-text-muted">{c.min_cart_amount > 0 ? `₺${c.min_cart_amount}` : "—"}</td>
                   <td className="adm-mono">
                     {c.usage_limit ? `${c.used_count}/${c.usage_limit}` : c.used_count}
                     {c.usage_limit && (
@@ -97,7 +97,7 @@ export default function AdminKampanyalar() {
                   </td>
                   <td>
                     <div style={{ display:"flex", gap:4, justifyContent:"flex-end" }}>
-                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ name:c.name, description:c.description||"", type:c.type, value:c.value, min_cart:c.min_cart, max_discount:c.max_discount?.toString()||"", usage_limit:c.usage_limit?.toString()||"", starts_at:c.starts_at?.slice(0,10)||"", ends_at:c.ends_at?.slice(0,10)||"", is_active:c.is_active, priority:c.priority }); setEditId(c.id); setOpen(true); }}>Düzenle</button>
+                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ name:c.name, description:c.description||"", type:c.type, value:c.value, min_cart:c.min_cart_amount, max_discount:c.max_discount?.toString()||"", usage_limit:c.usage_limit?.toString()||"", starts_at:c.starts_at?.slice(0,10)||"", ends_at:c.ends_at?.slice(0,10)||"", is_active:c.is_active, priority:c.priority }); setEditId(c.id); setOpen(true); }}>Düzenle</button>
                       <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => remove(c.id)}>Sil</button>
                     </div>
                   </td>

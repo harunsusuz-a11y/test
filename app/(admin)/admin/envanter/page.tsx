@@ -40,10 +40,10 @@ export default function AdminEnvanter() {
     await supabase.from("inventory_movements").insert({
       product_id: (inv as any).product_id,
       warehouse_id: (inv as any).warehouse_id,
-      type: "adjustment",
+      movement_type: "adjustment",
       quantity: diff,
-      note: adjustNote,
-      created_by: user?.id,
+      notes: adjustNote,
+      performed_by: user?.id,
     });
     setAdjustModal(null);
     setAdjustQty(0);

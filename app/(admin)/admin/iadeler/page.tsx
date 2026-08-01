@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 
 interface Return {
   id: string; type: string; status: string; reason: string | null;
-  customer_note: string | null; admin_note: string | null;
+  customer_description: string | null; admin_note: string | null;
   cargo_code: string | null; created_at: string;
   order: { order_number: string; total: number } | null;
 }
@@ -77,7 +77,7 @@ export default function AdminIadeler() {
               {filtered.map(r => (
                 <tr key={r.id} style={{ cursor:"pointer" }} onClick={() => { setSelected(r); setAdminNote(r.admin_note||""); setCargoCode(r.cargo_code||""); }}>
                   <td className="adm-mono">{(r.order as any)?.order_number || "—"}</td>
-                  <td><span className="adm-badge adm-badge--muted">{r.type === "return" ? "İade" : "Değişim"}</span></td>
+                  <td><span className="adm-badge adm-badge--muted">{"İade / Değişim"}</span></td>
                   <td style={{ maxWidth:160, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", color:"var(--adm-text-3)", fontSize:12 }}>{r.reason || "—"}</td>
                   <td className="adm-mono adm-text-accent">₺{(r.order as any)?.total?.toFixed(2) || "—"}</td>
                   <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{new Date(r.created_at).toLocaleDateString("tr-TR")}</td>
@@ -98,7 +98,7 @@ export default function AdminIadeler() {
             <div className="adm-drawer-header">
               <div>
                 <div style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)" }}>
-                  {selected.type==="return"?"İade":"Değişim"} Talebi
+                  {"İade / Değişim"} Talebi
                 </div>
                 <div style={{ fontSize:11, color:"var(--adm-text-3)", marginTop:2 }}>{new Date(selected.created_at).toLocaleString("tr-TR")}</div>
               </div>
@@ -111,7 +111,7 @@ export default function AdminIadeler() {
               <div className="adm-card" style={{ marginBottom:12 }}>
                 <div className="adm-card-header"><span className="adm-card-title">Detaylar</span></div>
                 <div className="adm-card-body">
-                  {[["Sipariş No",(r => (r as any)?.order_number)(selected.order)],["Neden",selected.reason||"—"],["Müşteri Notu",selected.customer_note||"—"]].map(([k,v]) => (
+                  {[["Sipariş No",(r => (r as any)?.order_number)(selected.order)],["Neden",selected.reason||"—"],["Müşteri Notu",selected.customer_description||"—"]].map(([k,v]) => (
                     <div key={k} style={{ display:"flex", gap:8, marginBottom:8 }}>
                       <span style={{ fontSize:11, color:"var(--adm-text-4)", width:90, flexShrink:0 }}>{k}</span>
                       <span style={{ fontSize:12, color:"var(--adm-text-2)" }}>{v}</span>
