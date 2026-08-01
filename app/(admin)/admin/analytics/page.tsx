@@ -19,7 +19,7 @@ export default function AdminAnalytics() {
 
       const [{ data:o }, { data:items }] = await Promise.all([
         supabase.from("orders").select("status,total,created_at").gte("created_at",since).order("created_at"),
-        supabase.from("order_items").select("product_name,quantity,total").gte("created_at",since).limit(500),
+        supabase.from("order_items").select("product_name,quantity,unit_price").limit(500),
       ]);
 
       setOrders((o as OrderRow[])||[]);
@@ -29,7 +29,7 @@ export default function AdminAnalytics() {
       ((items||[]) as any[]).forEach(item => {
         if (!map[item.product_name]) map[item.product_name] = { product_name:item.product_name, qty:0, revenue:0 };
         map[item.product_name].qty += item.quantity;
-        map[item.product_name].revenue += Number(item.total);
+        map[item.product_name].revenue += Number(item.unit_price) * Number(item.quantity);
       });
       setTopProducts(Object.values(map).sort((a,b)=>b.revenue-a.revenue).slice(0,8));
       setLoading(false);
