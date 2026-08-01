@@ -1,248 +1,189 @@
 "use client";
-import React, { useState } from "react";
-
-type Status = "hazırlanıyor" | "kargoda" | "teslim" | "iptal";
+import React, { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface Order {
-  id: string; customer: string; email: string; phone: string;
-  address: string; items: { name: string; qty: number; price: number }[];
-  total: number; status: Status; date: string; cargo?: string; note?: string;
+  id:string; order_number:string; status:string; payment_status:string;
+  total:number; shipping_cost:number; discount_amount:number;
+  payment_method:string|null; tracking_number:string|null;
+  customer_note:string|null; admin_note:string|null;
+  created_at:string; updated_at:string;
+  customer?:{ profile?:{ first_name:string; last_name:string; email:string; phone:string|null }|null }|null;
+  items?:{ product_name:string; variant_name:string|null; quantity:number; price:number; total:number }[];
+  addresses?:{ type:string; first_name:string; last_name:string; address_line:string; city:string; phone:string|null }[];
 }
 
-const ORDERS: Order[] = [
-  { id: "#1024", customer: "Elif Kaya",     email: "elif@example.com",   phone: "0532 111 22 33", address: "Bağcılar Mah. No:12/4, Bursa",   items: [{ name: "Tiramisu Fındıklı Protein Bar", qty: 3, price: 39.9 }], total: 119.70, status: "kargoda",      date: "31 Tem 2026", cargo: "MNG / 1234567890", note: "Kapıda zil çalma" },
-  { id: "#1023", customer: "Mehmet Tunç",   email: "mtunc@example.com",  phone: "0541 222 33 44", address: "Çankaya, Ankara",                 items: [{ name: "Sade Fındık Kreması", qty: 2, price: 94.9 }],          total: 189.80, status: "teslim",      date: "30 Tem 2026" },
-  { id: "#1022", customer: "Ayşe Şahin",   email: "ayse@example.com",   phone: "0555 333 44 55", address: "Kadıköy, İstanbul",               items: [{ name: "Tiramisu Protein Bar", qty: 1, price: 39.9 }, { name: "Sade Fındık Kreması", qty: 1, price: 94.9 }], total: 134.80, status: "hazırlanıyor", date: "30 Tem 2026" },
-  { id: "#1021", customer: "Derya Çelik",  email: "derya@example.com",  phone: "0544 444 55 66", address: "Konak, İzmir",                   items: [{ name: "Tiramisu Fındıklı Protein Bar", qty: 5, price: 39.9 }], total: 199.50, status: "iptal",       date: "29 Tem 2026" },
-  { id: "#1020", customer: "Selin Yıldız", email: "selin@example.com",  phone: "0533 555 66 77", address: "Nilüfer, Bursa",                  items: [{ name: "Kakao Fındıklı Protein Bar", qty: 2, price: 39.9 }],   total:  79.80, status: "teslim",      date: "29 Tem 2026" },
-  { id: "#1019", customer: "Can Arslan",   email: "can@example.com",    phone: "0546 666 77 88", address: "Keçiören, Ankara",                items: [{ name: "Fındık Kreması Jumbo", qty: 1, price: 149.9 }],         total: 149.90, status: "kargoda",     date: "28 Tem 2026", cargo: "Yurtiçi / 9876543" },
-  { id: "#1018", customer: "Nur Demir",   email: "nurd@example.com",   phone: "0537 777 88 99", address: "Bornova, İzmir",                   items: [{ name: "Kakao Bar", qty: 3, price: 39.9 }, { name: "Tiramisu Bar", qty: 2, price: 39.9 }], total: 199.50, status: "hazırlanıyor", date: "28 Tem 2026" },
-];
-
-const STATUS_MAP: Record<Status, string>  = { hazırlanıyor: "adm-badge--yellow", kargoda: "adm-badge--blue", teslim: "adm-badge--green", iptal: "adm-badge--red" };
-const STATUS_NEXT: Record<Status, Status | null> = { hazırlanıyor: "kargoda", kargoda: "teslim", teslim: null, iptal: null };
-const ALL_STATUSES: Status[] = ["hazırlanıyor", "kargoda", "teslim", "iptal"];
+const STATUS_MAP: Record<string,string> = { pending:"adm-badge--yellow", payment_pending:"adm-badge--yellow", preparing:"adm-badge--blue", shipped:"adm-badge--blue", delivered:"adm-badge--green", cancelled:"adm-badge--red", refunded:"adm-badge--red", failed:"adm-badge--red" };
+const STATUS_TR: Record<string,string> = { pending:"Bekliyor", payment_pending:"Ödeme Bekliyor", preparing:"Hazırlanıyor", shipped:"Kargoda", delivered:"Teslim", cancelled:"İptal", refunded:"İade", failed:"Başarısız" };
+const STATUS_FLOW: Record<string,string|null> = { pending:"preparing", payment_pending:"preparing", preparing:"shipped", shipped:"delivered", delivered:null, cancelled:null, refunded:null, failed:null };
 
 export default function AdminSiparisler() {
-  const [orders, setOrders]   = useState<Order[]>(ORDERS);
-  const [filter, setFilter]   = useState<Status | "tümü">("tümü");
-  const [search, setSearch]   = useState("");
-  const [selected, setSelected] = useState<Order | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Order|null>(null);
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [adminNote, setAdminNote] = useState("");
+  const [trackingNo, setTrackingNo] = useState("");
+  const [page, setPage] = useState(0);
+  const PER_PAGE = 20;
+  const supabase = createClient();
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    let q = supabase.from("orders")
+      .select("*, customer:customer_id(profile:id(first_name,last_name,email,phone)), items:order_items(product_name,variant_name,quantity,price,total), addresses:order_addresses(*)")
+      .order("created_at",{ascending:false})
+      .range(page*PER_PAGE,(page+1)*PER_PAGE-1);
+    if (filter!=="all") q = q.eq("status",filter);
+    const { data } = await q;
+    setOrders((data as Order[]) || []);
+    setLoading(false);
+  }, [supabase, filter, page]);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function updateStatus(id:string, status:string) {
+    const { data:{user} } = await supabase.auth.getUser();
+    const upd: any = { status, updated_at:new Date().toISOString() };
+    if (adminNote) upd.admin_note = adminNote;
+    if (trackingNo) upd.tracking_number = trackingNo;
+    await supabase.from("orders").update(upd).eq("id",id);
+    await supabase.from("order_status_history").insert({ order_id:id, status, note:adminNote||null, created_by:user?.id });
+    setSelected(null); setAdminNote(""); setTrackingNo("");
+    load();
+  }
 
   const filtered = orders.filter(o => {
-    const ms = filter === "tümü" || o.status === filter;
-    const mq = o.id.includes(search) || o.customer.toLowerCase().includes(search.toLowerCase());
-    return ms && mq;
+    const q = search.toLowerCase();
+    const p = (o.customer as any)?.profile;
+    return !q || o.order_number.toLowerCase().includes(q) || (p?.email||"").toLowerCase().includes(q) || (`${p?.first_name||""} ${p?.last_name||""}`).toLowerCase().includes(q);
   });
 
-  function advance(id: string) {
-    setOrders(prev => prev.map(o => {
-      if (o.id !== id) return o;
-      const next = STATUS_NEXT[o.status];
-      return next ? { ...o, status: next } : o;
-    }));
-    if (selected?.id === id) {
-      const next = STATUS_NEXT[selected.status];
-      if (next) setSelected({ ...selected, status: next });
-    }
-  }
-
-  function cancel(id: string) {
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: "iptal" } : o));
-    if (selected?.id === id) setSelected({ ...selected, status: "iptal" });
-  }
-
-  const counts = {
-    tümü: orders.length,
-    hazırlanıyor: orders.filter(o => o.status === "hazırlanıyor").length,
-    kargoda: orders.filter(o => o.status === "kargoda").length,
-    teslim: orders.filter(o => o.status === "teslim").length,
-    iptal: orders.filter(o => o.status === "iptal").length,
-  };
+  const counts = Object.keys(STATUS_TR).reduce((acc,k) => ({ ...acc, [k]:orders.filter(o=>o.status===k).length }), {} as Record<string,number>);
 
   return (
     <div>
       <div className="adm-page-header">
-        <div>
-          <div className="adm-page-title">Siparişler</div>
-          <div className="adm-page-sub">{orders.length} sipariş · {filtered.length} gösteriliyor</div>
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button className="adm-btn adm-btn--secondary">↓ Dışa aktar</button>
-        </div>
+        <div><div className="adm-page-title">Siparişler</div><div className="adm-page-sub">{orders.length} sipariş</div></div>
+        <button className="adm-btn adm-btn--secondary" onClick={load}>↻ Yenile</button>
       </div>
 
-      {/* Filters */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-        <div className="adm-tabs">
-          {(["tümü", ...ALL_STATUSES] as const).map(s => (
-            <button key={s} className={`adm-tab${filter === s ? " active" : ""}`} onClick={() => setFilter(s)}>
-              {s.charAt(0).toUpperCase() + s.slice(1)}
-              <span style={{ marginLeft: 5, fontSize: 10, opacity: 0.7 }}>({counts[s]})</span>
-            </button>
+      <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap" }}>
+        <div className="adm-tabs" style={{ flexWrap:"wrap" }}>
+          <button className={`adm-tab${filter==="all"?" active":""}`} onClick={() => setFilter("all")}>Tümü ({orders.length})</button>
+          {Object.entries(STATUS_TR).map(([k,l]) => (
+            <button key={k} className={`adm-tab${filter===k?" active":""}`} onClick={() => setFilter(k)}>
+              {l} {counts[k]>0?`(${counts[k]})`:""}</button>
           ))}
         </div>
-        <div className="adm-search" style={{ flex: 1, maxWidth: 280 }}>
+      </div>
+
+      <div style={{ marginBottom:12 }}>
+        <div className="adm-search" style={{ maxWidth:340 }}>
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
-          <input className="adm-input" placeholder="Sipariş veya müşteri ara…" value={search} onChange={e => setSearch(e.target.value)} />
+          <input className="adm-input" placeholder="Sipariş no, müşteri ara…" value={search} onChange={e => setSearch(e.target.value)} />
         </div>
       </div>
 
-      {/* Table */}
       <div className="adm-card">
-        <table className="adm-table">
-          <thead>
-            <tr>
-              <th>Sipariş No</th>
-              <th>Müşteri</th>
-              <th>Ürünler</th>
-              <th>Toplam</th>
-              <th>Durum</th>
-              <th>Tarih</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(o => (
-              <tr key={o.id} style={{ cursor: "pointer" }} onClick={() => setSelected(o)}>
-                <td className="adm-td--mono">{o.id}</td>
-                <td>
-                  <div style={{ fontWeight: 500, color: "var(--adm-text)" }}>{o.customer}</div>
-                  <div style={{ fontSize: 10, color: "var(--adm-text-4)" }}>{o.email}</div>
-                </td>
-                <td style={{ maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {o.items.map(i => `${i.name} ×${i.qty}`).join(", ")}
-                </td>
-                <td className="adm-td--strong" style={{ fontFamily: "var(--adm-mono)" }}>₺{o.total.toFixed(2)}</td>
-                <td><span className={`adm-badge ${STATUS_MAP[o.status]}`}>{o.status}</span></td>
-                <td className="adm-text-muted">{o.date}</td>
-                <td onClick={e => e.stopPropagation()}>
-                  <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
-                    {STATUS_NEXT[o.status] && (
-                      <button className="adm-btn adm-btn--secondary adm-btn--sm" onClick={() => advance(o.id)}>
-                        → {STATUS_NEXT[o.status]}
-                      </button>
-                    )}
-                    {o.status !== "iptal" && o.status !== "teslim" && (
-                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => cancel(o.id)}>İptal</button>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {filtered.length === 0 && (
-          <div className="adm-empty">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M2 4h12l-1 10H3L2 4z"/><path d="M5 4V3a3 3 0 016 0v1"/></svg>
-            <div className="adm-empty__title">Sipariş bulunamadı</div>
-          </div>
+        {loading ? <div className="adm-empty"><div className="adm-empty__title">Yükleniyor…</div></div> : (
+          <>
+            <table className="adm-table">
+              <thead><tr><th>Sipariş No</th><th>Müşteri</th><th>Toplam</th><th>Ödeme</th><th>Durum</th><th>Tarih</th><th /></tr></thead>
+              <tbody>
+                {filtered.map(o => {
+                  const p = (o.customer as any)?.profile;
+                  return (
+                    <tr key={o.id} style={{ cursor:"pointer" }} onClick={() => { setSelected(o); setAdminNote(o.admin_note||""); setTrackingNo(o.tracking_number||""); }}>
+                      <td className="adm-mono adm-font-500" style={{ color:"var(--adm-accent)" }}>{o.order_number}</td>
+                      <td>
+                        <div style={{ fontSize:12, fontWeight:500, color:"var(--adm-text)" }}>{p?`${p.first_name} ${p.last_name}`:"—"}</div>
+                        <div style={{ fontSize:10, color:"var(--adm-text-4)" }}>{p?.email||""}</div>
+                      </td>
+                      <td className="adm-mono adm-font-500">₺{Number(o.total).toFixed(2)}</td>
+                      <td><span className={`adm-badge ${o.payment_status==="paid"?"adm-badge--green":"adm-badge--yellow"}`}>{o.payment_status}</span></td>
+                      <td><span className={`adm-badge ${STATUS_MAP[o.status]||"adm-badge--muted"}`}>{STATUS_TR[o.status]||o.status}</span></td>
+                      <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{new Date(o.created_at).toLocaleDateString("tr-TR")}</td>
+                      <td><button className="adm-btn adm-btn--ghost adm-btn--sm">Detay</button></td>
+                    </tr>
+                  );
+                })}
+                {filtered.length===0 && <tr><td colSpan={7}><div className="adm-empty"><div className="adm-empty__title">Sipariş bulunamadı</div></div></td></tr>}
+              </tbody>
+            </table>
+            <div style={{ display:"flex", justifyContent:"space-between", padding:"12px 14px", borderTop:"1px solid var(--adm-border)" }}>
+              <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setPage(p=>Math.max(0,p-1))} disabled={page===0}>← Önceki</button>
+              <span style={{ fontSize:12, color:"var(--adm-text-3)" }}>Sayfa {page+1}</span>
+              <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setPage(p=>p+1)} disabled={orders.length<PER_PAGE}>Sonraki →</button>
+            </div>
+          </>
         )}
       </div>
 
-      {/* Drawer — Order Detail */}
       {selected && (
         <>
-          <div className="adm-overlay" style={{ justifyContent: "flex-end", padding: 0, alignItems: "stretch" }} onClick={() => setSelected(null)} />
+          <div className="adm-overlay" style={{ justifyContent:"flex-end", padding:0, alignItems:"stretch" }} onClick={() => setSelected(null)} />
           <div className="adm-drawer">
             <div className="adm-drawer-header">
               <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--adm-text)" }}>Sipariş {selected.id}</div>
-                <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginTop: 2 }}>{selected.date}</div>
+                <div style={{ fontSize:15, fontWeight:600, color:"var(--adm-accent)", fontFamily:"var(--adm-mono)" }}>{selected.order_number}</div>
+                <div style={{ fontSize:11, color:"var(--adm-text-3)", marginTop:2 }}>{new Date(selected.created_at).toLocaleString("tr-TR")}</div>
               </div>
               <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setSelected(null)}>✕</button>
             </div>
             <div className="adm-drawer-body">
-              {/* Status */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-                <span className={`adm-badge ${STATUS_MAP[selected.status]}`} style={{ fontSize: 11, padding: "4px 12px" }}>
-                  {selected.status}
-                </span>
-                <div style={{ display: "flex", gap: 6 }}>
-                  {STATUS_NEXT[selected.status] && (
-                    <button className="adm-btn adm-btn--primary adm-btn--sm" onClick={() => advance(selected.id)}>
-                      → {STATUS_NEXT[selected.status]}
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+                <span className={`adm-badge ${STATUS_MAP[selected.status]}`} style={{ fontSize:12, padding:"4px 12px" }}>{STATUS_TR[selected.status]}</span>
+                <div style={{ display:"flex", gap:6 }}>
+                  {STATUS_FLOW[selected.status] && (
+                    <button className="adm-btn adm-btn--primary adm-btn--sm" onClick={() => updateStatus(selected.id,STATUS_FLOW[selected.status]!)}>
+                      → {STATUS_TR[STATUS_FLOW[selected.status]!]}
                     </button>
                   )}
-                  {selected.status !== "iptal" && selected.status !== "teslim" && (
-                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => cancel(selected.id)}>İptal Et</button>
+                  {!["cancelled","delivered","refunded"].includes(selected.status) && (
+                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => updateStatus(selected.id,"cancelled")}>İptal</button>
                   )}
                 </div>
               </div>
 
-              {/* Customer */}
-              <div className="adm-card" style={{ marginBottom: 12 }}>
-                <div className="adm-card-header"><span className="adm-card-title">Müşteri Bilgileri</span></div>
-                <div className="adm-card-body">
-                  <Row label="Ad Soyad" value={selected.customer} />
-                  <Row label="E-posta"  value={selected.email} />
-                  <Row label="Telefon"  value={selected.phone} />
-                  <Row label="Adres"    value={selected.address} />
-                  {selected.note && <Row label="Not" value={selected.note} accent />}
-                </div>
-              </div>
-
-              {/* Items */}
-              <div className="adm-card" style={{ marginBottom: 12 }}>
-                <div className="adm-card-header"><span className="adm-card-title">Ürünler</span></div>
-                <div>
-                  {selected.items.map((item, i) => (
-                    <div key={i} style={{
-                      display: "flex", justifyContent: "space-between", alignItems: "center",
-                      padding: "10px 14px",
-                      borderBottom: i < selected.items.length - 1 ? "1px solid var(--adm-border)" : "none",
-                    }}>
+              {/* Ürünler */}
+              {selected.items && selected.items.length>0 && (
+                <div className="adm-card" style={{ marginBottom:12 }}>
+                  <div className="adm-card-header"><span className="adm-card-title">Ürünler</span></div>
+                  {selected.items.map((item,i) => (
+                    <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 14px", borderBottom:i<selected.items!.length-1?"1px solid var(--adm-border)":"none" }}>
                       <div>
-                        <div style={{ fontSize: 12, fontWeight: 500, color: "var(--adm-text-2)" }}>{item.name}</div>
-                        <div style={{ fontSize: 11, color: "var(--adm-text-4)" }}>× {item.qty} adet</div>
+                        <div style={{ fontSize:12, fontWeight:500, color:"var(--adm-text-2)" }}>{item.product_name}</div>
+                        {item.variant_name && <div style={{ fontSize:10, color:"var(--adm-text-4)" }}>{item.variant_name}</div>}
+                        <div style={{ fontSize:10, color:"var(--adm-text-4)" }}>×{item.quantity}</div>
                       </div>
-                      <span style={{ fontFamily: "var(--adm-mono)", fontWeight: 600, color: "var(--adm-text)" }}>
-                        ₺{(item.qty * item.price).toFixed(2)}
-                      </span>
+                      <span style={{ fontFamily:"var(--adm-mono)", fontWeight:600, color:"var(--adm-text)" }}>₺{Number(item.total).toFixed(2)}</span>
                     </div>
                   ))}
-                  <div style={{
-                    display: "flex", justifyContent: "space-between",
-                    padding: "10px 14px",
-                    borderTop: "1px solid var(--adm-border-2)",
-                    fontWeight: 700, color: "var(--adm-text)",
-                    fontFamily: "var(--adm-mono)",
-                  }}>
-                    <span>Toplam</span>
-                    <span style={{ color: "var(--adm-accent)" }}>₺{selected.total.toFixed(2)}</span>
+                  <div style={{ display:"flex", justifyContent:"space-between", padding:"10px 14px", borderTop:"1px solid var(--adm-border-2)", fontWeight:700, fontFamily:"var(--adm-mono)" }}>
+                    <span style={{ color:"var(--adm-text-2)" }}>Toplam</span>
+                    <span style={{ color:"var(--adm-accent)" }}>₺{Number(selected.total).toFixed(2)}</span>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* Cargo */}
-              {selected.cargo && (
-                <div className="adm-card">
-                  <div className="adm-card-header"><span className="adm-card-title">Kargo</span></div>
-                  <div className="adm-card-body">
-                    <Row label="Takip" value={selected.cargo} mono />
-                  </div>
+              {/* Kargo takip */}
+              <div className="adm-field"><label className="adm-label-text">Kargo Takip Numarası</label><input className="adm-input" value={trackingNo} onChange={e => setTrackingNo(e.target.value)} placeholder="MNG / …" /></div>
+              <div className="adm-field"><label className="adm-label-text">Admin Notu</label><textarea className="adm-textarea" rows={2} value={adminNote} onChange={e => setAdminNote(e.target.value)} placeholder="İç not…" /></div>
+
+              {selected.customer_note && (
+                <div style={{ background:"var(--adm-yellow-dim)", border:"1px solid rgba(251,191,36,0.2)", borderRadius:7, padding:"9px 12px", fontSize:12, color:"var(--adm-yellow)" }}>
+                  <strong>Müşteri Notu:</strong> {selected.customer_note}
                 </div>
               )}
             </div>
             <div className="adm-drawer-footer">
-              <button className="adm-btn adm-btn--secondary" onClick={() => setSelected(null)}>Kapat</button>
+              <button className="adm-btn adm-btn--secondary" onClick={() => { if(trackingNo||adminNote) updateStatus(selected.id,selected.status); else setSelected(null); }}>Kaydet & Kapat</button>
             </div>
           </div>
         </>
       )}
-    </div>
-  );
-}
-
-function Row({ label, value, accent, mono }: { label: string; value: string; accent?: boolean; mono?: boolean }) {
-  return (
-    <div style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "flex-start" }}>
-      <span style={{ fontSize: 11, color: "var(--adm-text-4)", width: 70, flexShrink: 0, paddingTop: 1 }}>{label}</span>
-      <span style={{
-        fontSize: 12, color: accent ? "var(--adm-yellow)" : "var(--adm-text-2)",
-        fontFamily: mono ? "var(--adm-mono)" : undefined,
-        flex: 1,
-      }}>{value}</span>
     </div>
   );
 }
