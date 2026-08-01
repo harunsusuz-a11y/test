@@ -19,7 +19,7 @@ export default function AdminAnalytics() {
 
       const [{ data:o }, { data:items }] = await Promise.all([
         supabase.from("orders").select("status,total,created_at").gte("created_at",since).order("created_at"),
-        supabase.from("order_items").select("product_name,quantity,total").gte("created_at",since),
+        supabase.from("order_items").select("product_name,quantity,total").gte("created_at",since).limit(500),
       ]);
 
       setOrders((o as OrderRow[])||[]);
