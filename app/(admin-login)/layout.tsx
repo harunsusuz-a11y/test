@@ -1,4 +1,4 @@
-import "@/app/admin/admin.css"
+import "@/app/(admin)/admin/admin.css"
 export default function LoginLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
