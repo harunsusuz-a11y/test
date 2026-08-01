@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-interface Banner { id:string; title:string; description:string|null; image_url:string|null; button_text:string|null; button_url:string|null; position:string; sort_order:number; is_active:boolean; click_count:number; view_count:number; starts_at:string|null; ends_at:string|null; }
+interface Banner { id:string; title:string; description:string|null; image_url:string|null; button_text:string|null; link_url:string|null; placement:string; sort_order:number; is_active:boolean; click_count:number; impression_count:number; starts_at:string|null; ends_at:string|null; }
 const EMPTY = { title:"", description:"", image_url:"", button_text:"", button_url:"", position:"hero", sort_order:0, is_active:true, starts_at:"", ends_at:"" };
 
 export default function AdminBannerlar() {
@@ -27,7 +27,7 @@ export default function AdminBannerlar() {
     if (!editing.title) return;
     setSaving(true);
     const { data: { user } } = await supabase.auth.getUser();
-    const payload = { ...editing, description:editing.description||null, image_url:editing.image_url||null, button_text:editing.button_text||null, button_url:editing.button_url||null, starts_at:editing.starts_at||null, ends_at:editing.ends_at||null, created_by:user?.id };
+    const payload = { ...editing, description:editing.description||null, image_url:editing.image_url||null, button_text:editing.button_text||null, link_url:editing.button_url||null, starts_at:editing.starts_at||null, ends_at:editing.ends_at||null, created_by:user?.id };
     if (editId) await supabase.from("banners").update(payload).eq("id", editId);
     else await supabase.from("banners").insert(payload);
     setSaving(false); setOpen(false); load();
@@ -66,14 +66,14 @@ export default function AdminBannerlar() {
                     }
                   </td>
                   <td className="adm-td--strong">{b.title}</td>
-                  <td><span className="adm-badge adm-badge--muted">{POSITIONS[b.position]||b.position}</span></td>
-                  <td className="adm-mono adm-text-muted">{b.view_count.toLocaleString()}</td>
+                  <td><span className="adm-badge adm-badge--muted">{POSITIONS[b.placement]||b.placement}</span></td>
+                  <td className="adm-mono adm-text-muted">{b.impression_count.toLocaleString()}</td>
                   <td className="adm-mono adm-text-muted">{b.click_count.toLocaleString()}</td>
                   <td className="adm-mono">{b.sort_order}</td>
                   <td><div className={`adm-toggle${b.is_active?" on":""}`} onClick={() => toggle(b.id,!b.is_active)} /></td>
                   <td>
                     <div style={{ display:"flex", gap:4, justifyContent:"flex-end" }}>
-                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ title:b.title, description:b.description||"", image_url:b.image_url||"", button_text:b.button_text||"", button_url:b.button_url||"", position:b.position, sort_order:b.sort_order, is_active:b.is_active, starts_at:b.starts_at?.slice(0,10)||"", ends_at:b.ends_at?.slice(0,10)||"" }); setEditId(b.id); setOpen(true); }}>Düzenle</button>
+                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ title:b.title, description:b.description||"", image_url:b.image_url||"", button_text:b.button_text||"", button_url:b.link_url||"", position:b.placement, sort_order:b.sort_order, is_active:b.is_active, starts_at:b.starts_at?.slice(0,10)||"", ends_at:b.ends_at?.slice(0,10)||"" }); setEditId(b.id); setOpen(true); }}>Düzenle</button>
                       <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => remove(b.id)}>Sil</button>
                     </div>
                   </td>
