@@ -1,6 +1,5 @@
 import "@/app/admin/admin.css"
-
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+export default function LoginLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
       <head>
