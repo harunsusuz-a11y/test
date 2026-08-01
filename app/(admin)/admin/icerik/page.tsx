@@ -1,211 +1,252 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 
-const TABS = ["Anasayfa", "Hakkımızda", "Ürünler", "SSS", "Blog"] as const;
-type Tab = typeof TABS[number];
+type Tab = "pages" | "blog" | "sss" | "seo";
 
-const HOMEPAGE = {
-  heroTitle:    "Giresun'dan Gelen\nGerçek Lezzet",
-  heroSubtitle: "Fındık bazlı protein bar ve fındık kreması — doğal, besleyici, gerçek.",
-  heroCta:      "Alışverişe Başla",
-  announcementBar: "Tüm siparişlerde VENTI10 koduyla %10 indirim · Ücretsiz kargo ₺300+",
-  featuredTitle: "Öne Çıkan Ürünler",
-  aboutSnippet: "Giresun fındığını modern protein ihtiyacıyla buluşturuyoruz.",
-};
-
-const FAQS_INIT = [
-  { id: 1, q: "Ürünler doğal mı?", a: "Evet, tüm ürünlerimiz katkısız ve doğal hammaddelerle üretilmektedir." },
-  { id: 2, q: "Kargo ne kadar sürer?", a: "Siparişler 1-3 iş günü içinde kargoya verilir. İstanbul içi 1 günde teslim." },
-  { id: 3, q: "İade politikanız nedir?", a: "Ürün tesliminden itibaren 14 gün içinde iade hakkınız bulunmaktadır." },
-];
-
-const BLOG_POSTS_INIT = [
-  { id: 1, title: "Fındık Proteini: Neden Önemli?", slug: "findik-proteini", status: "yayında", date: "28 Tem 2026" },
-  { id: 2, title: "Antrenman Sonrası En İyi Atıştırmalıklar", slug: "antrenman-sonrasi", status: "taslak", date: "25 Tem 2026" },
-  { id: 3, title: "Protein Bar vs Protein Tozu", slug: "bar-vs-toz", status: "yayında", date: "20 Tem 2026" },
-];
+interface Page { id:string; title:string; slug:string; is_active:boolean; updated_at:string; }
+interface BlogPost { id:string; title:string; slug:string; status:string; published_at:string|null; updated_at:string; }
+interface SeoMeta { id:string; entity_type:string; entity_id:string; seo_title:string|null; seo_desc:string|null; robots:string|null; }
 
 export default function AdminIcerik() {
-  const [tab, setTab] = useState<Tab>("Anasayfa");
-  const [home, setHome] = useState(HOMEPAGE);
-  const [faqs, setFaqs] = useState(FAQS_INIT);
-  const [posts, setPosts] = useState(BLOG_POSTS_INIT);
-  const [faqModal, setFaqModal] = useState<{ id?: number; q: string; a: string } | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [tab, setTab] = useState<Tab>("pages");
+  const [pages, setPages] = useState<Page[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [seoItems, setSeoItems] = useState<SeoMeta[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [pageModal, setPageModal] = useState<Partial<Page>|null>(null);
+  const [postModal, setPostModal] = useState<Partial<BlogPost>|null>(null);
+  const [seoModal, setSeoModal] = useState<Partial<SeoMeta>|null>(null);
+  const [saving, setSaving] = useState(false);
+  const supabase = createClient();
 
-  function handleSave() { setSaved(true); setTimeout(() => setSaved(false), 2000); }
+  const load = useCallback(async () => {
+    setLoading(true);
+    const [{ data:p },{ data:b },{ data:s }] = await Promise.all([
+      supabase.from("pages").select("*").order("title"),
+      supabase.from("blog_posts").select("*").order("created_at",{ascending:false}),
+      supabase.from("seo_metadata").select("*").order("entity_type"),
+    ]);
+    setPages((p as Page[])||[]);
+    setPosts((b as BlogPost[])||[]);
+    setSeoItems((s as SeoMeta[])||[]);
+    setLoading(false);
+  }, [supabase]);
 
-  function saveFaq() {
-    if (!faqModal) return;
-    if (faqModal.id) {
-      setFaqs(prev => prev.map(f => f.id === faqModal.id ? { ...f, q: faqModal.q, a: faqModal.a } : f));
-    } else {
-      setFaqs(prev => [...prev, { id: Date.now(), q: faqModal.q, a: faqModal.a }]);
-    }
-    setFaqModal(null);
+  useEffect(() => { load(); }, [load]);
+
+  function slugify(s:string) { return s.toLowerCase().replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ş/g,"s").replace(/ı/g,"i").replace(/ö/g,"o").replace(/ç/g,"c").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); }
+
+  async function savePage() {
+    if (!pageModal?.title) return;
+    setSaving(true);
+    const { data:{user} } = await supabase.auth.getUser();
+    const payload = { title:pageModal.title, slug:pageModal.slug||slugify(pageModal.title||""), is_active:pageModal.is_active??true, created_by:user?.id };
+    if (pageModal.id) await supabase.from("pages").update(payload).eq("id",pageModal.id);
+    else await supabase.from("pages").insert(payload);
+    setSaving(false); setPageModal(null); load();
   }
 
-  function togglePostStatus(id: number) {
-    setPosts(prev => prev.map(p => p.id === id ? { ...p, status: p.status === "yayında" ? "taslak" : "yayında" } : p));
+  async function savePost() {
+    if (!postModal?.title) return;
+    setSaving(true);
+    const { data:{user} } = await supabase.auth.getUser();
+    const payload = { title:postModal.title, slug:postModal.slug||slugify(postModal.title||""), status:postModal.status||"draft", author_id:user?.id, published_at:postModal.status==="published"?new Date().toISOString():null };
+    if (postModal.id) await supabase.from("blog_posts").update(payload).eq("id",postModal.id);
+    else await supabase.from("blog_posts").insert(payload);
+    setSaving(false); setPostModal(null); load();
   }
+
+  async function togglePage(id:string, val:boolean) {
+    await supabase.from("pages").update({ is_active:val }).eq("id",id);
+    setPages(prev => prev.map(p => p.id===id?{...p,is_active:val}:p));
+  }
+
+  async function togglePost(id:string, status:string) {
+    const next = status==="published"?"draft":"published";
+    await supabase.from("blog_posts").update({ status:next, published_at:next==="published"?new Date().toISOString():null }).eq("id",id);
+    setPosts(prev => prev.map(p => p.id===id?{...p,status:next}:p));
+  }
+
+  async function saveSeo() {
+    if (!seoModal?.entity_type || !seoModal?.entity_id) return;
+    setSaving(true);
+    await supabase.from("seo_metadata").upsert({ entity_type:seoModal.entity_type, entity_id:seoModal.entity_id, seo_title:seoModal.seo_title||null, seo_desc:seoModal.seo_desc||null, robots:seoModal.robots||"index,follow" }, { onConflict:"entity_type,entity_id" });
+    setSaving(false); setSeoModal(null); load();
+  }
+
+  const TABS: { key:Tab; label:string }[] = [{ key:"pages",label:"Sayfalar" },{ key:"blog",label:"Blog" },{ key:"seo",label:"SEO Meta" },{ key:"sss",label:"SSS" }];
 
   return (
     <div>
       <div className="adm-page-header">
-        <div>
-          <div className="adm-page-title">İçerik & SEO</div>
-          <div className="adm-page-sub">Site içeriklerini buradan yönet</div>
+        <div><div className="adm-page-title">İçerik & SEO</div></div>
+        <div style={{ display:"flex", gap:8 }}>
+          {tab==="pages" && <button className="adm-btn adm-btn--primary" onClick={()=>setPageModal({ is_active:true })}>+ Yeni Sayfa</button>}
+          {tab==="blog" && <button className="adm-btn adm-btn--primary" onClick={()=>setPostModal({ status:"draft" })}>+ Yeni Yazı</button>}
+          {tab==="seo" && <button className="adm-btn adm-btn--primary" onClick={()=>setSeoModal({ robots:"index,follow" })}>+ SEO Kaydı</button>}
         </div>
-        <button className="adm-btn adm-btn--primary" onClick={handleSave}>{saved ? "✓ Kaydedildi" : "Kaydet"}</button>
       </div>
 
-      {/* Tab Bar */}
-      <div className="adm-tabs" style={{ marginBottom: 20 }}>
-        {TABS.map(t => (
-          <button key={t} className={`adm-tab${tab === t ? " active" : ""}`} onClick={() => setTab(t)}>{t}</button>
-        ))}
+      <div className="adm-tabs" style={{ marginBottom:20 }}>
+        {TABS.map(t => <button key={t.key} className={`adm-tab${tab===t.key?" active":""}`} onClick={()=>setTab(t.key)}>{t.label}</button>)}
       </div>
 
-      {/* Anasayfa */}
-      {tab === "Anasayfa" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="adm-card">
-            <div className="adm-card-header"><span className="adm-card-title">Hero Bölümü</span></div>
-            <div className="adm-card-body">
-              <F label="Başlık">
-                <textarea className="adm-textarea" rows={2} value={home.heroTitle} onChange={e => setHome({ ...home, heroTitle: e.target.value })} />
-              </F>
-              <F label="Alt Başlık">
-                <input className="adm-input" value={home.heroSubtitle} onChange={e => setHome({ ...home, heroSubtitle: e.target.value })} />
-              </F>
-              <F label="CTA Butonu">
-                <input className="adm-input" value={home.heroCta} onChange={e => setHome({ ...home, heroCta: e.target.value })} />
-              </F>
-            </div>
-          </div>
-          <div className="adm-card">
-            <div className="adm-card-header"><span className="adm-card-title">Duyuru Barı</span></div>
-            <div className="adm-card-body">
-              <F label="Metin">
-                <input className="adm-input" value={home.announcementBar} onChange={e => setHome({ ...home, announcementBar: e.target.value })} />
-              </F>
-              <div style={{ padding: "10px 14px", background: "var(--adm-surface-2)", borderRadius: 6, marginTop: 8 }}>
-                <div style={{ fontSize: 11, color: "var(--adm-text-3)", marginBottom: 5 }}>Önizleme</div>
-                <div style={{ fontSize: 12, color: "var(--adm-accent)", textAlign: "center" }}>{home.announcementBar}</div>
-              </div>
-            </div>
-          </div>
-          <div className="adm-card">
-            <div className="adm-card-header"><span className="adm-card-title">Hakkımızda Snippet</span></div>
-            <div className="adm-card-body">
-              <F label="Kısa Metin">
-                <input className="adm-input" value={home.aboutSnippet} onChange={e => setHome({ ...home, aboutSnippet: e.target.value })} />
-              </F>
-            </div>
-          </div>
-        </div>
-      )}
+      {loading ? <div className="adm-card"><div className="adm-empty"><div className="adm-empty__title">Yükleniyor…</div></div></div> : null}
 
-      {/* SSS */}
-      {tab === "SSS" && (
-        <div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-            <button className="adm-btn adm-btn--secondary" onClick={() => setFaqModal({ q: "", a: "" })}>+ Yeni SSS</button>
-          </div>
-          <div className="adm-card">
-            {faqs.length === 0 && <div className="adm-empty"><div className="adm-empty__title">Henüz SSS yok</div></div>}
-            {faqs.map((f, i) => (
-              <div key={f.id} style={{
-                padding: "14px 16px",
-                borderBottom: i < faqs.length - 1 ? "1px solid var(--adm-border)" : "none",
-              }}>
-                <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 500, color: "var(--adm-text)", marginBottom: 4 }}>{f.q}</div>
-                    <div style={{ fontSize: 12, color: "var(--adm-text-3)", lineHeight: 1.6 }}>{f.a}</div>
-                  </div>
-                  <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
-                    <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => setFaqModal({ id: f.id, q: f.q, a: f.a })}>Düzenle</button>
-                    <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => setFaqs(prev => prev.filter(x => x.id !== f.id))}>Sil</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          {faqModal && (
-            <div className="adm-overlay" onClick={() => setFaqModal(null)}>
-              <div className="adm-modal" onClick={e => e.stopPropagation()}>
-                <div className="adm-modal-header">
-                  <span className="adm-modal-title">{faqModal.id ? "SSS Düzenle" : "Yeni SSS"}</span>
-                  <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setFaqModal(null)}>✕</button>
-                </div>
-                <div className="adm-modal-body">
-                  <F label="Soru">
-                    <input className="adm-input" value={faqModal.q} onChange={e => setFaqModal({ ...faqModal, q: e.target.value })} placeholder="Soru metni" />
-                  </F>
-                  <F label="Cevap">
-                    <textarea className="adm-textarea" rows={4} value={faqModal.a} onChange={e => setFaqModal({ ...faqModal, a: e.target.value })} placeholder="Cevap metni" />
-                  </F>
-                </div>
-                <div className="adm-modal-footer">
-                  <button className="adm-btn adm-btn--secondary" onClick={() => setFaqModal(null)}>İptal</button>
-                  <button className="adm-btn adm-btn--primary" onClick={saveFaq}>Kaydet</button>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Sayfalar */}
+      {!loading && tab==="pages" && (
+        <div className="adm-card">
+          <table className="adm-table">
+            <thead><tr><th>Başlık</th><th>Slug</th><th>Güncelleme</th><th>Durum</th><th /></tr></thead>
+            <tbody>
+              {pages.map(p => (
+                <tr key={p.id}>
+                  <td className="adm-td--strong">{p.title}</td>
+                  <td className="adm-mono adm-text-muted">{p.slug}</td>
+                  <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{new Date(p.updated_at).toLocaleDateString("tr-TR")}</td>
+                  <td><div className={`adm-toggle${p.is_active?" on":""}`} onClick={()=>togglePage(p.id,!p.is_active)} /></td>
+                  <td><button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={()=>setPageModal({...p})}>Düzenle</button></td>
+                </tr>
+              ))}
+              {pages.length===0 && <tr><td colSpan={5}><div className="adm-empty"><div className="adm-empty__title">Sayfa yok</div></div></td></tr>}
+            </tbody>
+          </table>
         </div>
       )}
 
       {/* Blog */}
-      {tab === "Blog" && (
-        <div>
-          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 12 }}>
-            <button className="adm-btn adm-btn--primary">+ Yeni Yazı</button>
-          </div>
-          <div className="adm-card">
-            <table className="adm-table">
-              <thead><tr><th>Başlık</th><th>Slug</th><th>Tarih</th><th>Durum</th><th /></tr></thead>
-              <tbody>
-                {posts.map(p => (
-                  <tr key={p.id}>
-                    <td className="adm-td--strong">{p.title}</td>
-                    <td className="adm-mono adm-text-muted">{p.slug}</td>
-                    <td className="adm-text-muted">{p.date}</td>
-                    <td>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <div className={`adm-toggle${p.status === "yayında" ? " on" : ""}`} onClick={() => togglePostStatus(p.id)} />
-                        <span className={`adm-badge ${p.status === "yayında" ? "adm-badge--green" : "adm-badge--muted"}`}>{p.status}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ display: "flex", gap: 4, justifyContent: "flex-end" }}>
-                        <button className="adm-btn adm-btn--ghost adm-btn--sm">Düzenle</button>
-                        <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => setPosts(prev => prev.filter(x => x.id !== p.id))}>Sil</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {!loading && tab==="blog" && (
+        <div className="adm-card">
+          <table className="adm-table">
+            <thead><tr><th>Başlık</th><th>Slug</th><th>Yayın Tarihi</th><th>Durum</th><th /></tr></thead>
+            <tbody>
+              {posts.map(p => (
+                <tr key={p.id}>
+                  <td className="adm-td--strong">{p.title}</td>
+                  <td className="adm-mono adm-text-muted">{p.slug}</td>
+                  <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{p.published_at?new Date(p.published_at).toLocaleDateString("tr-TR"):"—"}</td>
+                  <td>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <div className={`adm-toggle${p.status==="published"?" on":""}`} onClick={()=>togglePost(p.id,p.status)} />
+                      <span className={`adm-badge ${p.status==="published"?"adm-badge--green":"adm-badge--muted"}`}>{p.status==="published"?"Yayında":"Taslak"}</span>
+                    </div>
+                  </td>
+                  <td><button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={()=>setPostModal({...p})}>Düzenle</button></td>
+                </tr>
+              ))}
+              {posts.length===0 && <tr><td colSpan={5}><div className="adm-empty"><div className="adm-empty__title">Blog yazısı yok</div></div></td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* SEO Meta */}
+      {!loading && tab==="seo" && (
+        <div className="adm-card">
+          <table className="adm-table">
+            <thead><tr><th>Tür</th><th>Kayıt ID</th><th>SEO Başlık</th><th>Robots</th><th /></tr></thead>
+            <tbody>
+              {seoItems.map(s => (
+                <tr key={s.id}>
+                  <td><span className="adm-badge adm-badge--muted">{s.entity_type}</span></td>
+                  <td className="adm-mono" style={{ fontSize:10, color:"var(--adm-text-4)" }}>{s.entity_id?.slice(0,12)}…</td>
+                  <td style={{ maxWidth:240, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", fontSize:12, color:"var(--adm-text-2)" }}>{s.seo_title||"—"}</td>
+                  <td className="adm-mono adm-text-muted" style={{ fontSize:11 }}>{s.robots||"—"}</td>
+                  <td><button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={()=>setSeoModal({...s})}>Düzenle</button></td>
+                </tr>
+              ))}
+              {seoItems.length===0 && <tr><td colSpan={5}><div className="adm-empty"><div className="adm-empty__title">SEO kaydı yok</div></div></td></tr>}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* SSS Placeholder */}
+      {!loading && tab==="sss" && (
+        <div className="adm-card"><div className="adm-empty"><div className="adm-empty__title">SSS yönetimi</div>Supabase bağlantısı için pages tablosuna SSS tipi eklenebilir.</div></div>
+      )}
+
+      {/* Sayfa Modal */}
+      {pageModal && (
+        <div className="adm-overlay" onClick={()=>setPageModal(null)}>
+          <div className="adm-modal" onClick={e=>e.stopPropagation()}>
+            <div className="adm-modal-header">
+              <span className="adm-modal-title">{pageModal.id?"Sayfayı Düzenle":"Yeni Sayfa"}</span>
+              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={()=>setPageModal(null)}>✕</button>
+            </div>
+            <div className="adm-modal-body">
+              <div className="adm-field"><label className="adm-label-text">Başlık</label><input className="adm-input" value={pageModal.title||""} onChange={e=>setPageModal({...pageModal,title:e.target.value,slug:slugify(e.target.value)})} /></div>
+              <div className="adm-field"><label className="adm-label-text">Slug</label><input className="adm-input" value={pageModal.slug||""} onChange={e=>setPageModal({...pageModal,slug:e.target.value})} /></div>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div className={`adm-toggle${pageModal.is_active?" on":""}`} onClick={()=>setPageModal({...pageModal,is_active:!pageModal.is_active})} />
+                <span style={{ fontSize:12, color:"var(--adm-text-2)" }}>Aktif</span>
+              </div>
+            </div>
+            <div className="adm-modal-footer">
+              <button className="adm-btn adm-btn--secondary" onClick={()=>setPageModal(null)}>İptal</button>
+              <button className="adm-btn adm-btn--primary" onClick={savePage} disabled={saving}>{saving?"Kaydediliyor…":"Kaydet"}</button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Placeholder tabs */}
-      {(tab === "Hakkımızda" || tab === "Ürünler") && (
-        <div className="adm-card">
-          <div className="adm-empty">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2" width="32" height="32"><rect x="2" y="1" width="10" height="14" rx="1.5"/><line x1="5" y1="5" x2="9" y2="5"/><line x1="5" y1="8" x2="9" y2="8"/><line x1="5" y1="11" x2="7" y2="11"/></svg>
-            <div className="adm-empty__title">{tab} içeriği</div>
-            Bu bölüm yakında aktif olacak.
+      {/* Blog Modal */}
+      {postModal && (
+        <div className="adm-overlay" onClick={()=>setPostModal(null)}>
+          <div className="adm-modal" onClick={e=>e.stopPropagation()}>
+            <div className="adm-modal-header">
+              <span className="adm-modal-title">{postModal.id?"Yazıyı Düzenle":"Yeni Yazı"}</span>
+              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={()=>setPostModal(null)}>✕</button>
+            </div>
+            <div className="adm-modal-body">
+              <div className="adm-field"><label className="adm-label-text">Başlık</label><input className="adm-input" value={postModal.title||""} onChange={e=>setPostModal({...postModal,title:e.target.value,slug:slugify(e.target.value)})} /></div>
+              <div className="adm-field"><label className="adm-label-text">Slug</label><input className="adm-input" value={postModal.slug||""} onChange={e=>setPostModal({...postModal,slug:e.target.value})} /></div>
+              <div className="adm-field"><label className="adm-label-text">Durum</label>
+                <select className="adm-select" value={postModal.status||"draft"} onChange={e=>setPostModal({...postModal,status:e.target.value})}>
+                  <option value="draft">Taslak</option><option value="published">Yayında</option><option value="archived">Arşiv</option>
+                </select>
+              </div>
+            </div>
+            <div className="adm-modal-footer">
+              <button className="adm-btn adm-btn--secondary" onClick={()=>setPostModal(null)}>İptal</button>
+              <button className="adm-btn adm-btn--primary" onClick={savePost} disabled={saving}>{saving?"Kaydediliyor…":"Kaydet"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SEO Modal */}
+      {seoModal && (
+        <div className="adm-overlay" onClick={()=>setSeoModal(null)}>
+          <div className="adm-modal" onClick={e=>e.stopPropagation()}>
+            <div className="adm-modal-header">
+              <span className="adm-modal-title">SEO Kaydı</span>
+              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={()=>setSeoModal(null)}>✕</button>
+            </div>
+            <div className="adm-modal-body">
+              <div className="adm-field-row">
+                <div className="adm-field"><label className="adm-label-text">Tür</label><input className="adm-input" value={seoModal.entity_type||""} onChange={e=>setSeoModal({...seoModal,entity_type:e.target.value})} placeholder="product, category…" /></div>
+                <div className="adm-field"><label className="adm-label-text">Kayıt ID (UUID)</label><input className="adm-input" value={seoModal.entity_id||""} onChange={e=>setSeoModal({...seoModal,entity_id:e.target.value})} /></div>
+              </div>
+              <div className="adm-field"><label className="adm-label-text">SEO Başlık</label><input className="adm-input" value={seoModal.seo_title||""} onChange={e=>setSeoModal({...seoModal,seo_title:e.target.value})} maxLength={60} /></div>
+              <div className="adm-field"><label className="adm-label-text">SEO Açıklama</label><textarea className="adm-textarea" rows={2} value={seoModal.seo_desc||""} onChange={e=>setSeoModal({...seoModal,seo_desc:e.target.value})} maxLength={160} /></div>
+              <div className="adm-field"><label className="adm-label-text">Robots</label>
+                <select className="adm-select" value={seoModal.robots||"index,follow"} onChange={e=>setSeoModal({...seoModal,robots:e.target.value})}>
+                  <option value="index,follow">index, follow</option>
+                  <option value="noindex,follow">noindex, follow</option>
+                  <option value="index,nofollow">index, nofollow</option>
+                  <option value="noindex,nofollow">noindex, nofollow</option>
+                </select>
+              </div>
+            </div>
+            <div className="adm-modal-footer">
+              <button className="adm-btn adm-btn--secondary" onClick={()=>setSeoModal(null)}>İptal</button>
+              <button className="adm-btn adm-btn--primary" onClick={saveSeo} disabled={saving}>{saving?"Kaydediliyor…":"Kaydet"}</button>
+            </div>
           </div>
         </div>
       )}
     </div>
   );
-}
-
-function F({ label, children }: { label: string; children: React.ReactNode }) {
-  return <div className="adm-field"><label className="adm-label-text">{label}</label>{children}</div>;
 }
