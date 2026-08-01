@@ -9,37 +9,47 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createClient()
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const supabase = createClient()
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (authError || !data.user) {
-      setError('E-posta veya şifre hatalı.')
+      if (authError || !data.user) {
+        setError('E-posta veya şifre hatalı.')
+        setLoading(false)
+        return
+      }
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_type, status')
+        .eq('id', data.user.id)
+        .single()
+
+      if (!profile || !['admin','super_admin'].includes(profile.user_type) || profile.status !== 'active') {
+        await supabase.auth.signOut()
+        setError('Bu hesabın admin yetkisi yok.')
+        setLoading(false)
+        return
+      }
+
+      router.push('/admin')
+      router.refresh()
+    } catch {
+      setError('Bir hata oluştu. Tekrar deneyin.')
       setLoading(false)
-      return
     }
+  }
 
-    // Check admin role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('user_type, status')
-      .eq('id', data.user.id)
-      .single()
-
-    if (!profile || !['admin','super_admin'].includes(profile.user_type) || profile.status !== 'active') {
-      await supabase.auth.signOut()
-      setError('Bu hesabın admin yetkisi yok.')
-      setLoading(false)
-      return
-    }
-
-    router.push('/admin')
-    router.refresh()
+  const inp: React.CSSProperties = {
+    width: '100%', background: '#151518', border: '1px solid rgba(255,255,255,0.10)',
+    borderRadius: 7, color: '#f2f2f3', fontFamily: 'Inter, sans-serif',
+    fontSize: 13, padding: '9px 12px', outline: 'none', boxSizing: 'border-box',
   }
 
   return (
@@ -47,7 +57,6 @@ export function LoginForm() {
       width: 380, background: '#0f0f12', border: '1px solid rgba(255,255,255,0.08)',
       borderRadius: 14, padding: '36px 32px', boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
     }}>
-      {/* Logo */}
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <div style={{
           width: 44, height: 44, borderRadius: 11,
@@ -64,31 +73,17 @@ export function LoginForm() {
       <form onSubmit={handleLogin}>
         <div style={{ marginBottom: 14 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 500, color: '#6b6b76', marginBottom: 5, letterSpacing: '0.02em' }}>E-POSTA</label>
-          <input
-            type="email" required value={email} onChange={e => setEmail(e.target.value)}
-            placeholder="admin@ventiateprotein.com"
-            style={{
-              width: '100%', background: '#151518', border: '1px solid rgba(255,255,255,0.10)',
-              borderRadius: 7, color: '#f2f2f3', fontFamily: 'Inter, sans-serif',
-              fontSize: 13, padding: '9px 12px', outline: 'none', boxSizing: 'border-box',
-            }}
-            onFocus={e => e.target.style.borderColor = '#c8a26b'}
-            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.10)'}
-          />
+          <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="admin@ventiateprotein.com" style={inp}
+            onFocus={e => (e.target.style.borderColor = '#c8a26b')}
+            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.10)')} />
         </div>
         <div style={{ marginBottom: 20 }}>
           <label style={{ display: 'block', fontSize: 11, fontWeight: 500, color: '#6b6b76', marginBottom: 5, letterSpacing: '0.02em' }}>ŞİFRE</label>
-          <input
-            type="password" required value={password} onChange={e => setPassword(e.target.value)}
-            placeholder="••••••••"
-            style={{
-              width: '100%', background: '#151518', border: '1px solid rgba(255,255,255,0.10)',
-              borderRadius: 7, color: '#f2f2f3', fontFamily: 'Inter, sans-serif',
-              fontSize: 13, padding: '9px 12px', outline: 'none', boxSizing: 'border-box',
-            }}
-            onFocus={e => e.target.style.borderColor = '#c8a26b'}
-            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.10)'}
-          />
+          <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
+            placeholder="••••••••" style={inp}
+            onFocus={e => (e.target.style.borderColor = '#c8a26b')}
+            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.10)')} />
         </div>
 
         {error && (
@@ -99,16 +94,12 @@ export function LoginForm() {
           }}>{error}</div>
         )}
 
-        <button
-          type="submit" disabled={loading}
-          style={{
-            width: '100%', background: loading ? 'rgba(200,162,107,0.5)' : '#c8a26b',
-            border: 'none', borderRadius: 7, color: '#000',
-            fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 700,
-            padding: '10px', cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'opacity 0.15s', letterSpacing: '0.01em',
-          }}
-        >
+        <button type="submit" disabled={loading} style={{
+          width: '100%', background: loading ? 'rgba(200,162,107,0.5)' : '#c8a26b',
+          border: 'none', borderRadius: 7, color: '#000',
+          fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 700,
+          padding: '10px', cursor: loading ? 'not-allowed' : 'pointer',
+        }}>
           {loading ? 'Giriş yapılıyor…' : 'Giriş Yap'}
         </button>
       </form>

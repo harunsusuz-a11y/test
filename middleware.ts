@@ -1,17 +1,49 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  try {
-    return await updateSession(request)
-  } catch (e) {
-    // Supabase bağlantı hatası — admin/giris dışında admin'e erişimi engelle
-    if (request.nextUrl.pathname.startsWith('/admin') && 
-        request.nextUrl.pathname !== '/admin/giris') {
-      return NextResponse.redirect(new URL('/admin/giris', request.url))
-    }
+  const { pathname } = request.nextUrl
+
+  // Login sayfasına her zaman izin ver
+  if (pathname === '/admin/giris') {
     return NextResponse.next()
   }
+
+  // Admin route koruma — cookie var mı kontrol et
+  if (pathname.startsWith('/admin')) {
+    try {
+      const { createServerClient } = await import('@supabase/ssr')
+      let response = NextResponse.next({ request })
+
+      const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() { return request.cookies.getAll() },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+              response = NextResponse.next({ request })
+              cookiesToSet.forEach(({ name, value, options }) =>
+                response.cookies.set(name, value, options)
+              )
+            },
+          },
+        }
+      )
+
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (!user) {
+        return NextResponse.redirect(new URL('/admin/giris', request.url))
+      }
+
+      return response
+    } catch {
+      return NextResponse.redirect(new URL('/admin/giris', request.url))
+    }
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {

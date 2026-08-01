@@ -1,7 +1,6 @@
-import { LoginForm } from './LoginForm'
-import '../../admin/admin.css'
+import "@/app/admin/admin.css"
 
-export default function AdminLoginPage() {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="tr">
       <head>
@@ -10,7 +9,7 @@ export default function AdminLoginPage() {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body style={{ margin: 0, background: '#09090b', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', fontFamily: 'Inter, sans-serif' }}>
-        <LoginForm />
+        {children}
       </body>
     </html>
   )
