@@ -58,7 +58,7 @@ export default function AdminSiparisler() {
     if (trackingNo) upd.tracking_number = trackingNo;
     await supabase.from("orders").update(upd).eq("id", id);
     await supabase.from("order_status_history").insert({
-      order_id: id, status, note: adminNote || null, created_by: user?.id
+      order_id: id, new_status: status, note: adminNote || null, changed_by: user?.id
     }).select().maybeSingle();
     setSelected(null); setAdminNote(""); setTrackingNo("");
     load();

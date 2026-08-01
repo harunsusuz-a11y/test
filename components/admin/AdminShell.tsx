@@ -18,6 +18,7 @@ const NAV = [
     { label: "Siparişler",   href: "/admin/siparisler",   icon: <IBag /> },
     { label: "Müşteriler",   href: "/admin/musteriler",   icon: <IUsers /> },
     { label: "İadeler",      href: "/admin/iadeler",      icon: <IReturn /> },
+    { label: "Yorumlar",     href: "/admin/yorumlar",     icon: <IStar2 /> },
   ]},
   { section: "Stok", items: [
     { label: "Envanter",     href: "/admin/envanter",     icon: <IBox2 /> },
@@ -48,7 +49,8 @@ const ROUTE_LABELS: Record<string, string> = {
   "/admin/kampanyalar": "Kampanyalar", "/admin/kuponlar": "Kuponlar",
   "/admin/icerik": "İçerik & SEO", "/admin/medya": "Medya",
   "/admin/bannerlar": "Bannerlar", "/admin/kullanicilar": "Kullanıcılar",
-  "/admin/loglar": "Loglar", "/admin/ayarlar": "Ayarlar",
+  "/admin/loglar": "Loglar",
+  "/admin/yorumlar": "Yorumlar", "/admin/ayarlar": "Ayarlar",
 };
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -222,4 +224,5 @@ function IImage()     { return <svg viewBox="0 0 16 16" fill="none" stroke="curr
 function ILayout()    { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="1" y1="6" x2="15" y2="6"/><line x1="8" y1="6" x2="8" y2="15"/></svg> }
 function IShield()    { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1l6 2.5V8c0 3.5-6 7-6 7S2 11.5 2 8V3.5L8 1z"/></svg> }
 function IList()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="4" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="14" y2="8"/><line x1="4" y1="12" x2="14" y2="12"/><circle cx="1.5" cy="4" r="1"/><circle cx="1.5" cy="8" r="1"/><circle cx="1.5" cy="12" r="1"/></svg> }
+function IStar2()     { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1l1.4 4.2H14l-3.7 2.7 1.4 4.3L8 9.5l-3.7 2.7 1.4-4.3L2 5.2h4.6L8 1z"/></svg>; }
 function ILogout()    { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 14H2V2h4"/><path d="M11 11l3-3-3-3"/><line x1="14" y1="8" x2="6" y2="8"/></svg> }

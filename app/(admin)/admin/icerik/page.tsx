@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 
 type Tab = "pages" | "blog" | "sss" | "seo";
 
-interface Page { id:string; title:string; slug:string; is_active:boolean; updated_at:string; }
+interface Page { id:string; title:string; slug:string; status:string; updated_at:string; }
 interface BlogPost { id:string; title:string; slug:string; status:string; published_at:string|null; updated_at:string; }
 interface SeoMeta { id:string; entity_type:string; entity_id:string; seo_title:string|null; seo_desc:string|null; robots:string|null; }
 
@@ -41,7 +41,7 @@ export default function AdminIcerik() {
     if (!pageModal?.title) return;
     setSaving(true);
     const { data:{user} } = await supabase.auth.getUser();
-    const payload = { title:pageModal.title, slug:pageModal.slug||slugify(pageModal.title||""), is_active:pageModal.is_active??true, created_by:user?.id };
+    const payload = { title:pageModal.title, slug:pageModal.slug||slugify(pageModal.title||""), status:pageModal.status||"published", created_by:user?.id };
     if (pageModal.id) await supabase.from("pages").update(payload).eq("id",pageModal.id);
     else await supabase.from("pages").insert(payload);
     setSaving(false); setPageModal(null); load();
@@ -57,9 +57,10 @@ export default function AdminIcerik() {
     setSaving(false); setPostModal(null); load();
   }
 
-  async function togglePage(id:string, val:boolean) {
-    await supabase.from("pages").update({ is_active:val }).eq("id",id);
-    setPages(prev => prev.map(p => p.id===id?{...p,is_active:val}:p));
+  async function togglePage(id:string, status:string) {
+    const next = status==="published"?"draft":"published";
+    await supabase.from("pages").update({ status:next }).eq("id",id);
+    setPages(prev => prev.map(p => p.id===id?{...p,status:next}:p));
   }
 
   async function togglePost(id:string, status:string) {
@@ -82,7 +83,7 @@ export default function AdminIcerik() {
       <div className="adm-page-header">
         <div><div className="adm-page-title">İçerik & SEO</div></div>
         <div style={{ display:"flex", gap:8 }}>
-          {tab==="pages" && <button className="adm-btn adm-btn--primary" onClick={()=>setPageModal({ is_active:true })}>+ Yeni Sayfa</button>}
+          {tab==="pages" && <button className="adm-btn adm-btn--primary" onClick={()=>setPageModal({ status:'published' })}>+ Yeni Sayfa</button>}
           {tab==="blog" && <button className="adm-btn adm-btn--primary" onClick={()=>setPostModal({ status:"draft" })}>+ Yeni Yazı</button>}
           {tab==="seo" && <button className="adm-btn adm-btn--primary" onClick={()=>setSeoModal({ robots:"index,follow" })}>+ SEO Kaydı</button>}
         </div>
@@ -105,7 +106,7 @@ export default function AdminIcerik() {
                   <td className="adm-td--strong">{p.title}</td>
                   <td className="adm-mono adm-text-muted">{p.slug}</td>
                   <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{new Date(p.updated_at).toLocaleDateString("tr-TR")}</td>
-                  <td><div className={`adm-toggle${p.is_active?" on":""}`} onClick={()=>togglePage(p.id,!p.is_active)} /></td>
+                  <td><div className={`adm-toggle${p.status==="published"?" on":""}`} onClick={()=>togglePage(p.id,p.status)} /></td>
                   <td><button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={()=>setPageModal({...p})}>Düzenle</button></td>
                 </tr>
               ))}
@@ -179,7 +180,7 @@ export default function AdminIcerik() {
               <div className="adm-field"><label className="adm-label-text">Başlık</label><input className="adm-input" value={pageModal.title||""} onChange={e=>setPageModal({...pageModal,title:e.target.value,slug:slugify(e.target.value)})} /></div>
               <div className="adm-field"><label className="adm-label-text">Slug</label><input className="adm-input" value={pageModal.slug||""} onChange={e=>setPageModal({...pageModal,slug:e.target.value})} /></div>
               <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                <div className={`adm-toggle${pageModal.is_active?" on":""}`} onClick={()=>setPageModal({...pageModal,is_active:!pageModal.is_active})} />
+                <div className={`adm-toggle${pageModal.status==="published"?" on":""}`} onClick={()=>setPageModal({...pageModal,status:pageModal.status==="published"?"draft":"published"})} />
                 <span style={{ fontSize:12, color:"var(--adm-text-2)" }}>Aktif</span>
               </div>
             </div>
