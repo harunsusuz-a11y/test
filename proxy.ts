@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (!pathname.startsWith('/admin')) return NextResponse.next()
@@ -27,9 +27,7 @@ export async function middleware(request: NextRequest) {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) return NextResponse.redirect(new URL('/giris', request.url))
-
     return response
   } catch {
     return NextResponse.redirect(new URL('/giris', request.url))

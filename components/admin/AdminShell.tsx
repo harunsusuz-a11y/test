@@ -75,6 +75,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const [newOrders, setNewOrders] = useState(0);
+  const [showNotif, setShowNotif] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("admin-orders")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, () => {
+        setNewOrders(n => n + 1);
+        setShowNotif(true);
+        setTimeout(() => setShowNotif(false), 4000);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
@@ -90,6 +106,24 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const initials = userEmail ? userEmail[0].toUpperCase() : "A";
 
   return (
+    <>
+    {showNotif && (
+      <div style={{
+        position:"fixed", bottom:20, right:20, zIndex:200,
+        background:"var(--adm-surface)", border:"1px solid var(--adm-accent)",
+        borderRadius:"var(--adm-r-lg)", padding:"12px 16px",
+        boxShadow:"0 8px 32px rgba(0,0,0,0.4)",
+        display:"flex", alignItems:"center", gap:10,
+        animation:"adm-slide-up 0.2s ease",
+      }}>
+        <div className="adm-live-dot" />
+        <div>
+          <div style={{ fontSize:12, fontWeight:600, color:"var(--adm-text)" }}>Yeni Sipariş!</div>
+          <div style={{ fontSize:11, color:"var(--adm-text-3)" }}>{newOrders} yeni sipariş bekleniyor</div>
+        </div>
+        <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={()=>setShowNotif(false)}>✕</button>
+      </div>
+    )}
     <div className="adm-root" style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       {/* Sidebar */}
       <aside className={`adm-sidebar${collapsed ? " adm-sidebar--collapsed" : ""}`}>
@@ -202,6 +236,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
     </div>
+    </>
   );
 }
 
