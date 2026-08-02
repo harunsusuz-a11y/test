@@ -60,6 +60,6 @@ export const useCartStore = create<CartState>()(
       subtotal: () => get().lines.reduce((sum, l) => sum + l.price * l.quantity, 0),
       count: () => get().lines.reduce((sum, l) => sum + l.quantity, 0),
     }),
-    { name: "venti-ate-cart" }
+    { name: "venti-ate-cart", skipHydration: true }
   )
 );

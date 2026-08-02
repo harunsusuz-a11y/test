@@ -20,8 +20,11 @@ import { BUNDLE_NAME } from "@/content/discounts";
  * derin link/paylaşım için durur.
  */
 export function CartDrawer() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const { cartDrawerOpen, lastAddedSlug, closeCartDrawer } = useUiStore();
   const lines = useCartStore((s) => s.lines);
+  if (!mounted) return null;
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const addItem = useCartStore((s) => s.addItem);

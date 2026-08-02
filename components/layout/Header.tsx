@@ -10,7 +10,9 @@ import { useUiStore } from "@/store/ui-store";
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  const count = useCartStore((s) => s.count());
+  const [count, setCount] = useState(0);
+  const storeCount = useCartStore((s) => s.count);
+  useEffect(() => { setCount(storeCount()); }, [storeCount]);
   const openCartDrawer = useUiStore((s) => s.openCartDrawer);
   const pathname = usePathname();
   const isHome = pathname === "/";
