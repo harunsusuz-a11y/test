@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { OrganicFrame } from "@/components/brand/OrganicFrame";
+import { ThreeErrorBoundary } from "@/components/three/HazelnutSceneWrapper";
 import { HazelnutMark } from "@/components/brand/HazelnutMark";
 import { Scribble } from "@/components/brand/Scribble";
 import { MagneticButton } from "@/components/brand/MagneticButton";
@@ -65,7 +66,7 @@ export function Hero() {
     <section
       ref={sectionRef}
       onPointerMove={handlePointerMove}
-      className="relative flex min-h-[92vh] items-end overflow-hidden bg-brown-darker text-cream"
+      className="relative flex min-h-[92vh] items-end overflow-hidden bg-brown-darker text-cream" style={{ minHeight: "min(92vh, 100svh)" }}
     >
       <div ref={imgRef} className="absolute inset-0">
         <Image
@@ -89,10 +90,11 @@ export function Hero() {
             preload="none"
             aria-hidden="true"
             onError={() => setVideoOk(false)}
+            onStalled={() => setVideoOk(false)}
             className="absolute inset-0 h-full w-full object-cover opacity-70"
+            style={{ display: "block" }}
           >
-            {/* Kaynak bulunamadığında error olayı <source> üzerinde tetiklenir */}
-            <source src="/videos/hero-loop.webm" type="video/webm" onError={() => setVideoOk(false)} />
+            <source src="/videos/hero-loop.webm" type="video/webm" />
           </video>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-brown-darker via-brown-darker/40 to-transparent" />
@@ -117,9 +119,11 @@ export function Hero() {
           Bilinçli olarak sadece sağ yarıda gösterilir (metin bloğu sol-altta),
           böylece hiçbir zaman başlık/CTA okunabilirliğini bozmaz. */}
       {scene3dReady && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 opacity-90 sm:block">
-          <HazelnutScene />
-        </div>
+        <ThreeErrorBoundary>
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 opacity-90 sm:block">
+            <HazelnutScene />
+          </div>
+        </ThreeErrorBoundary>
       )}
 
       {/* İnce film grain — SVG fractalNoise, ek asset indirmeden üretilir */}

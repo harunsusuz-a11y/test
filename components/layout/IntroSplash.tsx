@@ -31,19 +31,19 @@ export function IntroSplash() {
   useEffect(() => {
     if (!visible || !nutRef.current || !wordmarkRef.current || !overlayRef.current) return;
 
+    // Fallback: ne olursa olsun 3 saniye içinde kapat
+    const fallback = setTimeout(() => setVisible(false), 1500);
+
     const tl = gsap.timeline({
-      onComplete: () => setVisible(false),
+      onComplete: () => { clearTimeout(fallback); setVisible(false); },
     });
 
-    tl.set(nutRef.current, { scale: 0.3, opacity: 0, rotate: -30 })
-      .set(wordmarkRef.current, { opacity: 0, y: 8 })
-      .to(nutRef.current, { opacity: 1, scale: 1, rotate: 360, duration: 0.9, ease: "power3.out" })
-      .to(nutRef.current, { scale: 0.7, opacity: 0, duration: 0.4, ease: "power2.in" }, "+=0.1")
-      .to(wordmarkRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, "<")
-      .to(wordmarkRef.current, { opacity: 1, duration: 0.5 })
-      .to(overlayRef.current, { opacity: 0, duration: 0.5, ease: "power2.inOut" });
+    tl.set(nutRef.current, { scale: 0.4, opacity: 0 })
+      .to(nutRef.current, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" })
+      .to(overlayRef.current, { opacity: 0, duration: 0.35, ease: "power2.inOut" }, "+=0.2");
 
     return () => {
+      clearTimeout(fallback);
       tl.kill();
     };
   }, [visible]);
