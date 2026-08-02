@@ -35,6 +35,8 @@ const NAV = [
     { label: "İçerik & SEO", href: "/admin/icerik",      icon: <IDoc /> },
     { label: "Medya",        href: "/admin/medya",        icon: <IImage /> },
     { label: "Bannerlar",    href: "/admin/bannerlar",    icon: <ILayout /> },
+    { label: "Bülten",      href: "/admin/bulten",       icon: <IMail /> },
+    { label: "Yönlendirme", href: "/admin/yonlendirmeler",icon: <ILink /> },
   ]},
   { section: "Sistem", items: [
     { label: "Kullanıcılar", href: "/admin/kullanicilar", icon: <IShield /> },
