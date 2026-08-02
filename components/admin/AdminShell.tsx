@@ -56,6 +56,8 @@ const ROUTE_LABELS: Record<string, string> = {
   "/admin/tedarikciler": "Tedarikçiler",
   "/admin/satin-alma": "Satın Alma",
   "/admin/kargo": "Kargo Yönetimi",
+  "/admin/bulten": "Bülten Aboneleri",
+  "/admin/yonlendirmeler": "URL Yönlendirmeleri",
   "/admin/yorumlar": "Yorumlar",
   "/admin/ayarlar": "Ayarlar",
 };
@@ -266,6 +268,8 @@ function IImage()     { return <svg viewBox="0 0 16 16" fill="none" stroke="curr
 function ILayout()    { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="1" width="14" height="14" rx="1.5"/><line x1="1" y1="6" x2="15" y2="6"/><line x1="8" y1="6" x2="8" y2="15"/></svg> }
 function IShield()    { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1l6 2.5V8c0 3.5-6 7-6 7S2 11.5 2 8V3.5L8 1z"/></svg> }
 function IList()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="4" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="14" y2="8"/><line x1="4" y1="12" x2="14" y2="12"/><circle cx="1.5" cy="4" r="1"/><circle cx="1.5" cy="8" r="1"/><circle cx="1.5" cy="12" r="1"/></svg> }
+function IMail()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 4l7 5 7-5"/></svg>; }
+function ILink()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M7 9a3 3 0 004.24 0l2-2a3 3 0 00-4.24-4.24L8 3.76"/><path d="M9 7a3 3 0 00-4.24 0l-2 2a3 3 0 004.24 4.24L8 12.24"/></svg>; }
 function IStar2()     { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 1l1.4 4.2H14l-3.7 2.7 1.4 4.3L8 9.5l-3.7 2.7 1.4-4.3L2 5.2h4.6L8 1z"/></svg>; }
 function ICart()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M1 1h2l2 8h8l1-5H5"/><circle cx="7" cy="13" r="1.5"/><circle cx="12" cy="13" r="1.5"/></svg>; }
 function IShip()      { return <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M2 10l2-6h8l2 6"/><path d="M1 10h14v2a2 2 0 01-14 0v-2z"/><line x1="8" y1="4" x2="8" y2="10"/></svg>; }
