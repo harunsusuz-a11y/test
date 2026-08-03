@@ -25,16 +25,35 @@ export async function POST(req: NextRequest) {
 
   const supabase = await createClient();
 
+  const orderStatus = status === "success" ? "confirmed" : "cancelled";
+  const paymentStatus = status === "success" ? "paid" : "failed";
+
+  await supabase
+    .from("orders")
+    .update({ status: orderStatus, payment_status: paymentStatus })
+    .eq("order_number", merchantOid);
+
+  // Sipariş onay maili (sadece başarılıda)
   if (status === "success") {
-    await supabase
+    const { data: order } = await supabase
       .from("orders")
-      .update({ status: "confirmed", payment_status: "paid" })
-      .eq("order_number", merchantOid);
-  } else {
-    await supabase
-      .from("orders")
-      .update({ status: "cancelled", payment_status: "failed" })
-      .eq("order_number", merchantOid);
+      .select("email, full_name, total")
+      .eq("order_number", merchantOid)
+      .single();
+    
+    if (order) {
+      await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/email/order-confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: order.email,
+          fullName: order.full_name,
+          orderId: merchantOid,
+          lines: [],
+          total: order.total,
+        }),
+      }).catch(() => null);
+    }
   }
 
   return new NextResponse("OK");

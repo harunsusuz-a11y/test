@@ -22,8 +22,13 @@ import { TextureHotspots } from "@/components/product/TextureHotspots";
 import { ReviewsPanel } from "@/components/product/ReviewsPanel";
 import { OutlineMarquee, QuizCta } from "@/components/product/PdpBands";
 import { getProductTheme } from "@/lib/utils/product-theme";
+import { getProductsServer, getProductBySlugServer } from "@/lib/data/products-server";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  try {
+    const dbProducts = await getProductsServer();
+    if (dbProducts.length > 0) return dbProducts.map((p) => ({ slug: p.slug }));
+  } catch {}
   return products.map((p) => ({ slug: p.slug }));
 }
 

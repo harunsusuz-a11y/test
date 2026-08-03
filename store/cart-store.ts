@@ -3,6 +3,14 @@
 import { create } from "zustand";
 import type { Product } from "@/content/products";
 
+// DbProduct veya Product — ikisi de kabul edilir
+type AddableProduct = {
+  slug: string;
+  name: string;
+  price: number;
+  image: string;
+};
+
 export type CartLine = {
   slug: string;
   name: string;
@@ -16,7 +24,7 @@ type CartState = {
   couponCode: string | null;
   _hydrated: boolean;
   setCoupon: (code: string | null) => void;
-  addItem: (product: Product, quantity?: number) => void;
+  addItem: (product: AddableProduct, quantity?: number) => void;
   removeItem: (slug: string) => void;
   updateQuantity: (slug: string, quantity: number) => void;
   clear: () => void;
@@ -61,7 +69,7 @@ export const useCartStore = create<CartState>()((set, get) => ({
     saveToStorage(get().lines, couponCode);
   },
 
-  addItem: (product, quantity = 1) => {
+  addItem: (product: AddableProduct, quantity = 1) => {
     set((state) => {
       const existing = state.lines.find((l) => l.slug === product.slug);
       const lines = existing

@@ -117,7 +117,39 @@ export function CheckoutForm() {
     }
   }
 
+  async function saveOrder(values: FormValues, orderId: string, userId: string | null) {
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    try {
+      await supabase.from("orders").insert({
+        order_number: orderId,
+        user_id: userId,
+        full_name: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        address: values.address,
+        city: values.city,
+        postal_code: values.postalCode,
+        shipping_type: values.shipping,
+        coupon_code: couponCode,
+        subtotal: totals.subtotal,
+        discount: totals.bundleDiscount + totals.couponDiscount,
+        shipping_cost: shippingCost,
+        total: grandTotal,
+        currency: "TRY",
+        status: "pending",
+        payment_status: "pending",
+      });
+    } catch { /* devam et */ }
+  }
+
   async function demoFlow(values: FormValues, orderId: string) {
+    // Kullanıcı ID al (varsa)
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    await saveOrder(values, orderId, user?.id ?? null);
+
     // Sipariş onay maili gönder
     await fetch("/api/email/order-confirm", {
       method: "POST",
