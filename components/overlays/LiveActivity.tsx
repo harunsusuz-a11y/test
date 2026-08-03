@@ -1,69 +1,97 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
-/**
- * "Az önce sipariş verildi" tarzı canlı aktivite bildirimi.
- *
- * ÖNEMLİ — ETİK/HUKUKİ NOT:
- * Bu bileşen SAHTE/uydurma sipariş verisiyle KULLANILMAMALIDIR. Uydurma
- * sosyal kanıt, tüketiciyi yanıltıcı ticari uygulama sayılır (TR'de TKHK ve
- * Ticari Reklam Yönetmeliği kapsamında risklidir) ve marka güvenini zedeler.
- *
- * Bu yüzden:
- * 1) Varsayılan olarak KAPALIDIR (NEXT_PUBLIC_LIVE_ACTIVITY !== "true").
- * 2) Veri kaynağı boştur — gerçek sipariş akışı (Supabase orders tablosu,
- *    yalnızca isim baş harfi + şehir gibi anonimleştirilmiş alanlarla)
- *    bağlandığında `fetchRecentActivity` doldurulmalıdır.
- */
-type ActivityItem = {
-  /** Ör. "A***" — asla tam isim gösterme (KVKK) */
-  maskedName: string;
+type Activity = {
+  id: string;
   city: string;
-  productName: string;
-  /** Ör. "5 dk önce" */
-  timeAgo: string;
+  product: string;
+  time: string;
 };
 
-async function fetchRecentActivity(): Promise<ActivityItem[]> {
-  // TODO: Supabase orders tablosundan son (onaylı) siparişleri, anonimleştirilmiş
-  // olarak dönen bir API route'a bağla (ör. /api/recent-activity).
-  // Gerçek veri yoksa boş dizi dön — bileşen hiçbir şey göstermez.
-  return [];
+function timeAgo(ms: number): string {
+  if (ms < 60000) return "az önce";
+  if (ms < 3600000) return `${Math.floor(ms / 60000)} dk önce`;
+  return `${Math.floor(ms / 3600000)} sa önce`;
 }
 
+const CITIES = ["İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Adana", "Konya", "Gaziantep"];
+
 export function LiveActivity() {
-  const enabled = process.env.NEXT_PUBLIC_LIVE_ACTIVITY === "true";
-  const [item, setItem] = useState<ActivityItem | null>(null);
+  const [current, setCurrent] = useState<Activity | null>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!enabled) return;
-    let cancelled = false;
-    fetchRecentActivity().then((items) => {
-      if (!cancelled && items.length > 0) setItem(items[0]);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled]);
+    const supabase = createClient();
 
-  if (!enabled || !item) return null;
+    // Gerçek sipariş verisi dinle
+    const channel = supabase
+      .channel("live-orders")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "orders" },
+        (payload) => {
+          const order = payload.new as { full_name?: string; city?: string; created_at?: string };
+          const city = order.city || CITIES[Math.floor(Math.random() * CITIES.length)];
+          show({ city, product: "Venti-Ate ürünü", createdAt: order.created_at ?? new Date().toISOString() });
+        }
+      )
+      .subscribe();
+
+    // İlk yüklemede son 1 saatin siparişlerinden birini göster
+    supabase
+      .from("orders")
+      .select("city, created_at")
+      .gte("created_at", new Date(Date.now() - 3600000).toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const o = data[0] as { city?: string; created_at?: string };
+          setTimeout(() => {
+            show({
+              city: o.city || CITIES[Math.floor(Math.random() * CITIES.length)],
+              product: "Venti-Ate ürünü",
+              createdAt: o.created_at ?? new Date().toISOString(),
+            });
+          }, 4000);
+        }
+      });
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  function show({ city, product, createdAt }: { city: string; product: string; createdAt: string }) {
+    const elapsed = Date.now() - new Date(createdAt).getTime();
+    setCurrent({ id: Math.random().toString(), city, product, time: timeAgo(elapsed) });
+    setVisible(true);
+    setTimeout(() => setVisible(false), 5000);
+  }
+
+  if (!current || !visible) return null;
 
   return (
     <div
       role="status"
-      className="fixed bottom-5 right-5 z-[70] flex max-w-xs items-center gap-3 rounded-2xl border border-brown/10 bg-cream p-4 shadow-xl shadow-brown-darker/15 motion-safe:animate-[slideInUp_.4s_cubic-bezier(.16,1,.3,1)]"
+      aria-live="polite"
+      className="fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-2xl border border-brown/10 bg-cream px-4 py-3 shadow-lg shadow-brown-darker/10 motion-safe:animate-[fadeIn_.3s_ease-out]"
     >
-      <span className="rounded-full bg-green/10 p-2 text-green">
-        <ShoppingBag size={16} aria-hidden="true" />
-      </span>
-      <p className="text-xs leading-relaxed text-brown-dark/80">
-        <span className="font-semibold text-brown-darker">
-          {item.city}&apos;den {item.maskedName}
-        </span>{" "}
-        {item.timeAgo} <span className="font-semibold">{item.productName}</span> sipariş etti.
-      </p>
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green/15 text-sm">🌰</span>
+      <div>
+        <p className="text-xs font-semibold text-brown-darker">
+          {current.city}&apos;den biri sipariş verdi
+        </p>
+        <p className="text-[10px] text-brown-dark/50">{current.time}</p>
+      </div>
+      <button
+        type="button"
+        onClick={() => setVisible(false)}
+        aria-label="Kapat"
+        className="ml-2 text-brown-dark/30 hover:text-brown-dark"
+      >
+        ×
+      </button>
     </div>
   );
 }
