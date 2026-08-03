@@ -20,8 +20,6 @@ import { BUNDLE_NAME } from "@/content/discounts";
  * derin link/paylaşım için durur.
  */
 export function CartDrawer() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
   const { cartDrawerOpen, lastAddedSlug, closeCartDrawer } = useUiStore();
   const lines = useCartStore((s) => s.lines);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -39,13 +37,22 @@ export function CartDrawer() {
     (totals.discountedSubtotal / (totals.discountedSubtotal + totals.remainingForFreeShipping || 1)) * 100
   );
 
-  // Paket tamamlama önerisi: eksik kategoriden en uygun ürün
   const bundleSuggestion = useMemo(() => {
     if (!totals.bundleMissingCategory) return null;
     return products.find((p) => p.category === totals.bundleMissingCategory) ?? null;
   }, [totals.bundleMissingCategory]);
 
-  if (!mounted) return null;
+  useEffect(() => {
+    if (!cartDrawerOpen) return;
+    panelRef.current?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") closeCartDrawer();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [cartDrawerOpen, closeCartDrawer]);
+
+  if (!cartDrawerOpen) return null;
 
   function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
@@ -60,18 +67,6 @@ export function CartDrawer() {
       setCouponError(true);
     }
   }
-
-  useEffect(() => {
-    if (!cartDrawerOpen) return;
-    panelRef.current?.focus();
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") closeCartDrawer();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [cartDrawerOpen, closeCartDrawer]);
-
-  if (!cartDrawerOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Sepetim">
