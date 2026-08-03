@@ -4,23 +4,16 @@ import "@fontsource-variable/fraunces";
 import "@fontsource-variable/outfit";
 import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
-import { Header } from "@/components/layout/Header";
-import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { ExitIntentPopup } from "@/components/overlays/ExitIntentPopup";
 import { LiveActivity } from "@/components/overlays/LiveActivity";
-import { Footer } from "@/components/layout/Footer";
 import { IntroSplash } from "@/components/layout/IntroSplash";
-import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { AmbientLayer } from "@/components/animations/AmbientLayer";
 import { ScrollProgress } from "@/components/animations/ScrollProgress";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { StorefrontShell } from "@/components/layout/StorefrontShell";
 import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
 import { brand } from "@/content/brand";
-
-// Editorial/premium tipografi çifti — Fontsource (https://github.com/fontsource/fontsource)
-// üzerinden self-hosted: npm paketi olarak kurulur, build sırasında harici bir
-// font CDN'ine istek atılmaz (next/font/google'ın aksine tamamen offline çalışır).
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -51,13 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <IntroSplash />
         <AmbientLayer />
         <ScrollProgress />
-        <SmoothScrollProvider>
-          <AnnouncementBar />
-          <Header />
-          <main id="main-content">{children}</main>
-          <Footer />
-        </SmoothScrollProvider>
-        {/* Global overlay katmanı — scroll akışının dışında */}
+        <StorefrontShell>{children}</StorefrontShell>
         <CartDrawer />
         <ExitIntentPopup />
         <LiveActivity />
