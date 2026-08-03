@@ -10,6 +10,7 @@ const SECTIONS = [
   { id:"notifications", label:"Bildirimler" },
   { id:"seo", label:"SEO & Meta" },
   { id:"integrations", label:"Entegrasyonlar" },
+  { id:"api_keys", label:"API Anahtarları" },
   { id:"danger", label:"Tehlike Bölgesi" },
 ];
 
@@ -26,6 +27,88 @@ const DEFAULTS: Record<string,any> = {
   google_analytics:"", google_tag_manager:"", facebook_pixel:"", tiktok_pixel:"",
   maintenance_mode:false,
 };
+
+const ENV_KEYS = [
+  { key: "PAYTR_MERCHANT_ID", label: "PayTR Merchant ID", hint: "PayTR panelinizden alın" },
+  { key: "PAYTR_MERCHANT_KEY", label: "PayTR Merchant Key", hint: "PayTR panelinizden alın" },
+  { key: "PAYTR_MERCHANT_SALT", label: "PayTR Merchant Salt", hint: "PayTR panelinizden alın" },
+  { key: "RESEND_API_KEY", label: "Resend API Key", hint: "resend.com → API Keys" },
+  { key: "NEXT_PUBLIC_SITE_URL", label: "Site URL", hint: "Örn: https://ventiate.com" },
+];
+
+function ApiKeysSection() {
+  const [values, setValues] = React.useState<Record<string,string>>({});
+  const [saving, setSaving] = React.useState<string|null>(null);
+  const [status, setStatus] = React.useState<Record<string,string>>({});
+
+  async function save(key: string) {
+    const val = values[key];
+    if (!val?.trim()) return;
+    setSaving(key);
+    setStatus(s => ({ ...s, [key]: "" }));
+    const res = await fetch("/api/admin/env", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value: val }),
+    });
+    const data = await res.json();
+    setStatus(s => ({ ...s, [key]: data.ok ? "✓ Kaydedildi" : (data.error || "Hata") }));
+    setSaving(null);
+    if (data.ok) setValues(v => ({ ...v, [key]: "" }));
+  }
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:24 }}>
+      <div style={{ background:"rgba(251,191,36,0.1)", border:"1px solid rgba(251,191,36,0.3)", borderRadius:8, padding:"12px 16px", fontSize:13, color:"#92400e" }}>
+        ⚠️ Bu değerler Vercel ortam değişkenlerine kaydedilir. Kaydettikten sonra yeni bir deploy başlatmanız gerekir.
+        VERCEL_TOKEN env değişkeni de Vercel&apos;e elle girilmelidir (bir kerelik).
+      </div>
+      {ENV_KEYS.map(({ key, label, hint }) => (
+        <div key={key} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
+          <div style={{ marginBottom:8 }}>
+            <span style={{ fontSize:13, fontWeight:600, color:"#f2f2f3" }}>{label}</span>
+            <code style={{ marginLeft:8, fontSize:11, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"2px 6px", borderRadius:4 }}>{key}</code>
+          </div>
+          <p style={{ fontSize:12, color:"#6b6b76", marginBottom:12 }}>{hint}</p>
+          <div style={{ display:"flex", gap:8 }}>
+            <input
+              type="password"
+              placeholder="Yeni değer girin…"
+              value={values[key] || ""}
+              onChange={e => setValues(v => ({ ...v, [key]: e.target.value }))}
+              onKeyDown={e => e.key === "Enter" && save(key)}
+              style={{ flex:1, background:"#151518", border:"1px solid rgba(255,255,255,0.10)", borderRadius:7, color:"#f2f2f3", fontSize:13, padding:"8px 12px", outline:"none" }}
+            />
+            <button
+              onClick={() => save(key)}
+              disabled={saving === key || !values[key]?.trim()}
+              style={{ background: saving === key ? "rgba(200,162,107,0.5)" : "#c8a26b", border:"none", borderRadius:7, color:"#000", fontSize:13, fontWeight:700, padding:"8px 16px", cursor: saving === key ? "not-allowed" : "pointer", whiteSpace:"nowrap" }}
+            >
+              {saving === key ? "…" : "Kaydet"}
+            </button>
+          </div>
+          {status[key] && (
+            <p style={{ marginTop:8, fontSize:12, color: status[key].startsWith("✓") ? "#4ade80" : "#f87171" }}>
+              {status[key]}
+            </p>
+          )}
+        </div>
+      ))}
+      <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
+        <p style={{ fontSize:13, fontWeight:600, color:"#f2f2f3", marginBottom:8 }}>Redeploy</p>
+        <p style={{ fontSize:12, color:"#6b6b76", marginBottom:12 }}>Env değişkenlerini kaydettikten sonra yeni deploy başlatın.</p>
+        <a
+          href="https://vercel.com/urlll/test/deployments"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display:"inline-block", background:"#c8a26b", borderRadius:7, color:"#000", fontSize:13, fontWeight:700, padding:"8px 16px", textDecoration:"none" }}
+        >
+          Vercel Dashboard → Redeploy
+        </a>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminAyarlar() {
   const [settings, setSettings] = useState<Record<string,any>>(DEFAULTS);
