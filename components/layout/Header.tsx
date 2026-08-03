@@ -20,10 +20,12 @@ export function Header() {
   // navigation" ilkesi. Menü açıkken veya en üstteyken asla gizlenmez.
   const [hidden, setHidden] = useState(false);
 
-  const cartCount = useCartStore((s) => s.count);
+  const cartLines = useCartStore((s) => s.lines);
   const hydrate = useCartStore((s) => s.hydrate);
   useEffect(() => { hydrate(); }, [hydrate]);
-  useEffect(() => { setCount(cartCount()); }, [cartCount]);
+  useEffect(() => {
+    setCount(cartLines.reduce((sum, l) => sum + l.quantity, 0));
+  }, [cartLines]);
 
   useEffect(() => {
     if (!isHome) {
