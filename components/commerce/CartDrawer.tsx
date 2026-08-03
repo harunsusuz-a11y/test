@@ -24,12 +24,12 @@ export function CartDrawer() {
   useEffect(() => { setMounted(true); }, []);
   const { cartDrawerOpen, lastAddedSlug, closeCartDrawer } = useUiStore();
   const lines = useCartStore((s) => s.lines);
-  if (!mounted) return null;
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
   const addItem = useCartStore((s) => s.addItem);
   const couponCode = useCartStore((s) => s.couponCode);
   const setCoupon = useCartStore((s) => s.setCoupon);
+  if (!mounted) return null;
 
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState(false);
