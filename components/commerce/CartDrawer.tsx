@@ -29,8 +29,6 @@ export function CartDrawer() {
   const addItem = useCartStore((s) => s.addItem);
   const couponCode = useCartStore((s) => s.couponCode);
   const setCoupon = useCartStore((s) => s.setCoupon);
-  if (!mounted) return null;
-
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -46,6 +44,8 @@ export function CartDrawer() {
     if (!totals.bundleMissingCategory) return null;
     return products.find((p) => p.category === totals.bundleMissingCategory) ?? null;
   }, [totals.bundleMissingCategory]);
+
+  if (!mounted) return null;
 
   function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
