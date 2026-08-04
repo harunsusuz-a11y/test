@@ -5,6 +5,8 @@ import { DataTable, type BulkAction } from "@/components/admin/ui/DataTable";
 import { ProductVariants } from "@/components/admin/ProductVariants";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Package, Plus, Upload, Edit2, Copy, Archive, X, Save } from "lucide-react";
+import { useToast } from "@/components/admin/ui/Toast";
+import { SkeletonTable } from "@/components/admin/ui/Skeleton";
 import Image from "next/image";
 
 type Product = {
@@ -33,6 +35,7 @@ export default function UrunlerPage() {
   const [selected, setSelected] = useState<Product | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const { success, error: toastError } = useToast();
   const [importing, setImporting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const PAGE_SIZE = 20;
@@ -82,7 +85,7 @@ export default function UrunlerPage() {
     } else {
       await supabase.from("products").insert(payload);
     }
-    setSaving(false); setModal(null); load();
+    setSaving(false); setModal(null); success(modal==="edit" ? "Ürün güncellendi" : "Ürün oluşturuldu"); load();
   }
 
   async function duplicate(p: Product) {

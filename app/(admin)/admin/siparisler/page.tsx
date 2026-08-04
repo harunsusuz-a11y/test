@@ -3,7 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { DataTable, type BulkAction } from "@/components/admin/ui/DataTable";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ShoppingBag, Eye, Edit2 } from "lucide-react";
+import Link from "next/link";
+import { ShoppingBag, Edit2, ExternalLink } from "lucide-react";
+import { useToast } from "@/components/admin/ui/Toast";
 
 type Order = {
   id: string; order_number: string; full_name: string; email: string;
@@ -38,6 +40,7 @@ export default function SiparislerPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updating, setUpdating] = useState(false);
+  const { success } = useToast();
   const PAGE_SIZE = 20;
   const supabase = createClient();
 
@@ -107,10 +110,16 @@ export default function SiparislerPage() {
     { id: "actions", header: "",
       cell: ({ row }) => (
         <div style={{ display:"flex", gap:6 }}>
-          <button onClick={() => setSelectedOrder(row.original)}
-            style={{ background:"rgba(200,162,107,0.1)", border:"none", borderRadius:6, padding:"5px 10px", color:"#c8a26b", cursor:"pointer" }}>
-            <Edit2 size={13} />
-          </button>
+          <div style={{ display:"flex", gap:5 }}>
+            <Link href={`/admin/siparisler/${row.original.id}`}
+              style={{ display:"flex", alignItems:"center", background:"rgba(96,165,250,0.1)", border:"none", borderRadius:6, padding:"5px 10px", color:"#60a5fa", textDecoration:"none" }}>
+              <ExternalLink size={13} />
+            </Link>
+            <button onClick={() => setSelectedOrder(row.original)}
+              style={{ background:"rgba(200,162,107,0.1)", border:"none", borderRadius:6, padding:"5px 10px", color:"#c8a26b", cursor:"pointer" }}>
+              <Edit2 size={13} />
+            </button>
+          </div>
         </div>
       )},
   ];
