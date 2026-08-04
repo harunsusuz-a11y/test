@@ -8,7 +8,7 @@ import { FileText, Download, Eye, CheckCircle, Clock, XCircle } from "lucide-rea
 type Invoice = {
   id: string; order_id: string | null; invoice_number: string | null;
   amount: number; tax_amount: number | null; status: string;
-  type: string | null; issued_at: string | null; due_at: string | null; created_at: string;
+  type: string | null; issued_at: string | null;  created_at: string;
   orders?: { order_number: string; full_name: string; email: string } | null;
 };
 

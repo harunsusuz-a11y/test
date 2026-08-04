@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 
 interface Review {
   id: string; product_slug: string | null; reviewer_name: string | null;
-  rating: number; comment: string | null; status: string;
+  rating: number; body: string | null; comment?: string | null; status: string;
   admin_reply: string | null; is_verified_purchase: boolean | null;
   created_at: string;
   product?: { name: string } | null;
@@ -96,7 +96,7 @@ export default function AdminYorumlar() {
                   <td className="adm-td--strong" style={{ fontSize:11 }}>{(r.product as any)?.name || r.product_slug || "—"}</td>
                   <td className="adm-text-muted">{r.reviewer_name || "Anonim"}</td>
                   <td><Stars n={r.rating} /></td>
-                  <td style={{ maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", fontSize:11, color:"var(--adm-text-2)" }}>{r.comment || "—"}</td>
+                  <td style={{ maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap", fontSize:11, color:"var(--adm-text-2)" }}>{r.body || "—"}</td>
                   <td>{r.is_verified_purchase ? <span className="adm-badge adm-badge--green" style={{ fontSize:9 }}>Onaylı</span> : <span className="adm-badge adm-badge--muted" style={{ fontSize:9 }}>—</span>}</td>
                   <td style={{ fontSize:11, color:"var(--adm-text-4)" }}>{new Date(r.created_at).toLocaleDateString("tr-TR")}</td>
                   <td><span className={`adm-badge ${STATUS_MAP[r.status]||"adm-badge--muted"}`}>{STATUS_TR[r.status]||r.status}</span></td>
@@ -134,11 +134,11 @@ export default function AdminYorumlar() {
                 {selected.status!=="rejected" && <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => updateStatus(selected.id,"rejected")}>Reddet</button>}
                 <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => updateStatus(selected.id,"spam")}>Spam İşaretle</button>
               </div>
-              {selected.comment && (
+              {selected.body && (
                 <div className="adm-card" style={{ marginBottom:12 }}>
                   <div className="adm-card-header"><span className="adm-card-title">Yorum</span></div>
                   <div className="adm-card-body">
-                    <div style={{ fontSize:12, color:"var(--adm-text-2)", lineHeight:1.7 }}>{selected.comment}</div>
+                    <div style={{ fontSize:12, color:"var(--adm-text-2)", lineHeight:1.7 }}>{selected.body}</div>
                   </div>
                 </div>
               )}

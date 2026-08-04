@@ -89,7 +89,7 @@ export default function SablonlarPage() {
                 <textarea style={{ ...inputStyle, minHeight:120, resize:"vertical" }}
                   value={tab==="email" ? (editData.body_html??"") : (editData.body??"")}
                   onChange={e => {
-                    if (tab==="email") setEditData(d => ({...d, body_html:e.target.value}));
+                    if (tab==="email" || tab==="notification") setEditData(d => ({...d, body_html:e.target.value}));
                     else setEditData(d => ({...d, body:e.target.value}));
                   }} />
               </div>

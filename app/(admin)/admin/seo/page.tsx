@@ -7,7 +7,7 @@ import { Search, AlertTriangle, CheckCircle, ExternalLink, Save } from "lucide-r
 
 type SeoRecord = {
   id: string; entity_type: string; entity_id: string | null; entity_slug: string | null;
-  title: string | null; description: string | null; canonical_url: string | null;
+  meta_title: string | null; meta_description: string | null; canonical_url: string | null;
   og_title: string | null; og_description: string | null;
   robots_index: boolean; robots_follow: boolean;
   created_at: string; updated_at: string | null;
@@ -30,12 +30,12 @@ export default function SeoPage() {
   const load = useCallback(async () => {
     setLoading(true);
     const [seoRes, productsRes, categoriesRes] = await Promise.all([
-      supabase.from("seo_metadata").select("*").order("updated_at", { ascending:false }),
+      supabase.from("seo_metadata").select("id,entity_type,entity_id,entity_slug,meta_title,meta_description,canonical_url,og_title,og_description,robots_index,robots_follow,created_at,updated_at").order("updated_at", { ascending:false }),
       supabase.from("products").select("id,name,slug,meta_title,meta_description").is("deleted_at",null).eq("status","active").limit(50),
       supabase.from("categories").select("id,name,slug,meta_title,meta_description").eq("is_active",true).limit(30),
     ]);
 
-    setRecords((seoRes.data ?? []) as SeoRecord[]);
+    setRecords((seoRes.data ?? []) as unknown as SeoRecord[]);
 
     // SEO analizi
     const found: SeoIssue[] = [];
@@ -54,7 +54,7 @@ export default function SeoPage() {
     const { data: settings } = await supabase.from("settings").select("key,value").in("key", ["site_title","site_description","default_og_image","robots_txt","google_verification","google_analytics"]);
     if (settings) {
       const map: Record<string,string> = {};
-      settings.forEach((s: { key:string; value:string }) => { map[s.key] = s.value; });
+      settings.forEach((s: { key:string; value:unknown }) => { map[s.key] = typeof s.value === 'string' ? s.value : JSON.stringify(s.value); });
       setGlobalSettings(g => ({ ...g, ...map }));
     }
 
@@ -75,7 +75,7 @@ export default function SeoPage() {
     setSavingGlobal(true);
     const entries = Object.entries(globalSettings);
     for (const [key, value] of entries) {
-      await supabase.from("settings").upsert({ key, value, setting_group:"seo" }, { onConflict:"key" });
+      await supabase.from("settings").upsert({ key, value: JSON.stringify(value), setting_group:"seo" }, { onConflict:"key" });
     }
     setSavingGlobal(false);
     success("Global SEO ayarları kaydedildi");
@@ -126,17 +126,17 @@ export default function SeoPage() {
                     <td style={{ padding:"10px 14px" }}>
                       <span style={{ fontSize:11, background:"rgba(255,255,255,0.05)", padding:"2px 8px", borderRadius:10, color:"#9b9ba4" }}>{r.entity_type}</span>
                     </td>
-                    <td style={{ padding:"10px 14px", fontSize:12, color:"#6b6b76", fontFamily:"monospace" }}>{r.entity_slug ?? "-"}</td>
+                    <td style={{ padding:"10px 14px", fontSize:12, color:"#6b6b76", fontFamily:"monospace" }}>{r.entity_slug ?? r.entity_id ?? "-"}</td>
                     <td style={{ padding:"10px 14px", fontSize:13 }}>
-                      {r.title ? (
+                      {r.meta_title ? (
                         <div>
-                          <span style={{ color: r.title.length > 60 ? "#f59e0b":"#f2f2f3" }}>{r.title.slice(0,50)}{r.title.length > 50 ? "…":""}</span>
-                          <span style={{ fontSize:10, color:"#6b6b76", marginLeft:6 }}>{r.title.length}/60</span>
+                          <span style={{ color: r.meta_title?.length > 60 ? "#f59e0b":"#f2f2f3" }}>{r.meta_title?.slice(0,50)}{r.meta_title?.length > 50 ? "…":""}</span>
+                          <span style={{ fontSize:10, color:"#6b6b76", marginLeft:6 }}>{r.meta_title?.length}/60</span>
                         </div>
                       ) : <span style={{ color:"#f87171", fontSize:12 }}>Eksik</span>}
                     </td>
                     <td style={{ padding:"10px 14px", fontSize:12, color:"#9b9ba4" }}>
-                      {r.description ? `${r.description.slice(0,40)}…` : <span style={{ color:"#f87171" }}>Eksik</span>}
+                      {r.meta_description ? `${r.meta_description?.slice(0,40)}…` : <span style={{ color:"#f87171" }}>Eksik</span>}
                     </td>
                     <td style={{ padding:"10px 14px" }}>
                       <span style={{ fontSize:11, color: r.robots_index ? "#4ade80":"#f87171" }}>
@@ -258,15 +258,15 @@ export default function SeoPage() {
             <h3 style={{ fontSize:16, fontWeight:700, color:"#f2f2f3", marginBottom:20 }}>SEO Kaydını Düzenle</h3>
             <div style={{ display:"grid", gap:14 }}>
               {[
-                { key:"title", label:"SEO Başlığı (maks 60 karakter)" },
-                { key:"description", label:"Meta Açıklama (maks 160 karakter)" },
+                { key:"meta_title", label:"SEO Başlığı (maks 60 karakter)" },
+                { key:"meta_description", label:"Meta Açıklama (maks 160 karakter)" },
                 { key:"og_title", label:"Open Graph Başlığı" },
                 { key:"og_description", label:"Open Graph Açıklaması" },
                 { key:"canonical_url", label:"Canonical URL" },
               ].map(f => (
                 <div key={f.key}>
                   <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>{f.label}</label>
-                  {f.key === "description" || f.key === "og_description" ? (
+                  {f.key === "meta_description" || f.key === "og_description" ? (
                     <textarea style={{ ...inputStyle, minHeight:60, resize:"vertical" as "vertical" }}
                       value={(editForm as Record<string,string|null>)[f.key] ?? ""}
                       onChange={e => setEditForm(form => ({ ...form, [f.key]: e.target.value }))} />
@@ -279,12 +279,12 @@ export default function SeoPage() {
               ))}
               <div style={{ display:"flex", gap:20 }}>
                 <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
-                  <input type="checkbox" checked={editForm.robots_index ?? true}
+                  <input type="checkbox" checked={editForm.robots_index !== false}
                     onChange={e => setEditForm(f => ({ ...f, robots_index: e.target.checked }))} style={{ accentColor:"#c8a26b" }} />
                   Indexle (robots index)
                 </label>
                 <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
-                  <input type="checkbox" checked={editForm.robots_follow ?? true}
+                  <input type="checkbox" checked={editForm.robots_follow !== false}
                     onChange={e => setEditForm(f => ({ ...f, robots_follow: e.target.checked }))} style={{ accentColor:"#c8a26b" }} />
                   Takip et (robots follow)
                 </label>

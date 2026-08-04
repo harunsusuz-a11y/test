@@ -15,7 +15,7 @@ type OrderDetail = {
   coupon_code: string | null; customer_note: string | null; admin_note: string | null;
   created_at: string; updated_at: string | null;
 };
-type OrderItem = { id:string; product_id:string; variant_id:string|null; quantity:number; unit_price:number; total_price:number; product_name:string|null };
+type OrderItem = { id:string; product_slug:string|null; product_name:string|null; variant_id:string|null; quantity:number; unit_price:number; total_price?:number; image?:string|null };
 type StatusHistory = { id:string; new_status:string; changed_by:string|null; created_at:string };
 
 const STATUS_TR: Record<string,string> = { pending:"Bekliyor", confirmed:"Onaylandı", processing:"Hazırlanıyor", shipped:"Kargoya Verildi", delivered:"Teslim Edildi", cancelled:"İptal", refunded:"İade" };
@@ -134,7 +134,7 @@ export default function SiparisDetayPage() {
                       <td style={{ padding:"10px 8px", fontSize:13, color:"#f2f2f3" }}>{item.product_name ?? "Ürün"}</td>
                       <td style={{ padding:"10px 8px", fontSize:13, color:"#9b9ba4" }}>{item.quantity}</td>
                       <td style={{ padding:"10px 8px", fontSize:13 }}>₺{Number(item.unit_price).toFixed(2)}</td>
-                      <td style={{ padding:"10px 8px", fontSize:13, fontWeight:600, color:"#f2f2f3" }}>₺{Number(item.total_price ?? item.unit_price * item.quantity).toFixed(2)}</td>
+                      <td style={{ padding:"10px 8px", fontSize:13, fontWeight:600, color:"#f2f2f3" }}>₺{(Number(item.unit_price) * item.quantity).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

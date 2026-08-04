@@ -28,7 +28,7 @@ export default function MusterilerPage() {
   const load = useCallback(async () => {
     setLoading(true);
     let q = supabase.from("profiles")
-      .select("*", { count:"exact" })
+      .select("id,first_name,last_name,email,phone,status,user_type,total_spent,total_orders,loyalty_points,created_at,group_id,customer_group_id,customer_groups!group_id(name)", { count:"exact" })
       .eq("user_type", "customer")
       .order("created_at", { ascending:false })
       .range((page-1)*PAGE_SIZE, page*PAGE_SIZE-1);

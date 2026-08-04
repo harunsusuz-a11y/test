@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Zap, Plus, Trash2, ToggleLeft, ToggleRight, CheckCircle, XCircle } from "lucide-react";
 
-type Webhook = { id:string; name:string; url:string; events:string[]; is_active:boolean; created_at:string };
+type Webhook = { id:string; name:string|null; url:string; events:string[]; is_active:boolean; created_at:string };
 type Log = { id:string; event:string; success:boolean; response_status:number|null; duration_ms:number|null; created_at:string };
 
 const ALL_EVENTS = ["order.placed","order.shipped","order.delivered","order.cancelled","payment.success","payment.failed","product.created","product.updated","review.created"];
@@ -113,7 +113,7 @@ export default function WebhooksPage() {
                 borderRadius:10, padding:16, marginBottom:12, cursor:"pointer", transition:"all .2s" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
                 <div>
-                  <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", margin:"0 0 4px" }}>{w.name}</p>
+                  <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", margin:"0 0 4px" }}>{w.name ?? w.url.slice(0,30)}</p>
                   <p style={{ fontSize:12, color:"#6b6b76", margin:"0 0 8px", wordBreak:"break-all" as "break-all" }}>{w.url}</p>
                   <div style={{ display:"flex", flexWrap:"wrap" as "wrap", gap:4 }}>
                     {w.events.map(ev => (

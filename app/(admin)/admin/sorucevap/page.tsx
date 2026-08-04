@@ -5,7 +5,7 @@ import { MessageSquare, Check, X, Eye } from "lucide-react";
 
 type Question = {
   id: string; product_id: string; question: string; answer: string | null;
-  is_published: boolean; created_at: string;
+  status: string; created_at: string;
   profiles?: { first_name: string; last_name: string; email: string } | null;
   products?: { name: string } | null;
 };
@@ -24,7 +24,7 @@ export default function SoruCevapPage() {
       .select("*, profiles(first_name,last_name,email), products(name)")
       .order("created_at", { ascending: false });
     if (filter === "pending") q = q.is("answer", null);
-    if (filter === "answered") q = q.not("answer", "is", null);
+    if (filter === "answered") q = q.not("answer","is",null);
     const { data } = await q;
     setQuestions((data ?? []) as Question[]);
     setLoading(false);
@@ -34,12 +34,12 @@ export default function SoruCevapPage() {
 
   async function submitAnswer(id: string) {
     if (!answerText.trim()) return;
-    await supabase.from("product_questions").update({ answer: answerText, is_published: true }).eq("id", id);
+    await supabase.from("product_questions").update({ answer: answerText, status: "published" }).eq("id", id);
     setAnswering(null); setAnswerText(""); load();
   }
 
-  async function togglePublish(id: string, current: boolean) {
-    await supabase.from("product_questions").update({ is_published: !current }).eq("id", id);
+  async function togglePublish(id: string, current: string) {
+    await supabase.from("product_questions").update({ status: current === "published" ? "pending" : "published" }).eq("id", id);
     load();
   }
 
@@ -93,8 +93,8 @@ export default function SoruCevapPage() {
             {" · "}
             <span>{new Date(q.created_at).toLocaleDateString("tr-TR")}</span>
             {" · "}
-            <span style={{ color: q.is_published ? "#4ade80" : "#f87171" }}>
-              {q.is_published ? "Yayında" : "Gizli"}
+            <span style={{ color: q.status === "published" ? "#4ade80" : "#f87171" }}>
+              {q.status === "published" ? "Yayında" : "Gizli"}
             </span>
           </div>
           <div style={s.question as React.CSSProperties}>❓ {q.question}</div>
@@ -123,8 +123,8 @@ export default function SoruCevapPage() {
                 onClick={() => { setAnswering(q.id); setAnswerText(""); }}>Yanıtla</button>
             )}
             <button style={{ ...s.btn as React.CSSProperties, background:"rgba(255,255,255,0.05)", color:"#9b9ba4" } as React.CSSProperties}
-              onClick={() => togglePublish(q.id, q.is_published)}>
-              {q.is_published ? "Gizle" : "Yayınla"}
+              onClick={() => togglePublish(q.id, q.status)}>
+              {q.status === "published" ? "Gizle" : "Yayınla"}
             </button>
             <button style={{ ...s.btn as React.CSSProperties, background:"rgba(248,113,113,0.1)", color:"#f87171" } as React.CSSProperties}
               onClick={() => deleteQuestion(q.id)}>Sil</button>
