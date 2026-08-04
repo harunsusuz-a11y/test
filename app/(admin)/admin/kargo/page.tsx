@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 interface ShippingCompany { id:string; name:string; code:string; tracking_url:string|null; is_active:boolean; }
-interface ShippingRate { id:string; company_id:string; name:string; min_weight:number; max_weight:number|null; min_cart:number; price:number; free_shipping_over:number|null; is_active:boolean; company?:{name:string}|null; }
+interface ShippingRate { id:string; zone_id:string; name:string; min_value:number; max_value:number|null; min_cart:number; price:number; free_shipping_threshold:number|null; is_active:boolean; company?:{name:string}|null; }
 
 export default function AdminKargo() {
   const [companies, setCompanies] = useState<ShippingCompany[]>([]);
@@ -16,7 +16,7 @@ export default function AdminKargo() {
     setLoading(true);
     const [{ data:c },{ data:r }] = await Promise.all([
       supabase.from("shipping_companies").select("*").order("name"),
-      supabase.from("shipping_rates").select("*, company:company_id(name)").order("price"),
+      supabase.from("shipping_rates").select("*, company:zone_id(name)").order("price"),
     ]);
     setCompanies((c as ShippingCompany[])||[]);
     setRates((r as ShippingRate[])||[]);
@@ -81,10 +81,10 @@ export default function AdminKargo() {
                     <tr key={r.id}>
                       <td className="adm-td--strong">{(r.company as any)?.name||"—"}</td>
                       <td className="adm-text-muted">{r.name}</td>
-                      <td className="adm-mono adm-text-muted">{r.min_weight}g</td>
-                      <td className="adm-mono adm-text-muted">{r.max_weight?`${r.max_weight}g`:"Limitsiz"}</td>
+                      <td className="adm-mono adm-text-muted">{r.min_value}g</td>
+                      <td className="adm-mono adm-text-muted">{r.max_value?`${r.max_value}g`:"Limitsiz"}</td>
                       <td className="adm-mono adm-font-500">₺{Number(r.price).toFixed(2)}</td>
-                      <td className="adm-mono adm-text-muted">{r.free_shipping_over?`₺${r.free_shipping_over}+`:"—"}</td>
+                      <td className="adm-mono adm-text-muted">{r.free_shipping_threshold?`₺${r.free_shipping_threshold}+`:"—"}</td>
                       <td>
                         <div className={`adm-toggle${r.is_active?" on":""}`} onClick={() => toggleRate(r.id,!r.is_active)} />
                       </td>

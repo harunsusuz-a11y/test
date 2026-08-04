@@ -20,14 +20,14 @@ export default function AdminSatinAlma() {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ supplier_id:"", warehouse_id:"", expected_at:"", notes:"" });
+  const [form, setForm] = useState({ supplier_id:"", notes:"", expected_at:"" });
   const [saving, setSaving] = useState(false);
   const supabase = createClient();
 
   const load = useCallback(async () => {
     setLoading(true);
     const [{ data:o },{ data:s },{ data:w }] = await Promise.all([
-      supabase.from("purchase_orders").select("*, supplier:supplier_id(name), warehouse:warehouse_id(name)").order("created_at",{ascending:false}),
+      supabase.from("purchase_orders").select("*, suppliers(name)").order("created_at",{ascending:false}),
       supabase.from("suppliers").select("id,name").is("deleted_at",null).eq("is_active",true).order("name"),
       supabase.from("warehouses").select("id,name").eq("is_active",true).order("name"),
     ]);
@@ -40,11 +40,11 @@ export default function AdminSatinAlma() {
   useEffect(() => { load(); }, [load]);
 
   async function save() {
-    if (!form.supplier_id || !form.warehouse_id) return;
+
     setSaving(true);
     const { data:{user} } = await supabase.auth.getUser();
     await supabase.from("purchase_orders").insert({
-      supplier_id: form.supplier_id, warehouse_id: form.warehouse_id,
+
       status: "draft", total_amount: 0,
       expected_at: form.expected_at || null, notes: form.notes || null,
       created_by: user?.id,
@@ -61,7 +61,7 @@ export default function AdminSatinAlma() {
     <div>
       <div className="adm-page-header">
         <div><div className="adm-page-title">Satın Alma Siparişleri</div><div className="adm-page-sub">{orders.length} sipariş</div></div>
-        <button className="adm-btn adm-btn--primary" onClick={() => { setForm({supplier_id:"",warehouse_id:"",expected_at:"",notes:""}); setOpen(true); }}>+ Yeni Sipariş</button>
+        <button className="adm-btn adm-btn--primary" onClick={() => { setForm({supplier_id:"",notes:"",expected_at:""}); setOpen(true); }}>+ Yeni Sipariş</button>
       </div>
 
       <div className="adm-kpi-grid" style={{ marginBottom:20 }}>
@@ -119,12 +119,7 @@ export default function AdminSatinAlma() {
                   {suppliers.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
-              <div className="adm-field"><label className="adm-label-text">Depo</label>
-                <select className="adm-select" value={form.warehouse_id} onChange={e=>setForm({...form,warehouse_id:e.target.value})}>
-                  <option value="">— Seç —</option>
-                  {warehouses.map(w=><option key={w.id} value={w.id}>{w.name}</option>)}
-                </select>
-              </div>
+
               <div className="adm-field"><label className="adm-label-text">Beklenen Tarih</label><input className="adm-input" type="date" value={form.expected_at} onChange={e=>setForm({...form,expected_at:e.target.value})} /></div>
               <div className="adm-field"><label className="adm-label-text">Notlar</label><textarea className="adm-textarea" rows={2} value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} /></div>
             </div>
