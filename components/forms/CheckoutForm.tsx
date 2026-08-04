@@ -121,7 +121,7 @@ export function CheckoutForm() {
     const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     try {
-      await supabase.from("orders").insert({
+      const { data: orderData } = await supabase.from("orders").insert({
         order_number: orderId,
         user_id: userId,
         full_name: values.fullName,
@@ -139,7 +139,20 @@ export function CheckoutForm() {
         currency: "TRY",
         status: "pending",
         payment_status: "pending",
-      });
+      }).select("id").single();
+
+      // order_items kaydet
+      if (orderData?.id) {
+        const orderItems = lines.map(l => ({
+          order_id: orderData.id,
+          product_slug: l.slug,
+          product_name: l.name,
+          unit_price: l.price,
+          quantity: l.quantity,
+          image: l.image ?? null,
+        }));
+        await supabase.from("order_items").insert(orderItems);
+      }
     } catch { /* devam et */ }
   }
 
@@ -164,7 +177,7 @@ export function CheckoutForm() {
     }).catch(() => null);
 
     clear();
-    router.push("/siparis-basarili");
+    router.push(`/siparis-basarili?siparis=${orderId}`);
   }
 
   if (lines.length === 0) {
