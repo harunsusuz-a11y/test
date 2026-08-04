@@ -1,202 +1,156 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { DataTable, type BulkAction } from "@/components/admin/ui/DataTable";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Users, UserCheck, UserX, Star } from "lucide-react";
 
-interface Profile {
+type Customer = {
   id: string; first_name: string | null; last_name: string | null;
-  email: string; phone: string | null; status: string; user_type: string;
-  loyalty_points: number | null; total_orders: number | null; total_spent: number | null;
-  last_login_at: string | null; created_at: string; marketing_consent: boolean | null;
-}
+  email: string; phone: string | null; status: string;
+  user_type: string; total_spent: number | null; total_orders: number | null;
+  loyalty_points: number | null; created_at: string;
+};
 
-export default function AdminMusteriler() {
-  const [customers, setCustomers] = useState<Profile[]>([]);
+const STATUS_COLORS: Record<string, string> = { active:"#4ade80", inactive:"#f59e0b", banned:"#f87171" };
+const STATUS_TR: Record<string, string> = { active:"Aktif", inactive:"Pasif", banned:"Engelli" };
+
+export default function MusterilerPage() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<Profile | null>(null);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("");
+  const PAGE_SIZE = 20;
   const supabase = createClient();
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
+    let q = supabase.from("profiles")
+      .select("*", { count:"exact" })
       .eq("user_type", "customer")
-      .order("created_at", { ascending: false });
-    setCustomers((data as Profile[]) || []);
+      .order("created_at", { ascending:false })
+      .range((page-1)*PAGE_SIZE, page*PAGE_SIZE-1);
+    if (statusFilter) q = q.eq("status", statusFilter);
+    if (search) q = q.or(`first_name.ilike.%${search}%,last_name.ilike.%${search}%,email.ilike.%${search}%`);
+    const { data, count } = await q;
+    setCustomers((data ?? []) as Customer[]);
+    setTotal(count ?? 0);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, page, statusFilter, search]);
 
   useEffect(() => { load(); }, [load]);
 
-  async function toggleStatus(id: string, status: string) {
-    const next = status === "active" ? "inactive" : "active";
-    await supabase.from("profiles").update({ status: next }).eq("id", id);
-    setCustomers(prev => prev.map(c => c.id === id ? { ...c, status: next } : c));
-    if (selected?.id === id) setSelected({ ...selected, status: next });
+  async function bulkSetStatus(ids: string[], status: string) {
+    await supabase.from("profiles").update({ status }).in("id", ids);
+    load();
   }
 
-  function fullName(c: Profile) {
-    return [c.first_name, c.last_name].filter(Boolean).join(" ") || "—";
+  function exportCSV() {
+    const rows = ["Ad,Soyad,E-posta,Telefon,Durum,Harcama,Sipariş,Kayıt",
+      ...customers.map(c => `${c.first_name??""} ,${c.last_name??""},${c.email},${c.phone??"-"},${STATUS_TR[c.status]??c.status},${c.total_spent??0},${c.total_orders??0},${new Date(c.created_at).toLocaleDateString("tr-TR")}`)
+    ].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\uFEFF"+rows], { type:"text/csv;charset=utf-8" }));
+    a.download = "musteriler.csv"; a.click();
   }
 
-  const filtered = customers.filter(c => {
-    const ms = statusFilter === "all" || c.status === statusFilter;
-    const q = search.toLowerCase();
-    const mq = !q || c.email.toLowerCase().includes(q) || fullName(c).toLowerCase().includes(q);
-    return ms && mq;
-  });
+  const columns: ColumnDef<Customer, unknown>[] = [
+    { accessorKey: "first_name", header: "Müşteri",
+      cell: ({ row }) => {
+        const c = row.original;
+        return (
+          <div>
+            <div style={{ fontWeight:500 }}>{c.first_name ?? "-"} {c.last_name ?? ""}</div>
+            <div style={{ fontSize:11, color:"#6b6b76" }}>{c.email}</div>
+            {c.phone && <div style={{ fontSize:11, color:"#6b6b76" }}>{c.phone}</div>}
+          </div>
+        );
+      }},
+    { accessorKey: "status", header: "Durum",
+      cell: ({ getValue }) => {
+        const s = getValue() as string;
+        return <span style={{ fontSize:12, fontWeight:600, color:STATUS_COLORS[s]??"#9b9ba4",
+          background:`${STATUS_COLORS[s]??"#9b9ba4"}18`, padding:"3px 10px", borderRadius:20 }}>
+          {STATUS_TR[s] ?? s}
+        </span>;
+      }},
+    { accessorKey: "total_orders", header: "Sipariş", enableSorting: true,
+      cell: ({ getValue }) => <span style={{ color:"#c8a26b", fontWeight:600 }}>{getValue() as number ?? 0}</span> },
+    { accessorKey: "total_spent", header: "Harcama", enableSorting: true,
+      cell: ({ getValue }) => <span style={{ fontWeight:600 }}>₺{Number(getValue() ?? 0).toFixed(2)}</span> },
+    { accessorKey: "loyalty_points", header: "Puan",
+      cell: ({ getValue }) => (
+        <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+          <Star size={12} color="#c8a26b" />
+          <span style={{ fontSize:13, color:"#c8a26b" }}>{getValue() as number ?? 0}</span>
+        </div>
+      )},
+    { accessorKey: "created_at", header: "Kayıt", enableSorting: true,
+      cell: ({ getValue }) => <span style={{ fontSize:12, color:"#6b6b76" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
+  ];
+
+  const bulkActions: BulkAction[] = [
+    { label:"Aktifleştir", onClick: (ids) => bulkSetStatus(ids, "active") },
+    { label:"Pasifleştir", onClick: (ids) => bulkSetStatus(ids, "inactive") },
+    { label:"Engelle", onClick: (ids) => bulkSetStatus(ids, "banned"), danger: true },
+  ];
+
+  const kpi = {
+    total,
+    active: customers.filter(c => c.status === "active").length,
+    banned: customers.filter(c => c.status === "banned").length,
+    avgSpent: customers.length ? customers.reduce((s,c) => s + Number(c.total_spent??0), 0) / customers.length : 0,
+  };
 
   return (
-    <div>
-      <div className="adm-page-header">
-        <div>
-          <div className="adm-page-title">Müşteriler</div>
-          <div className="adm-page-sub">{customers.length} müşteri</div>
+    <div style={{ padding:24 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <Users size={22} color="#c8a26b" />
+          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Müşteriler</span>
+          <span style={{ fontSize:13, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
         </div>
-        <button className="adm-btn adm-btn--secondary">↓ Dışa Aktar</button>
       </div>
 
       {/* KPI */}
-      <div className="adm-kpi-grid" style={{ marginBottom: 20 }}>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14, marginBottom:24 }}>
         {[
-          { label: "Toplam Müşteri", value: customers.length, color: "var(--adm-text)" },
-          { label: "Aktif",          value: customers.filter(c => c.status === "active").length,   color: "var(--adm-green)" },
-          { label: "Pasif",          value: customers.filter(c => c.status === "inactive").length, color: "var(--adm-yellow)" },
-          { label: "Engellenen",     value: customers.filter(c => c.status === "banned").length,   color: "var(--adm-red)" },
-        ].map((k, i) => (
-          <div key={i} className="adm-stat">
-            <div className="adm-stat__label">{k.label}</div>
-            <div className="adm-stat__value" style={{ fontSize: 22, color: k.color }}>{k.value}</div>
+          { icon:<Users size={16}/>, label:"Toplam", value:total, color:"#c8a26b" },
+          { icon:<UserCheck size={16}/>, label:"Aktif", value:kpi.active, color:"#4ade80" },
+          { icon:<UserX size={16}/>, label:"Engelli", value:kpi.banned, color:"#f87171" },
+          { icon:<Star size={16}/>, label:"Ort. Harcama", value:`₺${kpi.avgSpent.toFixed(2)}`, color:"#a78bfa" },
+        ].map((k,i) => (
+          <div key={i} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:16 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8, color:k.color, marginBottom:8 }}>{k.icon}<span style={{ fontSize:12 }}>{k.label}</span></div>
+            <div style={{ fontSize:22, fontWeight:700, color:k.color }}>{k.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Filtreler */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-        <div className="adm-tabs">
-          {[["all","Tümü"],["active","Aktif"],["inactive","Pasif"],["banned","Engellenen"]].map(([k,l]) => (
-            <button key={k} className={`adm-tab${statusFilter===k?" active":""}`} onClick={() => setStatusFilter(k)}>{l}</button>
-          ))}
-        </div>
-        <div className="adm-search" style={{ flex: 1, maxWidth: 300 }}>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
-          <input className="adm-input" placeholder="Ad, e-posta ile ara…" value={search} onChange={e => setSearch(e.target.value)} />
-        </div>
+      {/* Durum filtreleri */}
+      <div style={{ display:"flex", gap:8, marginBottom:20 }}>
+        {[{ label:"Tümü", value:"" }, { label:"Aktif", value:"active" }, { label:"Pasif", value:"inactive" }, { label:"Engelli", value:"banned" }].map(f => (
+          <button key={f.value} onClick={() => { setStatusFilter(f.value); setPage(1); }}
+            style={{ padding:"6px 14px", borderRadius:20, border: statusFilter===f.value ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
+              background: statusFilter===f.value ? "rgba(200,162,107,0.12)":"transparent",
+              color: statusFilter===f.value ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+            {f.label}
+          </button>
+        ))}
       </div>
 
-      <div className="adm-card">
-        {loading ? <div className="adm-empty"><div className="adm-empty__title">Yükleniyor…</div></div> : (
-          <table className="adm-table">
-            <thead><tr><th>Müşteri</th><th>E-posta</th><th>Sipariş</th><th>Toplam</th><th>Puan</th><th>Son Giriş</th><th>Durum</th><th /></tr></thead>
-            <tbody>
-              {filtered.map(c => (
-                <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => setSelected(c)}>
-                  <td>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--adm-surface-3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "var(--adm-accent)", flexShrink: 0 }}>
-                        {(c.first_name || c.email)[0].toUpperCase()}
-                      </div>
-                      <div style={{ fontWeight: 500, color: "var(--adm-text)" }}>{fullName(c)}</div>
-                    </div>
-                  </td>
-                  <td className="adm-text-muted">{c.email}</td>
-                  <td className="adm-mono">{c.total_orders ?? 0}</td>
-                  <td className="adm-mono adm-text-accent">₺{(c.total_spent || 0).toLocaleString("tr-TR")}</td>
-                  <td className="adm-mono">{c.loyalty_points ?? 0}</td>
-                  <td style={{ fontSize: 11, color: "var(--adm-text-4)" }}>
-                    {c.last_login_at ? new Date(c.last_login_at).toLocaleDateString("tr-TR") : "—"}
-                  </td>
-                  <td>
-                    <span className={`adm-badge ${c.status === "active" ? "adm-badge--green" : c.status === "banned" ? "adm-badge--red" : "adm-badge--muted"}`}>
-                      {c.status === "active" ? "Aktif" : c.status === "banned" ? "Engelli" : "Pasif"}
-                    </span>
-                  </td>
-                  <td onClick={e => e.stopPropagation()}>
-                    <button
-                      className={`adm-btn adm-btn--sm ${c.status === "active" ? "adm-btn--danger" : "adm-btn--secondary"}`}
-                      onClick={() => toggleStatus(c.id, c.status)}
-                    >
-                      {c.status === "active" ? "Devre Dışı" : "Aktifleştir"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && <tr><td colSpan={8}><div className="adm-empty"><div className="adm-empty__title">Müşteri bulunamadı</div></div></td></tr>}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Drawer */}
-      {selected && (
-        <>
-          <div className="adm-overlay" style={{ justifyContent:"flex-end", padding:0, alignItems:"stretch" }} onClick={() => setSelected(null)} />
-          <div className="adm-drawer">
-            <div className="adm-drawer-header">
-              <div>
-                <div style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)" }}>{fullName(selected)}</div>
-                <div style={{ fontSize:11, color:"var(--adm-text-3)", marginTop:2 }}>{selected.email}</div>
-              </div>
-              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setSelected(null)}>✕</button>
-            </div>
-            <div className="adm-drawer-body">
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10, marginBottom:16 }}>
-                {[
-                  { label:"Sipariş",  value: selected.total_orders ?? 0 },
-                  { label:"Harcama",  value: `₺${(selected.total_spent||0).toLocaleString("tr-TR")}` },
-                  { label:"Puan",     value: selected.loyalty_points ?? 0 },
-                ].map((k,i) => (
-                  <div key={i} className="adm-stat">
-                    <div className="adm-stat__label">{k.label}</div>
-                    <div className="adm-stat__value" style={{ fontSize:18 }}>{k.value}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="adm-card" style={{ marginBottom:12 }}>
-                <div className="adm-card-header"><span className="adm-card-title">Bilgiler</span></div>
-                <div className="adm-card-body">
-                  {[
-                    ["Ad", selected.first_name || "—"],
-                    ["Soyad", selected.last_name || "—"],
-                    ["E-posta", selected.email],
-                    ["Telefon", selected.phone || "—"],
-                    ["Kayıt", new Date(selected.created_at).toLocaleDateString("tr-TR")],
-                    ["Son Giriş", selected.last_login_at ? new Date(selected.last_login_at).toLocaleDateString("tr-TR") : "—"],
-                    ["Durum", selected.status],
-                    ["E-posta İzni", selected.marketing_consent ? "Evet" : "Hayır"],
-                  ].map(([k,v]) => (
-                    <div key={k} style={{ display:"flex", gap:8, marginBottom:7 }}>
-                      <span style={{ fontSize:11, color:"var(--adm-text-4)", width:80, flexShrink:0 }}>{k}</span>
-                      <span style={{ fontSize:12, color:"var(--adm-text-2)" }}>{v}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display:"flex", gap:8 }}>
-                <button
-                  className={`adm-btn ${selected.status === "active" ? "adm-btn--danger" : "adm-btn--secondary"}`}
-                  onClick={() => toggleStatus(selected.id, selected.status)}
-                >
-                  {selected.status === "active" ? "Devre Dışı Bırak" : selected.status === "banned" ? "Engeli Kaldır" : "Aktifleştir"}
-                </button>
-                <button
-                  className="adm-btn adm-btn--danger"
-                  onClick={() => { supabase.from("profiles").update({ status: "banned" }).eq("id", selected.id); setSelected({ ...selected, status: "banned" }); setCustomers(prev => prev.map(c => c.id === selected.id ? { ...c, status: "banned" } : c)); }}
-                >
-                  Engelle
-                </button>
-              </div>
-            </div>
-            <div className="adm-drawer-footer">
-              <button className="adm-btn adm-btn--secondary" onClick={() => setSelected(null)}>Kapat</button>
-            </div>
-          </div>
-        </>
-      )}
+      <DataTable
+        data={customers} columns={columns} loading={loading}
+        total={total} page={page} pageSize={PAGE_SIZE}
+        onPageChange={p => setPage(p)}
+        onSearch={q => { setSearch(q); setPage(1); }}
+        searchPlaceholder="Ad, e-posta, telefon…"
+        bulkActions={bulkActions}
+        onExportCSV={exportCSV}
+        emptyMessage="Müşteri bulunamadı."
+      />
     </div>
   );
 }

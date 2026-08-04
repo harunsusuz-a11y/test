@@ -1,382 +1,358 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { DataTable, type BulkAction } from "@/components/admin/ui/DataTable";
+import { ProductVariants } from "@/components/admin/ProductVariants";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Package, Plus, Upload, Edit2, Copy, Archive, X, Save } from "lucide-react";
+import Image from "next/image";
 
-interface Product {
-  id: string; name: string; slug: string; sku: string | null;
-  price: number; compare_at_price: number | null; cost_price: number | null;
-  status: string; is_featured: boolean; is_new: boolean; is_bestseller: boolean;
-  category_id: string | null; brand_id: string | null;
+type Product = {
+  id: string; name: string; slug: string; price: number; compare_at_price: number | null;
+  status: string; is_featured: boolean; is_bestseller: boolean;
   main_image_url: string | null; short_description: string | null;
-  meta_title: string | null; meta_description: string | null;
-  weight: number | null; created_at: string;
-  category?: { name: string } | null;
-  brand?: { name: string } | null;
-}
-interface Category { id: string; name: string; }
-interface Brand { id: string; name: string; }
-
-const EMPTY = {
-  name:"", slug:"", sku:"", price:"", compare_at_price:"", cost_price:"",
-  status:"active", is_featured:false, is_new:false, is_bestseller:false,
-  category_id:"", brand_id:"", main_image_url:"", short_description:"",
-  meta_title:"", meta_description:"", weight:"",
+  protein_percent: number | null; hazelnut_percent: number | null; created_at: string;
 };
 
-export default function AdminUrunler() {
+const STATUS_COLORS: Record<string,string> = { active:"#4ade80", inactive:"#f59e0b", draft:"#9b9ba4" };
+const STATUS_TR: Record<string,string> = { active:"Aktif", inactive:"Pasif", draft:"Taslak" };
+
+const EMPTY_FORM = {
+  name:"", slug:"", short_description:"", price:"", compare_at_price:"",
+  status:"active", is_featured:false, is_bestseller:false,
+};
+
+export default function UrunlerPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"genel"|"seo"|"flags">("genel");
-  const [editing, setEditing] = useState(EMPTY);
-  const [editId, setEditId] = useState<string|null>(null);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [modal, setModal] = useState<"create"|"edit"|"variants"|null>(null);
+  const [selected, setSelected] = useState<Product | null>(null);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const PAGE_SIZE = 20;
   const supabase = createClient();
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [{ data:p }, { data:c }, { data:b }] = await Promise.all([
-      supabase.from("products").select("*, category:category_id(name), brand:brand_id(name)")
-        .is("deleted_at", null).order("created_at", { ascending: false }),
-      supabase.from("categories").select("id,name").is("deleted_at", null).order("name"),
-      supabase.from("brands").select("id,name").is("deleted_at", null).order("name"),
-    ]);
-    setProducts((p as Product[]) || []);
-    setCategories((c as Category[]) || []);
-    setBrands((b as Brand[]) || []);
+    let q = supabase.from("products")
+      .select("*", { count:"exact" })
+      .is("deleted_at", null)
+      .order("created_at", { ascending:false })
+      .range((page-1)*PAGE_SIZE, page*PAGE_SIZE-1);
+    if (statusFilter) q = q.eq("status", statusFilter);
+    if (search) q = q.ilike("name", `%${search}%`);
+    const { data, count } = await q;
+    setProducts((data ?? []) as Product[]);
+    setTotal(count ?? 0);
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, page, statusFilter, search]);
 
   useEffect(() => { load(); }, [load]);
 
-  function slugify(s: string) {
-    return s.toLowerCase()
-      .replace(/ğ/g,"g").replace(/ü/g,"u").replace(/ş/g,"s")
-      .replace(/ı/g,"i").replace(/ö/g,"o").replace(/ç/g,"c")
-      .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-  }
-
-  function openNew() {
-    setEditing(EMPTY); setEditId(null); setActiveTab("genel"); setOpen(true);
+  function openCreate() {
+    setSelected(null); setForm(EMPTY_FORM); setModal("create");
   }
   function openEdit(p: Product) {
-    setEditing({
-      name: p.name, slug: p.slug, sku: p.sku||"",
-      price: String(p.price), compare_at_price: p.compare_at_price!=null?String(p.compare_at_price):"",
-      cost_price: p.cost_price!=null?String(p.cost_price):"",
-      status: p.status, is_featured: p.is_featured, is_new: p.is_new, is_bestseller: p.is_bestseller,
-      category_id: p.category_id||"", brand_id: p.brand_id||"",
-      main_image_url: p.main_image_url||"", short_description: p.short_description||"",
-      meta_title: p.meta_title||"", meta_description: p.meta_description||"",
-      weight: p.weight!=null?String(p.weight):"",
-    });
-    setEditId(p.id); setActiveTab("genel"); setOpen(true);
+    setSelected(p);
+    setForm({ name:p.name, slug:p.slug, short_description:p.short_description??"", price:String(p.price),
+      compare_at_price:String(p.compare_at_price??""), status:p.status, is_featured:p.is_featured, is_bestseller:p.is_bestseller });
+    setModal("edit");
   }
+  function openVariants(p: Product) { setSelected(p); setModal("variants"); }
 
   async function save() {
-    if (!editing.name || !editing.price) return;
+    if (!form.name || !form.price) return;
     setSaving(true);
-    const { data:{ user } } = await supabase.auth.getUser();
     const payload = {
-      name: editing.name,
-      slug: editing.slug || slugify(editing.name),
-      sku: editing.sku||null,
-      price: Number(editing.price),
-      compare_at_price: editing.compare_at_price?Number(editing.compare_at_price):null,
-      cost_price: editing.cost_price?Number(editing.cost_price):null,
-      status: editing.status,
-      is_featured: editing.is_featured, is_new: editing.is_new, is_bestseller: editing.is_bestseller,
-      category_id: editing.category_id||null, brand_id: editing.brand_id||null,
-      main_image_url: editing.main_image_url||null,
-      short_description: editing.short_description||null,
-      meta_title: editing.meta_title||null, meta_description: editing.meta_description||null,
-      weight: editing.weight?Number(editing.weight):null,
+      name: form.name,
+      slug: form.slug || form.name.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,""),
+      short_description: form.short_description || null,
+      price: parseFloat(form.price),
+      compare_at_price: form.compare_at_price ? parseFloat(form.compare_at_price) : null,
+      status: form.status, is_featured: form.is_featured, is_bestseller: form.is_bestseller,
     };
-    if (editId) {
-      await supabase.from("products").update({ ...payload, updated_by: user?.id }).eq("id", editId);
+    if (modal === "edit" && selected) {
+      await supabase.from("products").update({ ...payload, updated_at:new Date().toISOString() }).eq("id", selected.id);
     } else {
-      await supabase.from("products").insert({ ...payload, created_by: user?.id });
+      await supabase.from("products").insert(payload);
     }
-    setSaving(false); setOpen(false); load();
+    setSaving(false); setModal(null); load();
   }
 
-  async function remove(id: string) {
-    if (!confirm("Ürün arşivlensin mi?")) return;
-    await supabase.from("products").update({ deleted_at: new Date().toISOString() }).eq("id", id);
+  async function duplicate(p: Product) {
+    await supabase.from("products").insert({
+      ...p, id: undefined, slug: `${p.slug}-kopya-${Date.now()}`,
+      name: `${p.name} (Kopya)`, status:"draft", created_at: new Date().toISOString(),
+    });
     load();
   }
 
-  async function toggleStatus(id: string, status: string) {
-    const next = status === "active" ? "inactive" : "active";
-    await supabase.from("products").update({ status: next }).eq("id", id);
-    setProducts(prev => prev.map(p => p.id===id ? { ...p, status: next } : p));
+  async function archive(id: string) {
+    if (!confirm("Ürün arşivlensin mi?")) return;
+    await supabase.from("products").update({ status:"inactive" }).eq("id", id);
+    load();
   }
 
-  const filtered = products.filter(p => {
-    const ms = statusFilter==="all" || p.status===statusFilter;
-    const q = search.toLowerCase();
-    const mq = !q || p.name.toLowerCase().includes(q) || (p.sku||"").toLowerCase().includes(q);
-    return ms && mq;
-  });
+  async function bulkDelete(ids: string[]) {
+    if (!confirm(`${ids.length} ürün silinsin mi?`)) return;
+    await supabase.from("products").update({ deleted_at:new Date().toISOString() }).in("id", ids);
+    load();
+  }
 
-  const counts = { active: products.filter(p=>p.status==="active").length, inactive: products.filter(p=>p.status==="inactive").length, draft: products.filter(p=>p.status==="draft").length };
+  async function bulkStatus(ids: string[], status: string) {
+    await supabase.from("products").update({ status }).in("id", ids);
+    load();
+  }
+
+  // CSV import
+  async function handleCSVImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    const text = await file.text();
+    const lines = text.split("\n").filter(Boolean);
+    const headers = lines[0].split(",").map(h => h.trim());
+    const rows = lines.slice(1).map(line => {
+      const vals = line.split(",");
+      return Object.fromEntries(headers.map((h,i) => [h, vals[i]?.trim() ?? ""]));
+    });
+    for (const row of rows) {
+      if (!row.name) continue;
+      await supabase.from("products").upsert({
+        name: row.name,
+        slug: row.slug || row.name.toLowerCase().replace(/\s+/g,"-"),
+        price: parseFloat(row.price) || 0,
+        status: row.status || "draft",
+        short_description: row.short_description || null,
+      }, { onConflict:"slug" });
+    }
+    setImporting(false);
+    if (fileRef.current) fileRef.current.value = "";
+    load();
+  }
+
+  function exportCSV() {
+    const rows = ["Ad,Slug,Fiyat,Durum,Öne Çıkan,Çok Satan,Tarih",
+      ...products.map(p => `"${p.name}",${p.slug},${p.price},${STATUS_TR[p.status]??p.status},${p.is_featured?"Evet":"Hayır"},${p.is_bestseller?"Evet":"Hayır"},${new Date(p.created_at).toLocaleDateString("tr-TR")}`)
+    ].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\uFEFF"+rows], { type:"text/csv;charset=utf-8" }));
+    a.download = "urunler.csv"; a.click();
+  }
+
+  const columns: ColumnDef<Product, unknown>[] = [
+    { accessorKey: "name", header: "Ürün",
+      cell: ({ row }) => {
+        const p = row.original;
+        return (
+          <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+            {p.main_image_url ? (
+              <div style={{ width:40, height:40, borderRadius:8, overflow:"hidden", flexShrink:0, position:"relative" }}>
+                <Image src={p.main_image_url} alt={p.name} fill style={{ objectFit:"cover" }} sizes="40px" />
+              </div>
+            ) : (
+              <div style={{ width:40, height:40, borderRadius:8, background:"rgba(255,255,255,0.05)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <Package size={18} color="#3a3a45" />
+              </div>
+            )}
+            <div>
+              <div style={{ fontWeight:500 }}>{p.name}</div>
+              <div style={{ fontSize:11, color:"#6b6b76", fontFamily:"monospace" }}>{p.slug}</div>
+            </div>
+          </div>
+        );
+      }},
+    { accessorKey: "price", header: "Fiyat", enableSorting: true,
+      cell: ({ row }) => (
+        <div>
+          <div style={{ fontWeight:600 }}>₺{Number(row.original.price).toFixed(2)}</div>
+          {row.original.compare_at_price && <div style={{ fontSize:11, color:"#6b6b76", textDecoration:"line-through" }}>₺{Number(row.original.compare_at_price).toFixed(2)}</div>}
+        </div>
+      )},
+    { accessorKey: "status", header: "Durum",
+      cell: ({ getValue }) => {
+        const s = getValue() as string;
+        return <span style={{ fontSize:12, fontWeight:600, color:STATUS_COLORS[s]??"#9b9ba4",
+          background:`${STATUS_COLORS[s]??"#9b9ba4"}18`, padding:"3px 10px", borderRadius:20 }}>
+          {STATUS_TR[s] ?? s}
+        </span>;
+      }},
+    { id:"badges", header: "Etiket",
+      cell: ({ row }) => {
+        const p = row.original;
+        return (
+          <div style={{ display:"flex", gap:4, flexWrap:"wrap" as "wrap" }}>
+            {p.is_featured && <span style={{ fontSize:10, background:"rgba(200,162,107,0.15)", color:"#c8a26b", padding:"2px 7px", borderRadius:10, fontWeight:600 }}>Öne Çıkan</span>}
+            {p.is_bestseller && <span style={{ fontSize:10, background:"rgba(74,222,128,0.1)", color:"#4ade80", padding:"2px 7px", borderRadius:10, fontWeight:600 }}>Çok Satan</span>}
+          </div>
+        );
+      }},
+    { accessorKey: "created_at", header: "Tarih", enableSorting: true,
+      cell: ({ getValue }) => <span style={{ fontSize:12, color:"#6b6b76" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
+    { id: "actions", header: "",
+      cell: ({ row }) => {
+        const p = row.original;
+        return (
+          <div style={{ display:"flex", gap:5 }}>
+            <button title="Düzenle" onClick={() => openEdit(p)}
+              style={{ background:"rgba(200,162,107,0.1)", border:"none", borderRadius:6, padding:"5px 8px", color:"#c8a26b", cursor:"pointer" }}>
+              <Edit2 size={13}/>
+            </button>
+            <button title="Varyantlar" onClick={() => openVariants(p)}
+              style={{ background:"rgba(96,165,250,0.1)", border:"none", borderRadius:6, padding:"5px 8px", color:"#60a5fa", cursor:"pointer", fontSize:11, fontWeight:600 }}>
+              Varyant
+            </button>
+            <button title="Kopyala" onClick={() => duplicate(p)}
+              style={{ background:"rgba(255,255,255,0.05)", border:"none", borderRadius:6, padding:"5px 8px", color:"#9b9ba4", cursor:"pointer" }}>
+              <Copy size={13}/>
+            </button>
+            <button title="Arşivle" onClick={() => archive(p.id)}
+              style={{ background:"rgba(255,255,255,0.05)", border:"none", borderRadius:6, padding:"5px 8px", color:"#9b9ba4", cursor:"pointer" }}>
+              <Archive size={13}/>
+            </button>
+          </div>
+        );
+      }},
+  ];
+
+  const bulkActions: BulkAction[] = [
+    { label:"Yayınla", onClick: (ids) => bulkStatus(ids, "active") },
+    { label:"Taslağa Al", onClick: (ids) => bulkStatus(ids, "draft") },
+    { label:"Sil", onClick: bulkDelete, danger: true },
+  ];
+
+  const inputStyle: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"#f2f2f3", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
 
   return (
-    <div>
-      <div className="adm-page-header">
-        <div>
-          <div className="adm-page-title">Ürünler</div>
-          <div className="adm-page-sub">{products.length} ürün · {counts.active} aktif</div>
+    <div style={{ padding:24 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+          <Package size={22} color="#c8a26b" />
+          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Ürünler</span>
+          <span style={{ fontSize:13, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
         </div>
-        <button className="adm-btn adm-btn--primary" onClick={openNew}>+ Yeni Ürün</button>
+        <div style={{ display:"flex", gap:8 }}>
+          <input ref={fileRef} type="file" accept=".csv" style={{ display:"none" }} onChange={handleCSVImport} />
+          <button onClick={() => fileRef.current?.click()} disabled={importing}
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:importing ? "not-allowed":"pointer", fontSize:13 }}>
+            <Upload size={14}/>{importing ? "İçe Aktarılıyor…":"CSV İçe Aktar"}
+          </button>
+          <button onClick={openCreate}
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8, background:"#c8a26b", border:"none", color:"#000", cursor:"pointer", fontWeight:700, fontSize:13 }}>
+            <Plus size={14}/> Ürün Ekle
+          </button>
+        </div>
       </div>
 
-      <div className="adm-kpi-grid" style={{ marginBottom: 20 }}>
-        {[
-          { label:"Toplam", value:products.length, color:"var(--adm-text)" },
-          { label:"Aktif",  value:counts.active,   color:"var(--adm-green)" },
-          { label:"Pasif",  value:counts.inactive, color:"var(--adm-text-3)" },
-          { label:"Taslak", value:counts.draft,    color:"var(--adm-yellow)" },
-        ].map((k,i) => (
-          <div key={i} className="adm-stat">
-            <div className="adm-stat__label">{k.label}</div>
-            <div className="adm-stat__value" style={{ fontSize:22, color:k.color }}>{k.value}</div>
-          </div>
+      {/* Filtreler */}
+      <div style={{ display:"flex", gap:8, marginBottom:20 }}>
+        {[{ label:"Tümü", value:"" }, { label:"Aktif", value:"active" }, { label:"Pasif", value:"inactive" }, { label:"Taslak", value:"draft" }].map(f => (
+          <button key={f.value} onClick={() => { setStatusFilter(f.value); setPage(1); }}
+            style={{ padding:"6px 14px", borderRadius:20, border: statusFilter===f.value ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
+              background: statusFilter===f.value ? "rgba(200,162,107,0.12)":"transparent",
+              color: statusFilter===f.value ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+            {f.label}
+          </button>
         ))}
       </div>
 
-      <div style={{ display:"flex", gap:10, marginBottom:16, flexWrap:"wrap", alignItems:"center" }}>
-        <div className="adm-tabs">
-          {[["all","Tümü"],["active","Aktif"],["inactive","Pasif"],["draft","Taslak"]].map(([k,l]) => (
-            <button key={k} className={`adm-tab${statusFilter===k?" active":""}`} onClick={() => setStatusFilter(k)}>{l}</button>
-          ))}
-        </div>
-        <div className="adm-search" style={{ flex:1, maxWidth:320 }}>
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="6.5" cy="6.5" r="4"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
-          <input className="adm-input" placeholder="Ürün adı veya SKU…" value={search} onChange={e => setSearch(e.target.value)} />
-        </div>
-      </div>
+      <DataTable
+        data={products} columns={columns} loading={loading}
+        total={total} page={page} pageSize={PAGE_SIZE}
+        onPageChange={p => setPage(p)}
+        onSearch={q => { setSearch(q); setPage(1); }}
+        searchPlaceholder="Ürün adı, slug…"
+        bulkActions={bulkActions}
+        onExportCSV={exportCSV}
+        emptyMessage="Ürün bulunamadı."
+      />
 
-      <div className="adm-card">
-        {loading ? <div className="adm-empty"><div className="adm-empty__title">Yükleniyor…</div></div> : (
-          <table className="adm-table">
-            <thead>
-              <tr><th>Ürün</th><th>SKU</th><th>Kategori</th><th>Fiyat</th><th>Maliyet</th><th>Durum</th><th>Etiketler</th><th /></tr>
-            </thead>
-            <tbody>
-              {filtered.map(p => (
-                <tr key={p.id}>
-                  <td>
-                    <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                      <div style={{ width:36, height:36, borderRadius:6, overflow:"hidden", background:"var(--adm-surface-3)", flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center" }}>
-                        {p.main_image_url
-                          ? <img src={p.main_image_url} alt={p.name} style={{ width:"100%", height:"100%", objectFit:"cover" }} onError={e => { (e.target as HTMLImageElement).style.display="none"; }} />
-                          : <span style={{ fontSize:14 }}>📦</span>
-                        }
-                      </div>
-                      <div>
-                        <div style={{ fontWeight:500, color:"var(--adm-text)", fontSize:13 }}>{p.name}</div>
-                        <div style={{ fontSize:10, color:"var(--adm-text-4)", fontFamily:"var(--adm-mono)" }}>{p.slug}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="adm-mono adm-text-muted" style={{ fontSize:11 }}>{p.sku||"—"}</td>
-                  <td className="adm-text-muted" style={{ fontSize:12 }}>{(p.category as any)?.name||"—"}</td>
-                  <td>
-                    <div>
-                      <span className="adm-mono adm-font-500">₺{Number(p.price).toFixed(2)}</span>
-                      {p.compare_at_price && <div style={{ fontSize:10, color:"var(--adm-text-4)", textDecoration:"line-through" }}>₺{Number(p.compare_at_price).toFixed(2)}</div>}
-                    </div>
-                  </td>
-                  <td className="adm-mono adm-text-muted" style={{ fontSize:11 }}>{p.cost_price!=null?`₺${Number(p.cost_price).toFixed(2)}`:"—"}</td>
-                  <td>
-                    <div className={`adm-toggle${p.status==="active"?" on":""}`} onClick={() => toggleStatus(p.id, p.status)} />
-                  </td>
-                  <td>
-                    <div style={{ display:"flex", gap:3, flexWrap:"wrap" }}>
-                      {p.is_featured && <span className="adm-badge adm-badge--accent" style={{ fontSize:9 }}>⭐ Öne Çıkan</span>}
-                      {p.is_new && <span className="adm-badge adm-badge--blue" style={{ fontSize:9 }}>Yeni</span>}
-                      {p.is_bestseller && <span className="adm-badge adm-badge--green" style={{ fontSize:9 }}>🔥 Çok Satan</span>}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ display:"flex", gap:4, justifyContent:"flex-end" }}>
-                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => openEdit(p)}>Düzenle</button>
-                      <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => remove(p.id)}>Sil</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length===0 && <tr><td colSpan={8}><div className="adm-empty"><div className="adm-empty__title">Ürün bulunamadı</div></div></td></tr>}
-            </tbody>
-          </table>
-        )}
-      </div>
-
-      {/* Modal */}
-      {open && (
-        <div className="adm-overlay" onClick={() => setOpen(false)}>
-          <div className="adm-modal adm-modal--lg" onClick={e => e.stopPropagation()} style={{ maxWidth: 680 }}>
-            <div className="adm-modal-header">
-              <span className="adm-modal-title">{editId ? "Ürün Düzenle" : "Yeni Ürün"}</span>
-              <button className="adm-btn adm-btn--ghost adm-btn--icon" onClick={() => setOpen(false)}>✕</button>
+      {/* Create / Edit Modal */}
+      {(modal === "create" || modal === "edit") && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }}
+          onClick={() => setModal(null)}>
+          <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:540, maxWidth:"94vw", maxHeight:"90vh", overflowY:"auto" as "auto" }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+              <h3 style={{ fontSize:17, fontWeight:700, color:"#f2f2f3", margin:0 }}>{modal==="edit" ? "Ürünü Düzenle":"Yeni Ürün"}</h3>
+              <button onClick={() => setModal(null)} style={{ background:"transparent", border:"none", color:"#6b6b76", cursor:"pointer" }}><X size={18}/></button>
             </div>
-
-            {/* Tab nav */}
-            <div style={{ display:"flex", gap:2, padding:"0 20px", borderBottom:"1px solid var(--adm-border)" }}>
-              {(["genel","seo","flags"] as const).map(t => (
-                <button key={t} onClick={() => setActiveTab(t)} style={{
-                  padding:"8px 14px", fontSize:12, border:"none", background:"none", cursor:"pointer",
-                  color: activeTab===t?"var(--adm-text)":"var(--adm-text-3)",
-                  borderBottom: activeTab===t?"2px solid var(--adm-accent)":"2px solid transparent",
-                  fontFamily:"var(--adm-font)", fontWeight: activeTab===t?600:400,
-                }}>
-                  {t==="genel"?"Genel":t==="seo"?"SEO & Meta":"Etiketler"}
-                </button>
-              ))}
+            <div style={{ display:"grid", gap:14 }}>
+              <div>
+                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Ürün Adı *</label>
+                <input style={inputStyle} value={form.name}
+                  onChange={e => { const v = e.target.value; setForm(f => ({ ...f, name:v, slug: v.toLowerCase().replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"") })); }}
+                  placeholder="Tiramisu Protein Bar" />
+              </div>
+              <div>
+                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Slug</label>
+                <input style={inputStyle} value={form.slug} onChange={e => setForm(f => ({...f, slug:e.target.value}))} placeholder="tiramisu-protein-bar" />
+              </div>
+              <div>
+                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Kısa Açıklama</label>
+                <textarea style={{ ...inputStyle, minHeight:70, resize:"vertical" as "vertical" }} value={form.short_description}
+                  onChange={e => setForm(f => ({...f, short_description:e.target.value}))} placeholder="Ürün kısa açıklaması…" />
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                <div>
+                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Fiyat (₺) *</label>
+                  <input type="number" step="0.01" style={inputStyle} value={form.price} onChange={e => setForm(f => ({...f, price:e.target.value}))} placeholder="39.90" />
+                </div>
+                <div>
+                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>İndirim Öncesi (₺)</label>
+                  <input type="number" step="0.01" style={inputStyle} value={form.compare_at_price} onChange={e => setForm(f => ({...f, compare_at_price:e.target.value}))} placeholder="49.90" />
+                </div>
+              </div>
+              <div>
+                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Durum</label>
+                <select style={inputStyle} value={form.status} onChange={e => setForm(f => ({...f, status:e.target.value}))}>
+                  <option value="active">Aktif</option>
+                  <option value="inactive">Pasif</option>
+                  <option value="draft">Taslak</option>
+                </select>
+              </div>
+              <div style={{ display:"flex", gap:20 }}>
+                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
+                  <input type="checkbox" checked={form.is_featured} onChange={e => setForm(f => ({...f, is_featured:e.target.checked}))} style={{ accentColor:"#c8a26b" }} />
+                  Öne Çıkan
+                </label>
+                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
+                  <input type="checkbox" checked={form.is_bestseller} onChange={e => setForm(f => ({...f, is_bestseller:e.target.checked}))} style={{ accentColor:"#c8a26b" }} />
+                  Çok Satan
+                </label>
+              </div>
             </div>
-
-            <div className="adm-modal-body">
-              {activeTab==="genel" && <>
-                <div className="adm-field-row">
-                  <div className="adm-field">
-                    <label className="adm-label-text">Ürün Adı *</label>
-                    <input className="adm-input" value={editing.name}
-                      onChange={e => setEditing({ ...editing, name:e.target.value, slug:slugify(e.target.value) })} />
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Slug</label>
-                    <input className="adm-input" value={editing.slug}
-                      onChange={e => setEditing({ ...editing, slug:e.target.value })} />
-                  </div>
-                </div>
-                <div className="adm-field-row">
-                  <div className="adm-field">
-                    <label className="adm-label-text">SKU</label>
-                    <input className="adm-input" style={{ fontFamily:"var(--adm-mono)" }} value={editing.sku}
-                      onChange={e => setEditing({ ...editing, sku:e.target.value })} placeholder="VPB-001" />
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Durum</label>
-                    <select className="adm-select" value={editing.status} onChange={e => setEditing({ ...editing, status:e.target.value })}>
-                      <option value="active">Aktif</option>
-                      <option value="inactive">Pasif</option>
-                      <option value="draft">Taslak</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="adm-field-row">
-                  <div className="adm-field">
-                    <label className="adm-label-text">Satış Fiyatı (₺) *</label>
-                    <input className="adm-input" type="number" step="0.01" value={editing.price}
-                      onChange={e => setEditing({ ...editing, price:e.target.value })} />
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Karşılaştırma Fiyatı (₺)</label>
-                    <input className="adm-input" type="number" step="0.01" value={editing.compare_at_price}
-                      onChange={e => setEditing({ ...editing, compare_at_price:e.target.value })} />
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Maliyet (₺)</label>
-                    <input className="adm-input" type="number" step="0.01" value={editing.cost_price}
-                      onChange={e => setEditing({ ...editing, cost_price:e.target.value })} />
-                  </div>
-                </div>
-                <div className="adm-field-row">
-                  <div className="adm-field">
-                    <label className="adm-label-text">Kategori</label>
-                    <select className="adm-select" value={editing.category_id} onChange={e => setEditing({ ...editing, category_id:e.target.value })}>
-                      <option value="">— Seç —</option>
-                      {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Marka</label>
-                    <select className="adm-select" value={editing.brand_id} onChange={e => setEditing({ ...editing, brand_id:e.target.value })}>
-                      <option value="">— Seç —</option>
-                      {brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                    </select>
-                  </div>
-                  <div className="adm-field">
-                    <label className="adm-label-text">Ağırlık (g)</label>
-                    <input className="adm-input" type="number" value={editing.weight}
-                      onChange={e => setEditing({ ...editing, weight:e.target.value })} placeholder="45" />
-                  </div>
-                </div>
-                <div className="adm-field">
-                  <label className="adm-label-text">Ana Görsel URL</label>
-                  <div style={{ display:"flex", gap:8 }}>
-                    <input className="adm-input" value={editing.main_image_url}
-                      onChange={e => setEditing({ ...editing, main_image_url:e.target.value })} placeholder="https://…" />
-                    {editing.main_image_url && (
-                      <img src={editing.main_image_url} alt="" style={{ width:40, height:40, objectFit:"cover", borderRadius:6, border:"1px solid var(--adm-border)", flexShrink:0 }}
-                        onError={e => { (e.target as HTMLImageElement).style.display="none"; }} />
-                    )}
-                  </div>
-                </div>
-                <div className="adm-field">
-                  <label className="adm-label-text">Kısa Açıklama</label>
-                  <textarea className="adm-textarea" rows={2} value={editing.short_description}
-                    onChange={e => setEditing({ ...editing, short_description:e.target.value })} />
-                </div>
-              </>}
-
-              {activeTab==="seo" && <>
-                <div className="adm-field">
-                  <label className="adm-label-text">SEO Başlık</label>
-                  <input className="adm-input" value={editing.meta_title} onChange={e => setEditing({ ...editing, meta_title:e.target.value })} maxLength={60} />
-                  <div style={{ fontSize:10, color: editing.meta_title.length>55?"var(--adm-yellow)":"var(--adm-text-4)", marginTop:4 }}>{editing.meta_title.length}/60</div>
-                </div>
-                <div className="adm-field">
-                  <label className="adm-label-text">SEO Açıklama</label>
-                  <textarea className="adm-textarea" rows={3} value={editing.meta_description} onChange={e => setEditing({ ...editing, meta_description:e.target.value })} maxLength={160} />
-                  <div style={{ fontSize:10, color: editing.meta_description.length>150?"var(--adm-yellow)":"var(--adm-text-4)", marginTop:4 }}>{editing.meta_description.length}/160</div>
-                </div>
-                {/* Google önizleme */}
-                <div style={{ background:"var(--adm-surface-2)", border:"1px solid var(--adm-border)", borderRadius:8, padding:14, marginTop:4 }}>
-                  <div style={{ fontSize:10, color:"var(--adm-text-4)", marginBottom:6 }}>Google önizleme</div>
-                  <div style={{ fontSize:14, color:"#8ab4f8", fontWeight:500, marginBottom:2 }}>
-                    {editing.meta_title || editing.name || "Ürün başlığı"}
-                  </div>
-                  <div style={{ fontSize:12, color:"#4caf50", marginBottom:4 }}>
-                    ventiate.com/urun/{editing.slug || "urun-slug"}
-                  </div>
-                  <div style={{ fontSize:12, color:"var(--adm-text-3)", lineHeight:1.5 }}>
-                    {editing.meta_description || editing.short_description || "Ürün açıklaması buraya gelecek…"}
-                  </div>
-                </div>
-              </>}
-
-              {activeTab==="flags" && <>
-                <div style={{ display:"flex", flexDirection:"column", gap:16, padding:"4px 0" }}>
-                  {[
-                    { key:"is_featured",   label:"⭐ Öne Çıkan",  desc:"Ana sayfada ve koleksiyonlarda öne çıkar" },
-                    { key:"is_new",        label:"🆕 Yeni Ürün",  desc:"'Yeni' badge'i gösterilir" },
-                    { key:"is_bestseller", label:"🔥 Çok Satan",  desc:"Bestseller badge'i gösterilir" },
-                  ].map(({ key, label, desc }) => (
-                    <div key={key} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 14px", background:"var(--adm-surface-2)", borderRadius:8, border:"1px solid var(--adm-border)" }}>
-                      <div>
-                        <div style={{ fontSize:13, fontWeight:500, color:"var(--adm-text)" }}>{label}</div>
-                        <div style={{ fontSize:11, color:"var(--adm-text-4)", marginTop:2 }}>{desc}</div>
-                      </div>
-                      <div className={`adm-toggle${editing[key as keyof typeof editing]?" on":""}`}
-                        onClick={() => setEditing({ ...editing, [key]: !editing[key as keyof typeof editing] })} />
-                    </div>
-                  ))}
-                </div>
-              </>}
-            </div>
-
-            <div className="adm-modal-footer">
-              <button className="adm-btn adm-btn--secondary" onClick={() => setOpen(false)}>İptal</button>
-              <button className="adm-btn adm-btn--primary" onClick={save} disabled={saving}>
-                {saving ? "Kaydediliyor…" : editId ? "Güncelle" : "Oluştur"}
+            <div style={{ display:"flex", gap:10, marginTop:24 }}>
+              <button onClick={save} disabled={saving}
+                style={{ display:"flex", alignItems:"center", gap:6, padding:"10px 24px", borderRadius:8, background:"#c8a26b", border:"none", color:"#000", cursor:saving ? "not-allowed":"pointer", fontWeight:700, fontSize:14, opacity:saving ? .7:1 }}>
+                <Save size={15}/>{saving ? "Kaydediliyor…" : modal==="edit" ? "Güncelle":"Kaydet"}
+              </button>
+              <button onClick={() => setModal(null)}
+                style={{ padding:"10px 18px", borderRadius:8, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:14 }}>
+                İptal
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Varyantlar Modal */}
+      {modal === "variants" && selected && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }}
+          onClick={() => setModal(null)}>
+          <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:720, maxWidth:"95vw", maxHeight:"90vh", overflowY:"auto" as "auto" }}
+            onClick={e => e.stopPropagation()}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+              <h3 style={{ fontSize:16, fontWeight:700, color:"#f2f2f3", margin:0 }}>Varyant Yönetimi</h3>
+              <button onClick={() => setModal(null)} style={{ background:"transparent", border:"none", color:"#6b6b76", cursor:"pointer" }}><X size={18}/></button>
+            </div>
+            <ProductVariants productId={selected.id} productName={selected.name} />
           </div>
         </div>
       )}

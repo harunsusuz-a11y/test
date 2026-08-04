@@ -74,12 +74,50 @@ const ROUTE_LABELS: Record<string, string> = {
   "/admin/ayarlar": "Ayarlar",
 };
 
+function applyAdminTheme(theme: "dark"|"light") {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (theme === "light") {
+    root.style.setProperty("--adm-bg", "#f0f0f3");
+    root.style.setProperty("--adm-surface", "#ffffff");
+    root.style.setProperty("--adm-text", "#111118");
+    root.style.setProperty("--adm-text-muted", "#6b6b76");
+    root.style.setProperty("--adm-border", "rgba(0,0,0,0.08)");
+  } else {
+    root.style.setProperty("--adm-bg", "#0a0a0d");
+    root.style.setProperty("--adm-surface", "#1a1a1f");
+    root.style.setProperty("--adm-text", "#f2f2f3");
+    root.style.setProperty("--adm-text-muted", "#9b9ba4");
+    root.style.setProperty("--adm-border", "rgba(255,255,255,0.08)");
+  }
+}
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [time, setTime] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark"|"light">("dark");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = (localStorage.getItem("admin-theme") ?? "dark") as "dark"|"light";
+    setTheme(stored);
+    applyAdminTheme(stored);
+  }, []);
+
+  function toggleTheme() {
+    const next: "dark"|"light" = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    if (typeof window !== "undefined") localStorage.setItem("admin-theme", next);
+    applyAdminTheme(next);
+  }
+
+
+
+
+
   const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
@@ -207,6 +245,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+            <button
+              onClick={toggleTheme}
+              title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
+              style={{ background:"transparent", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, padding:"6px 10px", color:"#9b9ba4", cursor:"pointer", fontSize:14, lineHeight:1 }}>
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
             <div style={{ position: "relative" }}>
               <div
                 onClick={() => setProfileOpen(!profileOpen)}
