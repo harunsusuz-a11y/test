@@ -77,20 +77,13 @@ export const metadata: Metadata = {
     siteName: BRAND,
     title: `${BRAND} — ${TAGLINE}`,
     description: BASE_DESCRIPTION,
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: `${BRAND} — Giresun fındığıyla protein bar ve fındık kreması`,
-      },
-    ],
+
   },
   twitter: {
     card: "summary_large_image",
     title: `${BRAND} — ${TAGLINE}`,
     description: BASE_DESCRIPTION,
-    images: ["/og-image.jpg"],
+
     creator: "@ventiate",
     site: "@ventiate",
   },
