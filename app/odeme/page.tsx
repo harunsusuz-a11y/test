@@ -3,7 +3,10 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { CheckoutForm } from "@/components/forms/CheckoutForm";
 import { Reveal } from "@/components/animations/Reveal";
 
-export const metadata: Metadata = { title: "Ödeme" };
+export const metadata: Metadata = {
+  title: "Ödeme",
+  robots: { index: false, follow: false },
+};
 
 export default function Page() {
   const steps = ["Sepet", "Teslimat", "Ödeme"];

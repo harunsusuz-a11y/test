@@ -8,7 +8,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ProductFaq } from "@/components/product/ProductFaq";
 import { formatPrice } from "@/lib/utils/format";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
+import { getBreadcrumbJsonLd, getProductJsonLd } from "@/lib/seo/organization";
 import { getReviewsForProduct, getAverageRating } from "@/content/reviews";
 import { Reveal } from "@/components/animations/Reveal";
 import { StatRings } from "@/components/product/StatRings";
@@ -40,10 +40,37 @@ export async function generateMetadata({
   const { slug } = await params;
   const product = getProductBySlug(slug);
   if (!product) return { title: "Ürün Bulunamadı" };
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.com";
+  const imageAbs = product.image.startsWith("http") ? product.image : `${siteUrl}${product.image}`;
+  const categoryLabel = product.category === "protein-bar" ? "protein bar" : "fındık kreması";
+
   return {
     title: product.name,
-    description: product.shortDescription,
-    openGraph: { title: product.name, description: product.shortDescription, images: [product.image] },
+    description: product.description,
+    keywords: [
+      product.name,
+      "Venti-Ate",
+      "Giresun fındığı",
+      categoryLabel,
+      "sağlıklı atıştırmalık",
+      product.flavor,
+      `${product.weightGrams}g`,
+    ],
+    alternates: { canonical: `/urun/${slug}` },
+    openGraph: {
+      type: "website",
+      locale: "tr_TR",
+      title: `${product.name} | Venti-Ate`,
+      description: product.description,
+      images: [{ url: imageAbs, width: 1200, height: 630, alt: product.name }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Venti-Ate`,
+      description: product.shortDescription,
+      images: [imageAbs],
+    },
   };
 }
 

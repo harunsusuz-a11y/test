@@ -11,6 +11,25 @@ import { Newsletter } from "@/components/home/Newsletter";
 
 export const metadata: Metadata = {
   title: "Fındığın rafine hali",
+  description:
+    "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart. Gerçek içerik, güçlü lezzet.",
+  keywords: [
+    "Venti-Ate",
+    "Giresun fındığı protein bar",
+    "fındık kreması satın al",
+    "sağlıklı atıştırmalık Türkiye",
+    "yüksek proteinli bar",
+    "doğal fındık kreması",
+    "palm yağsız",
+    "spor beslenmesi",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Venti-Ate — Fındığın rafine hali",
+    description:
+      "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart.",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Venti-Ate ürünleri" }],
+  },
 };
 
 export default function HomePage() {

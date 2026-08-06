@@ -7,7 +7,14 @@ import { Reveal } from "@/components/animations/Reveal";
 
 export const metadata: Metadata = {
   title: "Hakkımızda",
-  description: brand.shortStory,
+  description: "Venti-Ate'in hikayesi: Giresun fındığını merkeze alan, temiz içerik ve güçlü lezzetle sağlıklı atıştırmalık kategorisinde yeni bir standart kurmayı hedefleyen Türk markası.",
+  keywords: ["Venti-Ate hakkında", "Giresun fındığı markası", "sağlıklı atıştırmalık Türkiye", "fındık protein bar markası"],
+  alternates: { canonical: "/hakkimizda" },
+  openGraph: {
+    title: "Hakkımızda | Venti-Ate",
+    description: brand.shortStory,
+    images: [{ url: "/images/hand-bars.jpg", width: 1200, height: 630, alt: "Venti-Ate protein barları" }],
+  },
 };
 
 const valueIcons = [Sprout, Leaf, Flame, Wind];

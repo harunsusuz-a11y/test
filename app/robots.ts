@@ -7,8 +7,25 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
-        disallow: ["/admin/", "/giris/", "/api/", "/uye-giris/", "/hesabim/", "/siparislerim/", "/odeme/", "/siparis-basarili/"],
+        allow: ["/", "/magaza", "/urun/", "/magaza/kategori/", "/hakkimizda", "/formunu-bul", "/abonelik", "/iletisim", "/sss"],
+        disallow: [
+          "/admin/",
+          "/giris/",
+          "/api/",
+          "/uye-giris/",
+          "/hesabim/",
+          "/siparislerim/",
+          "/favorilerim/",
+          "/odeme/",
+          "/siparis-basarili/",
+          "/_next/",
+          "/static/",
+        ],
+      },
+      {
+        // AI botlarını dışla
+        userAgent: ["GPTBot", "CCBot", "anthropic-ai", "Claude-Web"],
+        disallow: "/",
       },
     ],
     sitemap: `${BASE}/sitemap.xml`,

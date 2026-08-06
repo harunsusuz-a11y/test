@@ -6,7 +6,16 @@ import { ContactForm } from "@/components/forms/ContactForm";
 import { Reveal } from "@/components/animations/Reveal";
 import { brand } from "@/content/brand";
 
-export const metadata: Metadata = { title: "İletişim" };
+export const metadata: Metadata = {
+  title: "İletişim",
+  description: "Venti-Ate ile iletişime geç — soru, öneri veya iş birliği için. Gerçek bir insan okuyor.",
+  keywords: ["Venti-Ate iletişim", "Venti-Ate email", "protein bar iletişim"],
+  alternates: { canonical: "/iletisim" },
+  openGraph: {
+    title: "İletişim | Venti-Ate",
+    description: "Soru, öneri veya iş birliği — hangisi olursa olsun, gerçek bir insan okuyor.",
+  },
+};
 
 const contactItems = [
   { label: "E-posta", value: brand.contact.email },

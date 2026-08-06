@@ -3,7 +3,16 @@ import { Clock, Target, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FormunuBulQuiz } from "@/components/quiz/FormunuBulQuiz";
 
-export const metadata: Metadata = { title: "Formunu Bul" };
+export const metadata: Metadata = {
+  title: "Formunu Bul",
+  description: "4 soruda sana en uygun Venti-Ate ürününü bul. Protein bar mı, fındık kreması mı? Hedefine ve rutinine göre kişiselleştirilmiş öneri.",
+  keywords: ["Venti-Ate quiz", "hangi protein bar", "sağlıklı atıştırmalık test", "fındık protein bar öneri"],
+  alternates: { canonical: "/formunu-bul" },
+  openGraph: {
+    title: "Formunu Bul | Venti-Ate",
+    description: "4 soruda sana en uygun Venti-Ate ürününü bul.",
+  },
+};
 
 const points = [
   { icon: Clock, label: "30 saniye" },

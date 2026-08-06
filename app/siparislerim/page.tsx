@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { OrdersClient } from "./OrdersClient";
 
-export const metadata: Metadata = { title: "Siparişlerim" };
+export const metadata: Metadata = {
+  title: "Siparişlerim",
+  robots: { index: false, follow: false },
+};
 
 export default function Page() {
   return <OrdersClient />;

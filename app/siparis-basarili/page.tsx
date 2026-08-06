@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sipariş Tamamlandı",
+  robots: { index: false, follow: false },
+};
+
 import { Suspense } from "react";
 import { SiparisBasariliContent } from "./SiparisBasariliContent";
 

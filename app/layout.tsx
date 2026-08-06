@@ -14,9 +14,25 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@/components/seo/Analytics";
 import { StorefrontShell } from "@/components/layout/StorefrontShell";
 import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
-import { brand } from "@/content/brand";
+import { SITE_URL, BRAND, TAGLINE } from "@/lib/seo/metadata";
 
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.com";
+const BASE_DESCRIPTION =
+  "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart. Gerçek içerik, güçlü lezzet.";
+
+const BASE_KEYWORDS = [
+  "Venti-Ate",
+  "protein bar",
+  "fındık kreması",
+  "Giresun fındığı",
+  "sağlıklı atıştırmalık",
+  "fındık protein bar",
+  "yüksek proteinli atıştırmalık",
+  "doğal fındık kreması",
+  "palm yağsız fındık kreması",
+  "spor atıştırmalık",
+  "wellbeing snack",
+  "Türk protein bar",
+];
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -31,43 +47,63 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(BASE),
   title: {
-    default: `${brand.name} — ${brand.tagline}`,
-    template: `%s | ${brand.name}`,
+    default: `${BRAND} — ${TAGLINE}`,
+    template: `%s | ${BRAND}`,
   },
-  description: brand.shortStory,
-  keywords: ["protein bar","fındık kreması","Giresun fındığı","sağlıklı atıştırmalık","venti ate","fındık protein"],
-  authors: [{ name: brand.name, url: BASE }],
-  creator: brand.name,
-  publisher: brand.name,
+  description: BASE_DESCRIPTION,
+  keywords: BASE_KEYWORDS,
+  authors: [{ name: BRAND, url: BASE }],
+  creator: BRAND,
+  publisher: BRAND,
+  category: "food",
   formatDetection: { telephone: true, email: true },
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
     type: "website",
     locale: "tr_TR",
     url: BASE,
-    siteName: brand.name,
-    title: `${brand.name} — ${brand.tagline}`,
-    description: brand.shortStory,
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: brand.name }],
+    siteName: BRAND,
+    title: `${BRAND} — ${TAGLINE}`,
+    description: BASE_DESCRIPTION,
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${BRAND} — Giresun fındığıyla protein bar ve fındık kreması`,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${brand.name} — ${brand.tagline}`,
-    description: brand.shortStory,
+    title: `${BRAND} — ${TAGLINE}`,
+    description: BASE_DESCRIPTION,
     images: ["/og-image.jpg"],
     creator: "@ventiate",
+    site: "@ventiate",
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
   },
   alternates: {
     canonical: BASE,
+    languages: {
+      "tr-TR": BASE,
+    },
   },
 };
+
+const BASE = SITE_URL;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -77,6 +113,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <meta name="format-detection" content="telephone=no" />
       </head>
       <body className="font-body antialiased">
         <JsonLd data={getOrganizationJsonLd()} />

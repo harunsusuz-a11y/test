@@ -20,7 +20,20 @@ export async function generateMetadata({
   const { kategori } = await params;
   const category = getCategoryBySlug(kategori);
   if (!category) return { title: "Kategori Bulunamadı" };
-  return { title: category.label, description: category.description };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.com";
+  const keywords = kategori === "protein-bar"
+    ? ["protein bar", "Giresun fındığı protein bar", "yüksek proteinli bar", "fındıklı protein bar", "spor atıştırmalık"]
+    : ["fındık kreması", "Giresun fındık kreması", "yüksek fındık oranı", "doğal fındık kreması", "palm yağsız fındık kreması"];
+  return {
+    title: category.label,
+    description: category.description,
+    keywords,
+    alternates: { canonical: `/magaza/kategori/${kategori}` },
+    openGraph: {
+      title: `${category.label} | Venti-Ate`,
+      description: category.description,
+    },
+  };
 }
 
 export default async function Page({ params }: { params: Promise<{ kategori: string }> }) {

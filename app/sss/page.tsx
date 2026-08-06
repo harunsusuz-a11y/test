@@ -4,24 +4,31 @@ import { MessageCircle } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Accordion } from "@/components/ui/Accordion";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd, getFaqJsonLd } from "@/lib/seo/organization";
 import { faqs } from "@/content/faq";
 
-export const metadata: Metadata = { title: "Sıkça Sorulan Sorular" };
+export const metadata: Metadata = {
+  title: "Sıkça Sorulan Sorular",
+  description: "Venti-Ate ürünleri hakkında merak edilenler: içerik, protein oranı, kargo, abonelik iptal ve daha fazlası.",
+  keywords: ["Venti-Ate SSS", "protein bar hakkında", "fındık kreması sorular", "kargo ne zaman gelir", "abonelik iptal"],
+  alternates: { canonical: "/sss" },
+  openGraph: {
+    title: "Sıkça Sorulan Sorular | Venti-Ate",
+    description: "Ürünler, sipariş, kargo ve abonelik hakkında her şey.",
+  },
+};
 
 export default function Page() {
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
+  const faqJsonLd = getFaqJsonLd([...faqs]);
+  const breadcrumbJsonLd = getBreadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "Sıkça Sorulan Sorular", path: "/sss" },
+  ]);
 
   return (
     <>
       <JsonLd data={faqJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <PageHeader eyebrow="Yardım" title="Sıkça Sorulan Sorular" />
       <div className="mx-auto max-w-2xl px-5 pb-10 pt-12">
         <Accordion items={faqs} />

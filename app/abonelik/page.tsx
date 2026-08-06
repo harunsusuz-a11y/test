@@ -5,7 +5,13 @@ import { Reveal } from "@/components/animations/Reveal";
 
 export const metadata: Metadata = {
   title: "Abonelik",
-  description: "Venti-Ate ürünlerini düzenli aralıklarla kapına kadar getir.",
+  description: "Venti-Ate'i düzenli al, %10 indirim kazan. Fındık barı ve kremanı haftalık, iki haftada bir veya aylık kapına getir — taahhütsüz, istediğin an iptal et.",
+  keywords: ["Venti-Ate abonelik", "protein bar abonelik", "fındık kreması abonelik", "sağlıklı abonelik kutusu", "aylık protein bar"],
+  alternates: { canonical: "/abonelik" },
+  openGraph: {
+    title: "Abonelik | Venti-Ate",
+    description: "Fındığın hiç bitmesin. %10 abonelik indirimi, ücretsiz kargo, taahhütsüz iptal.",
+  },
 };
 
 const benefits = [

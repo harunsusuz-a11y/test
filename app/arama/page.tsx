@@ -3,7 +3,11 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { products } from "@/content/products";
 import { ProductCard } from "@/components/product/ProductCard";
 
-export const metadata: Metadata = { title: "Arama Sonuçları" };
+export const metadata: Metadata = {
+  title: "Arama",
+  description: "Venti-Ate ürünlerinde ara — protein bar, fındık kreması ve daha fazlası.",
+  robots: { index: false, follow: true },
+};
 
 export default async function Page({
   searchParams,
