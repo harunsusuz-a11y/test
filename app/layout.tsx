@@ -16,6 +16,8 @@ import { StorefrontShell } from "@/components/layout/StorefrontShell";
 import { getOrganizationJsonLd, getWebsiteJsonLd } from "@/lib/seo/organization";
 import { SITE_URL, BRAND, TAGLINE } from "@/lib/seo/metadata";
 
+const BASE = SITE_URL;
+
 const BASE_DESCRIPTION =
   "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart. Gerçek içerik, güçlü lezzet.";
 
@@ -102,8 +104,6 @@ export const metadata: Metadata = {
     },
   },
 };
-
-const BASE = SITE_URL;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

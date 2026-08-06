@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next"
 import { AdminShell } from "@/components/admin/AdminShell"
 import { ToastProvider } from "@/components/admin/ui/Toast"
