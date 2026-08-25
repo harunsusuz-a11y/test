@@ -9,7 +9,18 @@ import { ProductFaq } from "@/components/product/ProductFaq";
 import { formatPrice } from "@/lib/utils/format";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd, getProductJsonLd } from "@/lib/seo/organization";
-import { getReviewsForProduct, getAverageRating } from "@/content/reviews";
+import { createClient } from "@/lib/supabase/server";
+
+async function getReviewsFromDb(productSlug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("reviews")
+    .select("id,reviewer_name,rating,body,comment,verified_purchase,is_verified_purchase,created_at")
+    .eq("product_slug", productSlug)
+    .in("status", ["approved", "pending"])
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
 import { Reveal } from "@/components/animations/Reveal";
 import { StatRings } from "@/components/product/StatRings";
 import { TrustBadges } from "@/components/ui/TrustBadges";
@@ -81,8 +92,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const related = products.filter((p) => p.slug !== product.slug);
   const theme = getProductTheme(product);
-  const reviews = getReviewsForProduct(product.slug);
-  const avgRating = getAverageRating(product.slug);
+  const reviews = await getReviewsFromDb(product.slug);
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((s: number, r: { rating: number }) => s + r.rating, 0) / reviews.length
+    : null;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -165,7 +178,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   ))}
                 </span>
                 <span>
-                  {avgRating.toFixed(1)} · {reviews.length} yorum <span className="text-brown-dark/40">(demo veri)</span>
+                  {avgRating.toFixed(1)} · {reviews.length} yorum
                 </span>
               </a>
             )}
