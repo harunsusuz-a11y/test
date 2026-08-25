@@ -6,8 +6,8 @@ import { useMemo, useState } from "react";
 import { BadgePercent, Gift, Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils/format";
-import { computeCartTotals } from "@/lib/utils/cart-math";
-import { BUNDLE_NAME } from "@/content/discounts";
+import { computeCartTotals, validateCoupon, fetchShippingSettings } from "@/lib/utils/cart-math";
+const BUNDLE_NAME = "Bar + Krema Paketi";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -31,7 +31,23 @@ export default function CartPage() {
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState(false);
 
-  const totals = computeCartTotals(lines, couponCode);
+  const [appliedCouponDiscount, setAppliedCouponDiscount] = useState(0);
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(300);
+  const [standardShippingCost, setStandardShippingCost] = useState(29.9);
+
+  useEffect(() => {
+    fetchShippingSettings().then((s) => {
+      setFreeShippingThreshold(s.free_shipping_threshold);
+      setStandardShippingCost(s.standard_shipping_cost);
+    });
+  }, []);
+
+  const totals = computeCartTotals(lines, {
+    couponDiscount: appliedCouponDiscount,
+    couponValid: !!couponCode && appliedCouponDiscount > 0,
+    freeShippingThreshold,
+    standardShippingCost,
+  });
   const progress = totals.freeShipping
     ? 100
     : Math.min(100, (totals.discountedSubtotal / (totals.discountedSubtotal + totals.remainingForFreeShipping || 1)) * 100);
@@ -41,11 +57,15 @@ export default function CartPage() {
     return products.find((p) => p.category === totals.bundleMissingCategory) ?? null;
   }, [totals.bundleMissingCategory]);
 
-  function applyCoupon(e: React.FormEvent) {
+  async function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
     const trial = couponInput.trim().toUpperCase();
     if (!trial) return;
-    if (computeCartTotals(lines, trial).couponValid) {
+    const subtotal = lines.reduce((s, l) => s + l.price * l.quantity, 0);
+    const result = await validateCoupon(trial, subtotal);
+    if (result.valid && result.discount_value) {
+      const disc = result.discount_type === "percent" ? subtotal * (result.discount_value / 100) : result.discount_value;
+      setAppliedCouponDiscount(result.max_discount ? Math.min(disc, result.max_discount) : disc);
       setCoupon(trial);
       setCouponError(false);
       setCouponInput("");
@@ -187,7 +207,7 @@ export default function CartPage() {
                     <BadgePercent size={14} className="text-green" aria-hidden="true" />
                     {couponCode} <span className="font-normal text-brown-dark/50">(demo)</span>
                   </span>
-                  <button type="button" onClick={() => setCoupon(null)} aria-label="Kuponu kaldır" className="flex h-8 w-8 items-center justify-center rounded-full text-brown-dark/50 hover:text-brown-darker">
+                  <button type="button" onClick={() => { setCoupon(null); setAppliedCouponDiscount(0); }} aria-label="Kuponu kaldır" className="flex h-8 w-8 items-center justify-center rounded-full text-brown-dark/50 hover:text-brown-darker">
                     <X size={13} aria-hidden="true" />
                   </button>
                 </p>
