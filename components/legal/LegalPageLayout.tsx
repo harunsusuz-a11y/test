@@ -1,4 +1,3 @@
-import { legalDisclaimer } from "@/content/legal";
 
 type LegalContent = {
   title: string;
@@ -16,7 +15,7 @@ export function LegalPageLayout({ content }: { content: LegalContent }) {
         role="note"
         className="mt-6 rounded-xl border border-peach/60 bg-peach/15 px-5 py-4 text-sm text-brown-dark"
       >
-        <strong>Not:</strong> {legalDisclaimer}
+        <strong>Not:</strong> "Bilgiler bilgilendirme amaçlıdır; bağlayıcı değildir."
       </div>
 
       <div className="mt-10 space-y-8">
