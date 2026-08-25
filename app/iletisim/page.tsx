@@ -1,96 +1,83 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Instagram, ArrowRight } from "lucide-react";
+"use server";
+
+import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { ContactForm } from "@/components/forms/ContactForm";
-import { Reveal } from "@/components/animations/Reveal";
-import { brand } from "@/content/brand";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "İletişim",
-  description: "Venti-Ate ile iletişime geç — soru, öneri veya iş birliği için. Gerçek bir insan okuyor.",
-  keywords: ["Venti-Ate iletişim", "Venti-Ate email", "protein bar iletişim"],
-  alternates: { canonical: "/iletisim" },
-  openGraph: {
-    title: "İletişim | Venti-Ate",
-    description: "Soru, öneri veya iş birliği — hangisi olursa olsun, gerçek bir insan okuyor.",
-  },
+  title: "İletişim | Venti-Ate",
+  description: "Bize ulaşın — sipariş, iş birliği veya her türlü soru için.",
 };
 
-const contactItems = [
-  { label: "E-posta", value: brand.contact.email },
-  { label: "Telefon", value: brand.contact.phone },
-  { label: "Adres", value: brand.contact.address },
-  { label: "Yanıt Süresi", value: "[ORTALAMA YANIT SÜRESİ EKLENECEK] (demo)" },
-];
+export default async function IletisimPage() {
+  const settings = await getSettings(["contact_email", "contact_phone", "contact_instagram", "contact_address"]);
 
-/**
- * Split editorial iletişim: solda koyu marka paneli (bilgiler + SSS yönlendirmesi),
- * sağda krem zeminde form. İki kolon desktop'ta aynı kartın iki yüzü gibi durur.
- */
-export default function Page() {
+  const email = (settings.contact_email as string) ?? "info@ventiateprotein.com";
+  const phone = (settings.contact_phone as string) ?? "";
+  const instagram = (settings.contact_instagram as string) ?? "";
+  const address = (settings.contact_address as string) ?? "";
+
   return (
-    <>
+    <main>
       <PageHeader
+        title="İletişim"
+        subtitle="Her soruyu yanıtlıyoruz."
         eyebrow="Bize Ulaşın"
-        title="Konuşalım."
-        description="Soru, öneri veya iş birliği — hangisi olursa olsun, gerçek bir insan okuyor."
       />
-
-      <div className="mx-auto max-w-6xl px-5 pb-24 pt-12">
-        <Reveal>
-          <div className="grid overflow-hidden rounded-[2rem] border border-brown/10 shadow-xl shadow-brown-darker/5 md:grid-cols-[1fr_1.2fr]">
-            {/* Koyu panel */}
-            <div className="relative bg-brown-darker p-8 text-cream sm:p-10">
-              <svg aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.05]">
-                <filter id="contact-grain">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
-                </filter>
-                <rect width="100%" height="100%" filter="url(#contact-grain)" />
-              </svg>
-              <div className="relative">
-                <p className="text-xs font-bold uppercase tracking-widest2 text-peach">İletişim Bilgileri</p>
-                <h2 className="mt-3 font-display text-2xl font-extrabold sm:text-3xl">
-                  İlk ısırıktan sonra aklına takılan her şey.
-                </h2>
-
-                <div className="mt-8 divide-y divide-cream/10 border-t border-cream/10">
-                  {contactItems.map(({ label, value }) => (
-                    <div key={label} className="flex items-baseline justify-between gap-4 py-3.5">
-                      <p className="shrink-0 text-[11px] font-bold uppercase tracking-widest2 text-cream/45">{label}</p>
-                      <p className="break-words text-right text-sm font-medium text-cream/90">{value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-10 border-t border-cream/10 pt-6">
-                  <p className="text-sm text-cream/60">Cevabın hazır olabilir:</p>
-                  <Link
-                    href="/sss"
-                    className="group mt-2 inline-flex items-center gap-2 text-sm font-bold text-peach"
-                  >
-                    Sıkça Sorulan Sorular
-                    <ArrowRight size={14} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
-                  </Link>
-                  <p className="mt-6 flex items-center gap-2 text-xs text-cream/50">
-                    <Instagram size={14} aria-hidden="true" />
-                    {brand.social.instagram.startsWith("[") ? "@ventiate (demo)" : brand.social.instagram}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Form */}
-            <div className="bg-white/60 p-8 sm:p-10">
-              <p className="text-xs font-bold uppercase tracking-widest2 text-green">Mesaj Gönder</p>
-              <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">
-                Formu doldur, dönüş yapalım.
-              </h2>
-              <ContactForm />
+      <section className="max-w-2xl mx-auto px-6 py-20 space-y-10">
+        <div className="space-y-6">
+          <div className="flex items-start gap-4 border-b border-brown/10 pb-6">
+            <div>
+              <p className="text-xs text-brown/50 uppercase tracking-widest mb-1">E-posta</p>
+              <a href={`mailto:${email}`} className="text-brown hover:text-green transition-colors font-medium">
+                {email}
+              </a>
             </div>
           </div>
-        </Reveal>
-      </div>
-    </>
+          {phone && (
+            <div className="flex items-start gap-4 border-b border-brown/10 pb-6">
+              <div>
+                <p className="text-xs text-brown/50 uppercase tracking-widest mb-1">Telefon</p>
+                <a href={`tel:${phone.replace(/\s/g,"")}`} className="text-brown font-medium">
+                  {phone}
+                </a>
+              </div>
+            </div>
+          )}
+          {instagram && (
+            <div className="flex items-start gap-4 border-b border-brown/10 pb-6">
+              <div>
+                <p className="text-xs text-brown/50 uppercase tracking-widest mb-1">Instagram</p>
+                <a href={instagram} target="_blank" rel="noopener noreferrer" className="text-brown hover:text-green transition-colors font-medium">
+                  @ventiate
+                </a>
+              </div>
+            </div>
+          )}
+          {address && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="text-xs text-brown/50 uppercase tracking-widest mb-1">Adres</p>
+                <p className="text-brown font-medium">{address}</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-cream rounded-2xl p-8">
+          <h2 className="font-display text-xl text-brown mb-4">Hızlı İletişim</h2>
+          <p className="text-brown/70 text-sm leading-relaxed mb-6">
+            Sipariş soruları, kurumsal alım veya iş birliği teklifleri için e-posta gönderebilir
+            ya da Instagram'dan mesaj atabilirsin. 24 saat içinde yanıt veriyoruz.
+          </p>
+          <a
+            href={`mailto:${email}`}
+            className="inline-flex items-center gap-2 bg-brown text-cream px-6 py-3 rounded-full text-sm font-medium hover:bg-brown/90 transition-colors"
+          >
+            E-posta Gönder
+          </a>
+        </div>
+      </section>
+    </main>
   );
 }
