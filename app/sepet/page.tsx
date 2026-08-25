@@ -13,7 +13,6 @@ import { TrustBadges } from "@/components/ui/TrustBadges";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/animations/Reveal";
 import { Progress } from "@/components/ui/Progress";
-import { products, getProductBySlug } from "@/content/products";
 
 /**
  * Tam sayfa sepet — birincil deneyim artık CartDrawer'dadır (yandan açılır);
@@ -54,7 +53,7 @@ export default function CartPage() {
 
   const bundleSuggestion = useMemo(() => {
     if (!totals.bundleMissingCategory) return null;
-    return products.find((p) => p.category === totals.bundleMissingCategory) ?? null;
+    return [].find((p) => p.category === totals.bundleMissingCategory) ?? null;
   }, [totals.bundleMissingCategory]);
 
   async function applyCoupon(e: React.FormEvent) {
