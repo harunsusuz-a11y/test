@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { BadgePercent, Gift, Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { formatPrice } from "@/lib/utils/format";
