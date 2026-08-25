@@ -10,7 +10,6 @@ import { products, getProductBySlug } from "@/content/products";
 import { formatPrice } from "@/lib/utils/format";
 import { computeCartTotals } from "@/lib/utils/cart-math";
 import { Progress } from "@/components/ui/Progress";
-import { BUNDLE_NAME } from "@/content/discounts";
 
 /**
  * Tam sepet deneyimi — artık ayrı sayfaya gitmeden her şey burada:
@@ -31,7 +30,7 @@ export function CartDrawer() {
   const [couponError, setCouponError] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const totals = computeCartTotals(lines, couponCode);
+  const totals = computeCartTotals(lines, { couponDiscount: appliedCouponDiscount, couponValid: !!couponCode && appliedCouponDiscount > 0, freeShippingThreshold, standardShippingCost });
   const progress = Math.min(
     100,
     (totals.discountedSubtotal / (totals.discountedSubtotal + totals.remainingForFreeShipping || 1)) * 100
