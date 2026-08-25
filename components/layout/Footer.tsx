@@ -32,7 +32,7 @@ export function Footer() {
         <div className="mt-12 flex flex-col gap-3 border-t border-cream/10 pt-6 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Venti-Ate. Tüm hakları saklıdır.</p>
           <p>
-            İletişim: <span className="text-cream/70">{/* brand.contact.email}</span>
+            İletişim: <span className="text-cream/70">""</span>
           </p>
         </div>
       </div>
