@@ -17,7 +17,11 @@ export type DbProduct = {
   hazelnut_percent: number | null;
   flavor: string | null;
   highlights: string[];
+  ingredients: string[];
   nutrition_per_100g: { label: string; value: string }[];
+  usage_tips: string[];
+  faq: { question: string; answer: string }[];
+  attributes: { label: string; value: string }[];
   category_id: string | null;
   weight: number | null;
 };
@@ -26,7 +30,7 @@ export async function getProducts(): Promise<DbProduct[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id,name,slug,short_description,description,price,compare_at_price,main_image_url,gallery_images,status,is_featured,is_bestseller,protein_percent,hazelnut_percent,flavor,highlights,ingredients,nutrition_per_100g,usage_tips,faq,attributes,category_id,weight")
     .eq("status", "active")
     .is("deleted_at", null)
     .order("sort_order", { ascending: true });
@@ -42,7 +46,7 @@ export async function getProductBySlug(slug: string): Promise<DbProduct | null> 
   const supabase = createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id,name,slug,short_description,description,price,compare_at_price,main_image_url,gallery_images,status,is_featured,is_bestseller,protein_percent,hazelnut_percent,flavor,highlights,ingredients,nutrition_per_100g,usage_tips,faq,attributes,category_id,weight")
     .eq("slug", slug)
     .eq("status", "active")
     .is("deleted_at", null)
