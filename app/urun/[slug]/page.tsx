@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Star, Leaf } from "lucide-react";
-import { products, getProductBySlug } from "@/content/products";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductFaq } from "@/components/product/ProductFaq";
