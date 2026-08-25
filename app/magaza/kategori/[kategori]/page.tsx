@@ -6,7 +6,6 @@ import { TrustBadges } from "@/components/ui/TrustBadges";
 import { ProductCard } from "@/components/product/ProductCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
-import { categories, getCategoryBySlug, getProductsByCategory } from "@/content/products";
 
 export function generateStaticParams() {
   return categories.map((c) => ({ kategori: c.slug }));
@@ -18,7 +17,7 @@ export async function generateMetadata({
   params: Promise<{ kategori: string }>;
 }): Promise<Metadata> {
   const { kategori } = await params;
-  const category = getCategoryBySlug(kategori);
+  const category = {slug:""} //kategori);
   if (!category) return { title: "Kategori Bulunamadı" };
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.com";
   const keywords = kategori === "protein-bar"
@@ -38,10 +37,10 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<{ kategori: string }> }) {
   const { kategori } = await params;
-  const category = getCategoryBySlug(kategori);
+  const category = {slug:""} //kategori);
   if (!category) notFound();
 
-  const categoryProducts = getProductsByCategory(category.slug);
+  const categoryProducts = [] //category.slug);
 
   const breadcrumbData = getBreadcrumbJsonLd([
     { name: "Ana Sayfa", path: "/" },
