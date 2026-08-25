@@ -270,7 +270,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
           İlk ısıranlar ne dedi?
         </h2>
-        <ReviewsPanel reviews={reviews} averageRating={avgRating} theme={theme} />
+        <ReviewsPanel
+                    reviews={(reviews as Array<{id:string;reviewer_name?:string;rating:number;body?:string;comment?:string;verified_purchase?:boolean;is_verified_purchase?:boolean;created_at?:string}>).map((r) => ({
+                      ...r,
+                      authorInitial: r.reviewer_name
+                        ? r.reviewer_name.split(" ").map((n)=>n[0]).join(".")+"."
+                        : "M.Ş.",
+                      verifiedPurchase: r.verified_purchase ?? r.is_verified_purchase ?? false,
+                      productSlug: product.slug,
+                      isDemo: false as const,
+                    }))}
+                    averageRating={avgRating}
+                    theme={theme}
+                  />
       </section>
 
       {/* 9 — SSS */}
