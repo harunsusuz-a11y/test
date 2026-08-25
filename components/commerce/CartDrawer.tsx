@@ -6,9 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BadgePercent, Check, Gift, Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useUiStore } from "@/store/ui-store";
-import { products, getProductBySlug } from "@/content/products";
 import { formatPrice } from "@/lib/utils/format";
-import { computeCartTotals } from "@/lib/utils/cart-math";
+import { computeCartTotals, validateCoupon, fetchShippingSettings } from "@/lib/utils/cart-math";
 import { Progress } from "@/components/ui/Progress";
 
 /**
@@ -28,9 +27,24 @@ export function CartDrawer() {
   const setCoupon = useCartStore((s) => s.setCoupon);
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState(false);
+  const [appliedCouponDiscount, setAppliedCouponDiscount] = useState(0);
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(300);
+  const [standardShippingCost, setStandardShippingCost] = useState(29.9);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const totals = computeCartTotals(lines, { couponDiscount: appliedCouponDiscount, couponValid: !!couponCode && appliedCouponDiscount > 0, freeShippingThreshold, standardShippingCost });
+  useEffect(() => {
+    fetchShippingSettings().then((s) => {
+      setFreeShippingThreshold(s.free_shipping_threshold);
+      setStandardShippingCost(s.standard_shipping_cost);
+    });
+  }, []);
+
+  const totals = computeCartTotals(lines, {
+    couponDiscount: appliedCouponDiscount,
+    couponValid: !!couponCode && appliedCouponDiscount > 0,
+    freeShippingThreshold,
+    standardShippingCost,
+  });
   const progress = Math.min(
     100,
     (totals.discountedSubtotal / (totals.discountedSubtotal + totals.remainingForFreeShipping || 1)) * 100
