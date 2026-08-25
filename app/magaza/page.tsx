@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { products, categories } from "@/content/products";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ProductCard } from "@/components/product/ProductCard";
 import { TrustBadges } from "@/components/ui/TrustBadges";
