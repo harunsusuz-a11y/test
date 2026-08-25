@@ -1,39 +1,34 @@
-"use client";
+import { getProductsServer } from "@/lib/data/products-server";
+import { ProductCardDb } from "@/components/product/ProductCardDb";
+import Link from "next/link";
 
-import { motion } from "motion/react";
-import { products } from "@/content/products";
-import { ProductCard } from "@/components/product/ProductCard";
+export async function FeaturedProducts() {
+  const products = await getProductsServer();
+  const featured = products.filter((p) => p.is_featured).slice(0, 3);
+  const display = featured.length > 0 ? featured : products.slice(0, 3);
 
-export function FeaturedProducts() {
+  if (!display.length) return null;
+
   return (
-    <section id="urun-ailesi" className="mx-auto max-w-6xl px-5 py-28">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="mb-14 max-w-xl"
-      >
-        <p className="text-xs font-bold uppercase tracking-widest2 text-green">Ürün Ailesi</p>
-        <h2 className="mt-3 max-w-xl font-display text-3xl font-semibold tracking-tight text-brown-darker sm:text-4xl">
-          Sana uygun ateşi seç.
-        </h2>
-      </motion.div>
-
-      <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-        {products.map((product, i) => (
-          <motion.div
-            key={product.slug}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.6, delay: i * 0.045, ease: [0.16, 1, 0.3, 1] }}
-            // İkinci üründe hafif düşey ofset — mükemmel hizalı ızgarayı kasıtlı kırar
-            className={i === 1 ? "lg:mt-10" : undefined}
+    <section className="py-24 px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-brown/50 mb-2">Ürünler</p>
+            <h2 className="font-display text-3xl md:text-4xl text-brown">Öne Çıkanlar</h2>
+          </div>
+          <Link
+            href="/magaza"
+            className="text-sm text-brown/60 hover:text-brown transition-colors underline-offset-4 hover:underline"
           >
-            <ProductCard product={product} />
-          </motion.div>
-        ))}
+            Tümünü gör →
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {display.map((product) => (
+            <ProductCardDb key={product.slug} product={product} />
+          ))}
+        </div>
       </div>
     </section>
   );
