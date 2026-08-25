@@ -52,7 +52,7 @@ export function CheckoutForm() {
   });
 
   const shipping = watch("shipping");
-  const totals = computeCartTotals(lines, couponCode);
+  const totals = computeCartTotals(lines, { couponDiscount: 0, couponValid: false });
   const shippingCost = shipping === "hizli" ? 59.9 : totals.shippingCost;
   const grandTotal = totals.discountedSubtotal + shippingCost;
 
