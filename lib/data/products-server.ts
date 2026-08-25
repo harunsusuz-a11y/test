@@ -5,13 +5,13 @@ export async function getProductsServer(): Promise<DbProduct[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id,name,slug,short_description,description,price,compare_at_price,main_image_url,gallery_images,status,is_featured,is_bestseller,protein_percent,hazelnut_percent,flavor,highlights,ingredients,nutrition_per_100g,usage_tips,faq,attributes,category_id,weight")
     .eq("status", "active")
     .is("deleted_at", null)
     .order("sort_order", { ascending: true });
 
   if (error || !data || data.length === 0) {
-    // Fallback: static products.ts
+    // Fallback: static products.ts (geçiş dönemi güvencesi)
     const { products } = await import("@/content/products");
     return products.map((p) => ({
       id: p.slug,
@@ -30,7 +30,11 @@ export async function getProductsServer(): Promise<DbProduct[]> {
       hazelnut_percent: p.hazelnutPercent ?? null,
       flavor: p.flavor,
       highlights: p.highlights,
+      ingredients: p.ingredients ?? [],
       nutrition_per_100g: p.nutritionPer100g,
+      usage_tips: p.usageTips ?? [],
+      faq: p.faq ?? [],
+      attributes: p.attributes ?? [],
       category_id: null,
       weight: p.weightGrams ?? null,
     }));
@@ -42,7 +46,7 @@ export async function getProductBySlugServer(slug: string): Promise<DbProduct | 
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id,name,slug,short_description,description,price,compare_at_price,main_image_url,gallery_images,status,is_featured,is_bestseller,protein_percent,hazelnut_percent,flavor,highlights,ingredients,nutrition_per_100g,usage_tips,faq,attributes,category_id,weight")
     .eq("slug", slug)
     .eq("status", "active")
     .is("deleted_at", null)
@@ -70,7 +74,11 @@ export async function getProductBySlugServer(slug: string): Promise<DbProduct | 
       hazelnut_percent: p.hazelnutPercent ?? null,
       flavor: p.flavor,
       highlights: p.highlights,
+      ingredients: p.ingredients ?? [],
       nutrition_per_100g: p.nutritionPer100g,
+      usage_tips: p.usageTips ?? [],
+      faq: p.faq ?? [],
+      attributes: p.attributes ?? [],
       category_id: null,
       weight: p.weightGrams ?? null,
     };
