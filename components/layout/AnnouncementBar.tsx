@@ -3,51 +3,46 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-const STORAGE_KEY = "venti-announcement-dismissed-v1";
+const STORAGE_KEY = "venti-announcement-dismissed-v2";
 
-/**
- * Header üstünde ince, kapatılabilir duyuru barı.
- * Premium markalarda giriş popup'ı yerine tercih edilen desen:
- * teklifi gösterir ama deneyimin önüne bariyer koymaz.
- * Kapatıldığında localStorage ile bir daha gösterilmez
- * (kampanya değişince STORAGE_KEY sürümünü artırın).
- */
 export function AnnouncementBar() {
-  // SSR/hydration uyumu için başlangıçta gizli; mount'ta karar verilir.
   const [visible, setVisible] = useState(false);
+  const [text, setText] = useState("🎉 İlk siparişinde %10 indirim: VENTI10");
+  const [link, setLink] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      if (!localStorage.getItem(STORAGE_KEY)) setVisible(true);
-    } catch {
-      setVisible(true);
-    }
-  }, []);
+    const dismissed = localStorage.getItem(STORAGE_KEY);
+    if (dismissed) return;
 
-  function dismiss() {
-    setVisible(false);
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      /* storage kapalıysa sessizce geç */
-    }
-  }
+    fetch("/api/settings/content?keys=announcement_bar_text,announcement_bar_active,announcement_bar_link")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.announcement_bar_active === false) return;
+        if (data.announcement_bar_text) setText(data.announcement_bar_text);
+        if (data.announcement_bar_link) setLink(data.announcement_bar_link);
+        setVisible(true);
+      })
+      .catch(() => setVisible(true));
+  }, []);
 
   if (!visible) return null;
 
-  return (
-    <div className="relative z-40 bg-green text-cream">
-      <p className="mx-auto max-w-6xl px-10 py-2 text-center text-[11px] font-semibold uppercase tracking-widest2 sm:text-xs">
-        İlk siparişe %10 indirim — kod: <span className="text-peach">VENTI10</span>
-      </p>
+  const inner = (
+    <div className="flex items-center justify-center gap-3">
+      <span className="text-xs font-medium tracking-wide text-cream">{text}</span>
       <button
-        type="button"
-        onClick={dismiss}
-        aria-label="Duyuruyu kapat"
-        className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-cream/70 transition hover:text-cream"
+        onClick={() => { localStorage.setItem(STORAGE_KEY, "1"); setVisible(false); }}
+        className="ml-2 p-0.5 rounded-full hover:bg-white/10 transition-colors"
+        aria-label="Kapat"
       >
-        <X size={14} aria-hidden="true" />
+        <X className="w-3 h-3 text-cream/70" />
       </button>
+    </div>
+  );
+
+  return (
+    <div className="w-full bg-brown py-2 px-4">
+      {link ? <a href={link} className="block">{inner}</a> : inner}
     </div>
   );
 }
