@@ -1,4 +1,19 @@
 import { Star, BadgeCheck, Quote } from "lucide-react";
+
+type Review = {
+  id: string;
+  reviewer_name?: string;
+  authorInitial?: string;
+  rating: number;
+  body?: string;
+  comment?: string;
+  verified_purchase?: boolean;
+  is_verified_purchase?: boolean;
+  created_at?: string;
+  productSlug?: string;
+  isDemo?: boolean;
+};
+
 import type { Review } from "@/content/reviews";
 import type { ProductTheme } from "@/lib/utils/product-theme";
 
