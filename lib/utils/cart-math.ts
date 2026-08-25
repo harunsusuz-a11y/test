@@ -1,28 +1,53 @@
 import type { CartLine } from "@/store/cart-store";
-import { getProductBySlug } from "@/content/products";
-import {
-  BUNDLE_DISCOUNT_RATE,
-  FREE_SHIPPING_THRESHOLD,
-  STANDARD_SHIPPING_COST,
-  findCoupon,
-} from "@/content/discounts";
+
+export const BUNDLE_DISCOUNT_RATE = 0.1;
 
 /**
- * Sepet matematiğinin tek kaynağı. Drawer, /sepet sayfası ve ödeme özeti
- * hepsi bunu kullanır — üç yerde üç farklı toplam çıkması imkânsız hale gelir.
- *
- * Kurgu sırası:
- * 1) Ara toplam
- * 2) Paket indirimi: sepette hem protein bar hem krema varsa, en ucuz
- *    bar + en ucuz krema ikilisine %10 (otomatik, kupon gerektirmez)
- * 3) Kupon: paket sonrası tutara uygulanır (demo kuponlar)
- * 4) Kargo: indirimli tutar eşiği geçtiyse ücretsiz
+ * Kargo ayarlarını DB'den çeker. Client componentlerde çağrılacak.
+ * Hata durumunda hardcode fallback döner.
  */
+export async function fetchShippingSettings(): Promise<{
+  free_shipping_threshold: number;
+  standard_shipping_cost: number;
+}> {
+  try {
+    const res = await fetch("/api/settings/shipping", { next: { revalidate: 3600 } });
+    if (!res.ok) throw new Error();
+    return res.json();
+  } catch {
+    return { free_shipping_threshold: 300, standard_shipping_cost: 29.9 };
+  }
+}
+
+/**
+ * Kupon kodunu DB'den doğrular.
+ */
+export async function validateCoupon(
+  code: string,
+  order_amount: number
+): Promise<{
+  valid: boolean;
+  error?: string;
+  discount_type?: "percent" | "fixed";
+  discount_value?: number;
+  max_discount?: number | null;
+}> {
+  try {
+    const res = await fetch("/api/coupon/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code, order_amount }),
+    });
+    return res.json();
+  } catch {
+    return { valid: false, error: "Bağlantı hatası" };
+  }
+}
+
 export type CartTotals = {
   subtotal: number;
   bundleDiscount: number;
-  bundleEligible: boolean; // paket şu an uygulanıyor mu
-  /** Pakete bir kategori eksikse: hangi kategori eklenirse paket açılır */
+  bundleEligible: boolean;
   bundleMissingCategory: "protein-bar" | "findik-kremasi" | null;
   couponDiscount: number;
   couponValid: boolean;
@@ -33,18 +58,37 @@ export type CartTotals = {
   total: number;
 };
 
-export function computeCartTotals(lines: CartLine[], couponCode: string | null): CartTotals {
+/**
+ * Sync hesaplama — CartDrawer ve sepet sayfasında kullanılır.
+ * Kargo eşiği ve kupon indirimi dışarıdan geçirilir (async fetch sonrası).
+ */
+export function computeCartTotals(
+  lines: CartLine[],
+  options: {
+    couponDiscount?: number;
+    couponValid?: boolean;
+    freeShippingThreshold?: number;
+    standardShippingCost?: number;
+    /** ürün kategori bilgisi: slug → category slug */
+    categoryMap?: Record<string, string>;
+  } = {}
+): CartTotals {
+  const {
+    couponDiscount = 0,
+    couponValid = false,
+    freeShippingThreshold = 300,
+    standardShippingCost = 29.9,
+    categoryMap = {},
+  } = options;
+
   const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
 
-  // Kategoriler slug üzerinden ürün verisinden çözülür (persist edilmiş eski
-  // sepet satırlarında kategori alanı olmayabilir).
   const barPrices: number[] = [];
   const creamPrices: number[] = [];
   for (const line of lines) {
-    const product = getProductBySlug(line.slug);
-    if (!product) continue;
-    if (product.category === "protein-bar") barPrices.push(line.price);
-    if (product.category === "findik-kremasi") creamPrices.push(line.price);
+    const cat = categoryMap[line.slug];
+    if (cat === "protein-bar") barPrices.push(line.price);
+    if (cat === "findik-kremasi") creamPrices.push(line.price);
   }
 
   const bundleEligible = barPrices.length > 0 && creamPrices.length > 0;
@@ -59,14 +103,10 @@ export function computeCartTotals(lines: CartLine[], couponCode: string | null):
         : "findik-kremasi";
 
   const afterBundle = subtotal - bundleDiscount;
-
-  const coupon = couponCode ? findCoupon(couponCode) : null;
-  const couponDiscount = coupon ? afterBundle * (coupon.discountValue / 100) : 0;
-
   const discountedSubtotal = Math.max(0, afterBundle - couponDiscount);
-  const freeShipping = discountedSubtotal >= FREE_SHIPPING_THRESHOLD;
-  const shippingCost = lines.length === 0 || freeShipping ? 0 : STANDARD_SHIPPING_COST;
-  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - discountedSubtotal);
+  const freeShipping = discountedSubtotal >= freeShippingThreshold;
+  const shippingCost = lines.length === 0 || freeShipping ? 0 : standardShippingCost;
+  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - discountedSubtotal);
 
   return {
     subtotal,
@@ -74,7 +114,7 @@ export function computeCartTotals(lines: CartLine[], couponCode: string | null):
     bundleEligible,
     bundleMissingCategory,
     couponDiscount,
-    couponValid: !!coupon,
+    couponValid,
     discountedSubtotal,
     shippingCost,
     freeShipping,
