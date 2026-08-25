@@ -21,7 +21,7 @@ export default async function IletisimPage() {
     <main>
       <PageHeader
         title="İletişim"
-        subtitle="Her soruyu yanıtlıyoruz."
+        description="Her soruyu yanıtlıyoruz."
         eyebrow="Bize Ulaşın"
       />
       <section className="max-w-2xl mx-auto px-6 py-20 space-y-10">
