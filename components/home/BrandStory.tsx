@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { brand } from "@/content/brand";
 
 export function BrandStory() {
   return (
@@ -34,12 +33,12 @@ export function BrandStory() {
         >
           <p className="text-xs font-bold uppercase tracking-widest2 text-peach">Marka Hikayesi</p>
           <h2 className="mt-3 font-display text-3xl font-semibold italic leading-tight tracking-tight sm:text-4xl">
-            {brand.tagline}
+            {"Fındığın rafine hali"}
           </h2>
-          <p className="mt-6 max-w-lg leading-relaxed text-cream/80">{brand.shortStory}</p>
+          <p className="mt-6 max-w-lg leading-relaxed text-cream/80">{"Venti-Ate, Giresun fındığını merkeze alan premium bir atıştırmalık markasıdır. Hem lezzetli hem fonksiyonel."}</p>
 
           <ul className="mt-9 grid grid-cols-2 gap-x-5 gap-y-6">
-            {brand.values.map((v) => (
+            {/* brand.values.map((v) => (
               <li key={v.title} className="border-l border-peach/30 pl-4">
                 <p className="font-display text-sm font-semibold text-peach">{v.title}</p>
                 <p className="mt-1 text-xs leading-relaxed text-cream/65">{v.description}</p>
