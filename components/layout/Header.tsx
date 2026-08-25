@@ -4,11 +4,24 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, Search } from "lucide-react";
-import { mainNav } from "@/content/navigation";
 import { useCartStore } from "@/store/cart-store";
 import { useUiStore } from "@/store/ui-store";
 
 export function Header() {
+  const [mainNav, setMainNav] = useState([
+    { label: "Mağaza", href: "/magaza" },
+    { label: "Abonelik", href: "/abonelik" },
+    { label: "Formunu Bul", href: "/formunu-bul" },
+    { label: "Hakkımızda", href: "/hakkimizda" },
+  ]);
+
+  useEffect(() => {
+    fetch("/api/settings/content?keys=nav_main")
+      .then((r) => r.json())
+      .then((d) => { if (d.nav_main?.length) setMainNav(d.nav_main); })
+      .catch(() => {});
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [count, setCount] = useState(0);
   const openCartDrawer = useUiStore((s) => s.openCartDrawer);
