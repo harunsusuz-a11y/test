@@ -14,14 +14,13 @@ type Review = {
   isDemo?: boolean;
 };
 
-import type { Review } from "@/content/reviews";
 import type { ProductTheme } from "@/lib/utils/product-theme";
 
 /**
  * Yorumlar redesign'ı: solda puan özeti + dağılım barları,
  * sağda büyük tırnaklı öne çıkan yorum + diğer yorum kartları.
  * Veriler demo — arayüzde açıkça işaretlenir; gerçek yorum sistemi
- * bağlandığında yalnızca veri kaynağı değişecek.
+ * Veriler Supabase reviews tablosundan gelir.
  */
 function Stars({ rating, size = 14 }: { rating: number; size?: number }) {
   return (
