@@ -54,16 +54,23 @@ export function CartDrawer() {
 
   if (!cartDrawerOpen) return null;
 
-  function applyCoupon(e: React.FormEvent) {
+  async function applyCoupon(e: React.FormEvent) {
     e.preventDefault();
     const trial = couponInput.trim().toUpperCase();
     if (!trial) return;
-    const trialTotals = computeCartTotals(lines, trial);
-    if (trialTotals.couponValid) {
+    const subtotal = lines.reduce((s, l) => s + l.price * l.quantity, 0);
+    const result = await validateCoupon(trial, subtotal);
+    if (result.valid && result.discount_value) {
+      const discount = result.discount_type === "percent"
+        ? subtotal * (result.discount_value / 100)
+        : result.discount_value;
+      const final = result.max_discount ? Math.min(discount, result.max_discount) : discount;
+      setAppliedCouponDiscount(final);
       setCoupon(trial);
       setCouponError(false);
       setCouponInput("");
     } else {
+      setCouponErrorMsg(result.error ?? "Geçersiz kupon kodu");
       setCouponError(true);
     }
   }
@@ -245,7 +252,7 @@ export function CartDrawer() {
                     </span>
                     <button
                       type="button"
-                      onClick={() => setCoupon(null)}
+                      onClick={() => { setCoupon(null); setAppliedCouponDiscount(0); }}
                       aria-label="Kuponu kaldır"
                       className="flex h-8 w-8 items-center justify-center rounded-full text-brown-dark/50 hover:text-brown-darker"
                     >
