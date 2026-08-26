@@ -29,11 +29,16 @@ const DEFAULTS: Record<string,any> = {
 };
 
 const ENV_KEYS = [
+  { key: "NEXT_PUBLIC_SITE_URL", label: "Site URL", hint: "Örn: https://ventiate.com" },
   { key: "PAYTR_MERCHANT_ID", label: "PayTR Merchant ID", hint: "PayTR panelinizden alın" },
   { key: "PAYTR_MERCHANT_KEY", label: "PayTR Merchant Key", hint: "PayTR panelinizden alın" },
   { key: "PAYTR_MERCHANT_SALT", label: "PayTR Merchant Salt", hint: "PayTR panelinizden alın" },
   { key: "RESEND_API_KEY", label: "Resend API Key", hint: "resend.com → API Keys" },
-  { key: "NEXT_PUBLIC_SITE_URL", label: "Site URL", hint: "Örn: https://ventiate.com" },
+  { key: "YURTICI_USERNAME", label: "Yurtiçi Kargo Kullanıcı Adı", hint: "Yurtiçi müşteri API kullanıcı adı" },
+  { key: "YURTICI_PASSWORD", label: "Yurtiçi Kargo Şifresi", hint: "Yurtiçi müşteri API şifresi" },
+  { key: "YURTICI_CUSTOMER_NO", label: "Yurtiçi Müşteri No", hint: "Yurtiçi kargo müşteri numarası" },
+  { key: "NEXT_PUBLIC_SUPABASE_URL", label: "Supabase URL", hint: "Supabase proje URL'si" },
+  { key: "NEXT_PUBLIC_SUPABASE_ANON_KEY", label: "Supabase Anon Key", hint: "Supabase projesinden" },
 ];
 
 function ApiKeysSection() {
@@ -285,6 +290,13 @@ export default function AdminAyarlar() {
                   </F>
                 ))}
               </div>
+            </div>
+          )}
+
+          {activeSection==="api_keys" && (
+            <div className="adm-card">
+              <div className="adm-card-header"><span className="adm-card-title">API Anahtarları</span></div>
+              <div className="adm-card-body"><ApiKeysSection /></div>
             </div>
           )}
 
