@@ -48,7 +48,7 @@ export function ReviewsPanel({
     count: reviews.filter((r) => r.rating === star).length,
   }));
   // Öne çıkan: en yüksek puanlı, en uzun yorum
-  const featured = [...reviews].sort((a, b) => b.rating - a.rating || b.comment.length - a.comment.length)[0];
+  const featured = [...reviews].sort((a, b) => b.rating - a.rating || (b.comment ?? "").length - (a.comment ?? "").length)[0];
   const rest = reviews.filter((r) => r.id !== featured.id);
 
   return (
@@ -90,7 +90,7 @@ export function ReviewsPanel({
           <p className="mt-4 font-display text-xl font-semibold leading-snug">&ldquo;{featured.comment}&rdquo;</p>
           <footer className="mt-4 flex items-center gap-2 text-xs text-cream/60">
             {featured.authorInitial}
-            {featured.verifiedPurchase && (
+            {featured.verified_purchase && (
               <span className="flex items-center gap-1">
                 <BadgeCheck size={13} aria-hidden="true" className={theme.accentText} />
                 Doğrulanmış alışveriş (demo)
@@ -107,7 +107,7 @@ export function ReviewsPanel({
                 <span className="text-xs font-semibold text-brown-dark/50">{review.authorInitial}</span>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-brown-dark/80">{review.comment}</p>
-              {review.verifiedPurchase && (
+              {review.verified_purchase && (
                 <p className="mt-3 flex items-center gap-1 text-[11px] text-brown-dark/50">
                   <BadgeCheck size={12} className="text-green" aria-hidden="true" />
                   Doğrulanmış alışveriş (demo)

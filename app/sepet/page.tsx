@@ -53,7 +53,7 @@ export default function CartPage() {
 
   const bundleSuggestion = useMemo(() => {
     if (!totals.bundleMissingCategory) return null;
-    return [].find((p) => p.category === totals.bundleMissingCategory) ?? null;
+    return ([] as any[]).find((p) => p?.category === totals.bundleMissingCategory) ?? null;
   }, [totals.bundleMissingCategory]);
 
   async function applyCoupon(e: React.FormEvent) {
@@ -79,7 +79,7 @@ export default function CartPage() {
         <PageHeader eyebrow="Sepetim" title="Sepetin boş." description="İlk ısırık bir tık uzağında — ürün ailesine göz at." />
         <div className="mx-auto max-w-6xl px-5 pb-24 pt-14">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((p, i) => (
+            {([] as any[]).map((p, i) => (
               <Reveal key={p.slug} delay={i * 45}>
                 <ProductCard product={p} />
               </Reveal>
@@ -111,7 +111,7 @@ export default function CartPage() {
           {/* Satırlar */}
           <div className="space-y-4 lg:col-span-2">
             {lines.map((line, i) => {
-              const product = getProductBySlug(line.slug);
+              const product = null //line.slug);
               return (
                 <Reveal key={line.slug} delay={i * 45}>
                   <div className="flex gap-5 rounded-3xl border border-brown/10 bg-white/60 p-4 transition-shadow hover:shadow-lg hover:shadow-brown-darker/5">
@@ -125,7 +125,7 @@ export default function CartPage() {
                             {line.name}
                           </Link>
                           {product && (
-                            <p className="text-xs uppercase tracking-wide text-brown-dark/50">{product.flavor}</p>
+                            <p className="text-xs uppercase tracking-wide text-brown-dark/50">{}</p>
                           )}
                         </div>
                         <button

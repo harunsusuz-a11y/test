@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { DbProduct } from "./products";
+import { normalizeProduct } from "./products";
 
 export async function getProductsServer(): Promise<DbProduct[]> {
   const supabase = await createClient();
@@ -39,7 +40,7 @@ export async function getProductsServer(): Promise<DbProduct[]> {
       weight: p.weightGrams ?? null,
     }));
   }
-  return data as DbProduct[];
+  return (data as DbProduct[]).map(normalizeProduct);
 }
 
 export async function getProductBySlugServer(slug: string): Promise<DbProduct | null> {
@@ -83,5 +84,5 @@ export async function getProductBySlugServer(slug: string): Promise<DbProduct | 
       weight: p.weightGrams ?? null,
     };
   }
-  return data as DbProduct;
+  return normalizeProduct(data as DbProduct);
 }

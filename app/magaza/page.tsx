@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { ProductCard } from "@/components/product/ProductCard";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { getProductsServer } from "@/lib/data/products-server";
+import { ProductCardDb } from "@/components/product/ProductCardDb";
 
 export const metadata: Metadata = buildMetadata({
   title: "Mağaza",
@@ -23,21 +23,14 @@ export const metadata: Metadata = buildMetadata({
   ],
 });
 
-export default async function MagazaPage() {
-  let dbProducts: { id: string; name: string; slug: string; price: number; images?: string[]; short_description?: string; status?: string }[] = [];
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("products")
-      .select("id, name, slug, price, images, short_description, status")
-      .eq("status", "active")
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false });
-    if (data && data.length > 0) dbProducts = data;
-  } catch {}
+const KATEGORILER = [
+  { slug: "protein-bar", label: "Protein Bar" },
+  { slug: "findik-kremasi", label: "Fındık Kreması" },
+  { slug: "paketler", label: "Paketler" },
+];
 
-  const displayProducts = dbProducts.length > 0 ? dbProducts : products;
-  const featured = displayProducts[0];
+export default async function MagazaPage() {
+  const dbProducts = await getProductsServer();
 
   const breadcrumb = getBreadcrumbJsonLd([
     { name: "Ana Sayfa", path: "/" },
@@ -58,7 +51,7 @@ export default async function MagazaPage() {
           >
             Tümü
           </Link>
-          {categories.map((cat) => (
+          {KATEGORILER.map((cat) => (
             <Link
               key={cat.slug}
               href={`/magaza/kategori/${cat.slug}`}
@@ -80,7 +73,7 @@ export default async function MagazaPage() {
             </p>
           </div>
           <Link
-            href="/magaza"
+            href="/magaza/kategori/paketler"
             className="shrink-0 rounded-[10px] [clip-path:polygon(0_0,calc(100%-10px)_0,100%_10px,100%_100%,0_100%)] bg-brown px-5 py-2.5 text-sm font-bold text-cream transition hover:bg-green"
           >
             Paketi Gör
@@ -91,8 +84,8 @@ export default async function MagazaPage() {
       {/* Ürün grid */}
       <main className="mx-auto max-w-6xl px-5 py-14">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {(displayProducts as typeof products).map((product) => (
-            <ProductCard key={product.slug} product={product} />
+          {dbProducts.map((product) => (
+            <ProductCardDb key={product.slug} product={product} />
           ))}
         </div>
       </main>

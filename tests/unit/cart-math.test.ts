@@ -12,7 +12,7 @@ function line(product: typeof bar, quantity = 1): CartLine {
 
 describe("computeCartTotals", () => {
   it("boş sepette her şey sıfırdır", () => {
-    const t = computeCartTotals([], null);
+    const t = computeCartTotals([], undefined);
     expect(t.subtotal).toBe(0);
     expect(t.total).toBe(0);
     expect(t.shippingCost).toBe(0);
@@ -20,39 +20,39 @@ describe("computeCartTotals", () => {
   });
 
   it("tek kategoride paket uygulanmaz ve eksik kategori bildirilir", () => {
-    const t = computeCartTotals([line(bar, 2)], null);
+    const t = computeCartTotals([line(bar, 2)], undefined);
     expect(t.bundleEligible).toBe(false);
     expect(t.bundleDiscount).toBe(0);
     expect(t.bundleMissingCategory).toBe("findik-kremasi");
   });
 
   it("bar + krema birlikteyken paket indirimi ikiliye %10 uygulanır", () => {
-    const t = computeCartTotals([line(bar), line(cream)], null);
+    const t = computeCartTotals([line(bar), line(cream)], undefined);
     expect(t.bundleEligible).toBe(true);
     expect(t.bundleDiscount).toBeCloseTo((bar.price + cream.price) * 0.1, 2);
   });
 
   it("geçerli kupon paket sonrası tutara uygulanır", () => {
-    const t = computeCartTotals([line(bar), line(cream)], "VENTI10");
+    const t = computeCartTotals([line(bar), line(cream)], { couponDiscount: 100, couponValid: true });
     const afterBundle = t.subtotal - t.bundleDiscount;
     expect(t.couponValid).toBe(true);
     expect(t.couponDiscount).toBeCloseTo(afterBundle * 0.1, 2);
   });
 
   it("geçersiz kupon indirim yaratmaz", () => {
-    const t = computeCartTotals([line(bar)], "OLMAYANKOD");
+    const t = computeCartTotals([line(bar)], { couponDiscount: 0, couponValid: false });
     expect(t.couponValid).toBe(false);
     expect(t.couponDiscount).toBe(0);
   });
 
   it("indirimli tutar eşiği geçince kargo ücretsizdir", () => {
-    const t = computeCartTotals([line(cream, 3)], null); // 3 × 149.9 > 300
+    const t = computeCartTotals([line(cream, 3)], undefined); // 3 × 149.9 > 300
     expect(t.freeShipping).toBe(true);
     expect(t.shippingCost).toBe(0);
   });
 
   it("eşiğin altında standart kargo eklenir ve toplam tutarlıdır", () => {
-    const t = computeCartTotals([line(bar)], null);
+    const t = computeCartTotals([line(bar)], undefined);
     expect(t.freeShipping).toBe(false);
     expect(t.total).toBeCloseTo(t.discountedSubtotal + t.shippingCost, 2);
   });

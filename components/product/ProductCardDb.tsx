@@ -17,7 +17,6 @@ export function ProductCardDb({ product }: { product: DbProduct }) {
       name: product.name,
       price: product.price,
       image: product.main_image_url ?? "/images/hero-bars.jpg",
-      quantity: 1,
     });
     openCartDrawer(product.slug);
   }

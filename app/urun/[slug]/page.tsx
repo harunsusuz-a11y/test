@@ -39,7 +39,7 @@ export async function generateStaticParams() {
     const dbProducts = await getProductsServer();
     if (dbProducts.length > 0) return dbProducts.map((p) => ({ slug: p.slug }));
   } catch {}
-  return products.map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export async function generateMetadata({
@@ -48,16 +48,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugServer(slug);
   if (!product) return { title: "Ürün Bulunamadı" };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.com";
-  const imageAbs = product.image.startsWith("http") ? product.image : `${siteUrl}${product.image}`;
+  const img = product.image ?? product.main_image_url ?? "";
+  const imageAbs = img.startsWith("http") ? img : `${siteUrl}${img}`;
   const categoryLabel = product.category === "protein-bar" ? "protein bar" : "fındık kreması";
 
   return {
     title: product.name,
-    description: product.description,
+    description: product.description ?? "",
     keywords: [
       product.name,
       "Venti-Ate",
@@ -65,32 +66,33 @@ export async function generateMetadata({
       categoryLabel,
       "sağlıklı atıştırmalık",
       product.flavor,
-      `${product.weightGrams}g`,
-    ],
+      product.weightGrams ? `${product.weightGrams}g` : "",
+    ].filter(Boolean) as string[],
     alternates: { canonical: `/urun/${slug}` },
     openGraph: {
       type: "website",
       locale: "tr_TR",
       title: `${product.name} | Venti-Ate`,
-      description: product.description,
+      description: product.description ?? "",
       images: [{ url: imageAbs, width: 1200, height: 630, alt: product.name }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${product.name} | Venti-Ate`,
-      description: product.shortDescription,
-      images: [imageAbs],
+      description: (product.shortDescription ?? product.short_description) ?? "",
+      images: [imageAbs ?? ""],
     },
   };
 }
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugServer(slug);
   if (!product) notFound();
 
-  const related = products.filter((p) => p.slug !== product.slug);
-  const theme = getProductTheme(product);
+  const allProducts = await getProductsServer();
+  const related = allProducts.filter((p) => p.slug !== product.slug);
+  const theme = getProductTheme(product as any);
   const reviews = await getReviewsFromDb(product.slug);
   const avgRating = reviews.length > 0
     ? reviews.reduce((s: number, r: { rating: number }) => s + r.rating, 0) / reviews.length
@@ -101,7 +103,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     "@type": "Product",
     name: product.name,
     description: product.shortDescription,
-    image: product.image,
+    image: (product.image ?? product.main_image_url ?? "") as string,
     offers: {
       "@type": "Offer",
       priceCurrency: "TRY",
@@ -125,7 +127,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const faqStructuredData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: product.faq.map((item) => ({
+    mainEntity: product.faq.map((item: { question: string; answer: string }) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },
@@ -146,7 +148,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <JsonLd data={breadcrumbData} />
 
       {/* 1 — Sinematik açılış (ürüne özel renk kimliği) */}
-      <ProductHero product={product} theme={theme} />
+      <ProductHero product={product as any} theme={theme} />
 
       {/* 2 — Scrollspy bölüm navigasyonu */}
       <ProductNav accentBg={theme.accentBg} />
@@ -162,7 +164,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
         <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div className="md:sticky md:top-32">
-            <ProductGallery image={product.image} gallery={product.gallery} name={product.name} isDemo={product.isDemo} />
+            <ProductGallery image={(product.image ?? product.main_image_url ?? "") as string} gallery={(product.gallery ?? product.gallery_images ?? []) as string[]} name={product.name} isDemo={(product.isDemo ?? false) as boolean} />
           </div>
 
           <div>
@@ -184,17 +186,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
             <div className="mt-3 flex items-baseline gap-3">
               <p className="text-2xl font-bold text-brown-darker">{formatPrice(product.price)}</p>
-              {product.compareAtPrice && (
+              {(product.compareAtPrice ?? product.compare_at_price) && (
                 <>
-                  <p className="text-lg text-brown-dark/40 line-through">{formatPrice(product.compareAtPrice)}</p>
+                  <p className="text-lg text-brown-dark/40 line-through">{formatPrice((product.compareAtPrice ?? product.compare_at_price)!)}</p>
                   <span className="rounded-full bg-green/10 px-2.5 py-1 text-xs font-bold text-green">
-                    %{Math.round((1 - product.price / product.compareAtPrice) * 100)} indirim
+                    %{Math.round((1 - product.price / (product.compareAtPrice ?? product.compare_at_price)!) * 100)} indirim
                   </span>
                 </>
               )}
             </div>
 
-            <p className="mt-4 text-brown-dark/80">{product.description}</p>
+            <p className="mt-4 text-brown-dark/80">{(product.description ?? "") as string}</p>
 
             <ul className="mt-6 space-y-2">
               {product.highlights.map((h) => (
@@ -206,9 +208,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </ul>
 
             {/* Cam kart: adet + tek seferlik/abonelik toggle'ı */}
-            <BuyBox product={product} theme={theme} />
+            <BuyBox product={product as any} theme={theme} />
 
-            <StatRings proteinPercent={product.proteinPercent} hazelnutPercent={product.hazelnutPercent} />
+            <StatRings proteinPercent={(product.proteinPercent ?? product.protein_percent) ?? 0} hazelnutPercent={(product.hazelnutPercent ?? product.hazelnut_percent) ?? 0} />
 
             <dl className="mt-8 divide-y divide-brown/10 border-y border-brown/10">
               {product.attributes.map((attr) => (
@@ -225,11 +227,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       </section>
 
       {/* 4 — Dev outline tipografi şeridi */}
-      <OutlineMarquee text={product.flavor} theme={theme} />
+      <OutlineMarquee text={(product.flavor ?? "") as string} theme={theme} />
 
       {/* 5 — Scroll-driven ürün hikâyesi */}
       <section id="hikaye" className="scroll-mt-32">
-        <ProductStory product={product} theme={theme} />
+        <ProductStory product={product as any} theme={theme} />
       </section>
 
       {/* 6 — Besin etiketi + içindekiler + doku hotspot'ları */}
@@ -238,9 +240,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
           Etikette ne varsa, burada da o var.
         </h2>
-        <NutritionCard product={product} theme={theme} />
+        <NutritionCard product={product as any} theme={theme} />
         <div className="mt-10">
-          <TextureHotspots product={product} theme={theme} />
+          <TextureHotspots product={product as any} theme={theme} />
         </div>
       </section>
 
@@ -249,7 +251,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
         <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          {product.usageTips.map((tip, i) => (
+          {((product.usageTips ?? product.usage_tips ?? []) as string[]).map((tip: string, i: number) => (
             <Reveal key={tip} delay={i * 45}>
               <div className="group h-full rounded-2xl border border-brown/10 bg-brown/[0.03] p-6 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-brown/20 hover:bg-white/70 hover:shadow-lg hover:shadow-brown-darker/10">
                 <span className="mb-2 flex items-center gap-2 font-display text-lg font-bold text-green">
@@ -302,7 +304,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p, i) => (
               <Reveal key={p.slug} delay={i * 45}>
-                <ProductCard product={p} />
+                <ProductCard product={p as any} />
               </Reveal>
             ))}
           </div>

@@ -17,6 +17,8 @@ import { Progress } from "@/components/ui/Progress";
  * Header'daki "Sepetim" ve sepete ekleme bu çekmeceyi açar; /sepet sayfası
  * derin link/paylaşım için durur.
  */
+const BUNDLE_NAME = "Bar + Krema Paketi";
+
 export function CartDrawer() {
   const { cartDrawerOpen, lastAddedSlug, closeCartDrawer } = useUiStore();
   const lines = useCartStore((s) => s.lines);
@@ -27,6 +29,7 @@ export function CartDrawer() {
   const setCoupon = useCartStore((s) => s.setCoupon);
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState(false);
+  const [couponErrorMsg, setCouponErrorMsg] = useState("Geçersiz kupon kodu");
   const [appliedCouponDiscount, setAppliedCouponDiscount] = useState(0);
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(300);
   const [standardShippingCost, setStandardShippingCost] = useState(29.9);
@@ -52,7 +55,7 @@ export function CartDrawer() {
 
   const bundleSuggestion = useMemo(() => {
     if (!totals.bundleMissingCategory) return null;
-    return products.find((p) => p.category === totals.bundleMissingCategory) ?? null;
+    return null; // Öneri sistemi DB'den ayrıca implementlenecek
   }, [totals.bundleMissingCategory]);
 
   useEffect(() => {
@@ -154,7 +157,7 @@ export function CartDrawer() {
             <div className="flex-1 overflow-y-auto px-6 py-4">
               <ul className="space-y-4">
                 {lines.map((line) => {
-                  const product = getProductBySlug(line.slug);
+                  const product = null //line.slug);
                   return (
                     <li
                       key={line.slug}
@@ -174,7 +177,7 @@ export function CartDrawer() {
                           <div>
                             <p className="text-sm font-semibold text-brown-darker">{line.name}</p>
                             {product && (
-                              <p className="text-[11px] uppercase tracking-wide text-brown-dark/50">{product.flavor}</p>
+                              <p className="text-[11px] uppercase tracking-wide text-brown-dark/50">{product}</p>
                             )}
                           </div>
                           <button
@@ -233,18 +236,18 @@ export function CartDrawer() {
                     </p>
                     <div className="mt-3 flex items-center gap-3">
                       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-brown/5">
-                        <Image src={bundleSuggestion.image} alt={bundleSuggestion.name} fill sizes="3.5rem" className="object-cover" />
+                        <Image src={(bundleSuggestion as any)?.image ?? ""} alt={(bundleSuggestion as any)?.name ?? ""} fill sizes="3.5rem" className="object-cover" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-brown-darker">{bundleSuggestion.name}</p>
+                        <p className="text-sm font-semibold text-brown-darker">{(bundleSuggestion as any)?.name ?? ""}</p>
                         <p className="text-xs text-brown-dark/60">
                           Ekle, <span className="font-bold text-green">{BUNDLE_NAME} %10</span> açılsın
                         </p>
                       </div>
                       <button
                         type="button"
-                        onClick={() => addItem(bundleSuggestion)}
-                        aria-label={`${bundleSuggestion.name} ürününü sepete ekle`}
+                        onClick={() => bundleSuggestion && addItem(bundleSuggestion as any)}
+                        aria-label={`${(bundleSuggestion as any)?.name ?? ""} ürününü sepete ekle`}
                         className="rounded-full bg-green p-2.5 text-cream transition hover:bg-brown-darker"
                       >
                         <Plus size={14} aria-hidden="true" />
