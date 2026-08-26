@@ -1,3 +1,47 @@
+/* ── Tailwind preflight override — admin dark tema için ─────────────────
+   Tailwind base/preflight input/select background'u sıfırlıyor.
+   adm-root içindeki tüm native form elementlerini dark temaya çekiyoruz.
+   ──────────────────────────────────────────────────────────────────── */
+.adm-root input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.adm-root select,
+.adm-root textarea,
+.adm-overlay input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.adm-overlay select,
+.adm-overlay textarea {
+  background-color: var(--adm-surface-3) !important;
+  border: 1px solid var(--adm-border-2) !important;
+  color: var(--adm-text) !important;
+  border-radius: var(--adm-r);
+}
+.adm-root input::placeholder,
+.adm-root textarea::placeholder,
+.adm-overlay input::placeholder,
+.adm-overlay textarea::placeholder {
+  color: var(--adm-text-4) !important;
+  opacity: 1;
+}
+.adm-root input:focus,
+.adm-root select:focus,
+.adm-root textarea:focus,
+.adm-overlay input:focus,
+.adm-overlay select:focus,
+.adm-overlay textarea:focus {
+  border-color: var(--adm-accent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--adm-accent-dim) !important;
+}
+.adm-root input[type="date"],
+.adm-root input[type="datetime-local"],
+.adm-overlay input[type="date"],
+.adm-overlay input[type="datetime-local"] {
+  color-scheme: dark;
+}
+.adm-root select option,
+.adm-overlay select option {
+  background: var(--adm-surface-3);
+  color: var(--adm-text);
+}
+
 /* ─── Venti-Ate Admin Panel — Premium Dark UI v2 ──────────────────────────
    Referans: Linear, Vercel Dashboard, Resend, Raycast
    Token sistemi: adm-* prefix, site brandbook'tan bağımsız
@@ -411,20 +455,52 @@ html, body { height: 100%; }
   animation: adm-fade-in 0.15s ease;
 }
 .adm-modal {
-  background: var(--adm-surface);
-  border: 1px solid var(--adm-border-2);
-  border-radius: var(--adm-r-xl);
+  background: var(--adm-surface) !important;
+  border: 1px solid var(--adm-border-2) !important;
+  border-radius: var(--adm-r-xl) !important;
+  color: var(--adm-text) !important;
   width: 100%; max-width: 560px;
   max-height: 90vh; overflow-y: auto;
   animation: adm-slide-up 0.18s cubic-bezier(0.4,0,0.2,1);
   box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+/* Modal içindeki tüm input/select/textarea dark tema */
+.adm-modal input,
+.adm-modal textarea,
+.adm-modal select {
+  background: var(--adm-surface-3) !important;
+  border: 1px solid var(--adm-border-2) !important;
+  color: var(--adm-text) !important;
+}
+.adm-modal input::placeholder,
+.adm-modal textarea::placeholder {
+  color: var(--adm-text-4) !important;
+}
+.adm-modal input:focus,
+.adm-modal textarea:focus,
+.adm-modal select:focus {
+  border-color: var(--adm-accent) !important;
+  outline: none !important;
+}
+.adm-modal select option {
+  background: var(--adm-surface-3);
+  color: var(--adm-text);
+}
+.adm-modal input[type="date"],
+.adm-modal input[type="datetime-local"],
+.adm-modal input[type="time"] {
+  color-scheme: dark;
+}
+.adm-modal label,
+.adm-modal .adm-label-text {
+  color: var(--adm-text-3) !important;
 }
 .adm-modal--lg { max-width: 780px; }
 .adm-modal-header {
   padding: 18px 20px 14px;
   border-bottom: 1px solid var(--adm-border);
   display: flex; justify-content: space-between; align-items: center;
-  position: sticky; top: 0; background: var(--adm-surface); z-index: 1;
+  position: sticky; top: 0; background: var(--adm-surface) !important; z-index: 1;
 }
 .adm-modal-title { font-size: 15px; font-weight: 600; color: var(--adm-text); letter-spacing: -0.01em; }
 .adm-modal-body { padding: 20px; }
