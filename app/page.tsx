@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
+import { HeroSlider } from "@/components/home/HeroSlider";
+import { ProductSlider } from "@/components/home/ProductSlider";
+import { BrandStorySection } from "@/components/home/BrandStorySection";
+import { ProcessSteps } from "@/components/home/ProcessSteps";
+import { InstagramGrid } from "@/components/home/InstagramGrid";
+import { Newsletter } from "@/components/home/Newsletter";
 import { ProofTicker } from "@/components/home/ProofTicker";
 import { SubscriptionToast } from "@/components/overlays/SubscriptionToast";
-import { ScrollStory } from "@/components/home/ScrollStory";
-import { FeaturedProducts } from "@/components/home/FeaturedProducts";
-import { AromaNotes } from "@/components/home/AromaNotes";
-import { BrandStory } from "@/components/home/BrandStory";
-import { Community } from "@/components/home/Community";
-import { Newsletter } from "@/components/home/Newsletter";
+import { getProductsServer } from "@/lib/data/products-server";
+import { buildMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Fındığın rafine hali",
+export const metadata: Metadata = buildMetadata({
+  title: "Fındığın Rafine Hali",
   description:
     "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart. Gerçek içerik, güçlü lezzet.",
+  path: "/",
   keywords: [
     "Venti-Ate",
     "Giresun fındığı protein bar",
@@ -23,27 +25,21 @@ export const metadata: Metadata = {
     "palm yağsız",
     "spor beslenmesi",
   ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Venti-Ate — Fındığın rafine hali",
-    description:
-      "Giresun fındığını merkeze alan, %25 proteinli protein bar ve %50 fındık kremasıyla sağlıklı atıştırmalık kategorisinde yeni bir standart.",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Venti-Ate ürünleri" }],
-  },
-};
+});
 
-export default function HomePage() {
+export default async function HomePage() {
+  const products = await getProductsServer();
+
   return (
     <>
-      <Hero />
-      <ProofTicker />
-      <ScrollStory />
-      <FeaturedProducts />
-      <AromaNotes />
-      <BrandStory />
-      <Community />
-      <Newsletter />
       <SubscriptionToast />
+      <HeroSlider />
+      <ProofTicker />
+      <ProductSlider products={products} />
+      <BrandStorySection />
+      <ProcessSteps />
+      <InstagramGrid />
+      <Newsletter />
     </>
   );
 }
