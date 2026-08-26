@@ -1,5 +1,3 @@
-"use server";
-
 import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";

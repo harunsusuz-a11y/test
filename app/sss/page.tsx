@@ -1,5 +1,3 @@
-"use server";
-
 import { getSettings } from "@/lib/settings";
 import type { Metadata } from "next";
 
