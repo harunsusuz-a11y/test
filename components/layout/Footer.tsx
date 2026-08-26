@@ -16,11 +16,30 @@ export function Footer() {
   const [tagline, setTagline] = useState("Fındığın rafine hali");
 
   useEffect(() => {
-    fetch("/api/settings/content?keys=nav_footer,brand_tagline")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.nav_footer?.length) setFooterNav(d.nav_footer as NavGroup[]);
-        if (d.brand_tagline) setTagline(d.brand_tagline as string);
+    // Menü öğelerini DB'den çek
+    Promise.all([
+      fetch("/api/menu/footer").then((r) => r.json()),
+      fetch("/api/settings/content?keys=brand_tagline").then((r) => r.json()),
+    ])
+      .then(([items, settings]: [{ label: string; url: string }[], { brand_tagline?: string }]) => {
+        if (settings.brand_tagline) setTagline(settings.brand_tagline as string);
+        if (items?.length) {
+          // Footer menü öğelerini grupla
+          const alisveris = items.filter((i) =>
+            ["/magaza", "/abonelik", "/sepet"].includes(i.url)
+          );
+          const marka = items.filter((i) =>
+            ["/hakkimizda", "/sss", "/iletisim", "/formunu-bul"].includes(i.url)
+          );
+          const kurumsal = items.filter((i) =>
+            ["/gizlilik", "/kvkk", "/mesafeli-satis", "/iade-teslimat"].includes(i.url)
+          );
+          const groups: NavGroup[] = [];
+          if (alisveris.length) groups.push({ title: "Alışveriş", links: alisveris.map((i) => ({ label: i.label, href: i.url })) });
+          if (marka.length) groups.push({ title: "Marka", links: marka.map((i) => ({ label: i.label, href: i.url })) });
+          if (kurumsal.length) groups.push({ title: "Kurumsal", links: kurumsal.map((i) => ({ label: i.label, href: i.url })) });
+          if (groups.length) setFooterNav(groups);
+        }
       })
       .catch(() => {});
   }, []);

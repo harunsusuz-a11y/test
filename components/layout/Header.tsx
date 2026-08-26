@@ -16,9 +16,11 @@ export function Header() {
   ]);
 
   useEffect(() => {
-    fetch("/api/settings/content?keys=nav_main")
+    fetch("/api/menu/header")
       .then((r) => r.json())
-      .then((d) => { if (d.nav_main?.length) setMainNav(d.nav_main); })
+      .then((items: { label: string; url: string }[]) => {
+        if (items?.length) setMainNav(items.map((i) => ({ label: i.label, href: i.url })));
+      })
       .catch(() => {});
   }, []);
 
