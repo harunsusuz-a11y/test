@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { products } from "@/content/products";
-import { ProductCard } from "@/components/product/ProductCard";
+import { getProductsServer } from "@/lib/data/products-server";
+import { ProductCardDb } from "@/components/product/ProductCardDb";
 
 export const metadata: Metadata = {
   title: "Arama",
@@ -17,11 +17,12 @@ export default async function Page({
   const { q } = await searchParams;
   const query = (q ?? "").trim().toLocaleLowerCase("tr-TR");
 
+  const allProducts = await getProductsServer();
   const results = query
-    ? products.filter((p) =>
-        [p.name, p.flavor, p.shortDescription].some((f) => f.toLocaleLowerCase("tr-TR").includes(query))
+    ? allProducts.filter((p: any) =>
+        [p.name, p?.flavor, p.shortDescription].some((f) => f.toLocaleLowerCase("tr-TR").includes(query))
       )
-    : products;
+    : allProducts;
 
   return (
     <>
@@ -38,7 +39,7 @@ export default async function Page({
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+              <ProductCardDb key={product.slug} product={product} />
             ))}
           </div>
         )}

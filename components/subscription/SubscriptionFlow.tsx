@@ -1,5 +1,6 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -37,9 +38,28 @@ export function SubscriptionFlow() {
   const discountedTotal = listTotal * (1 - SUBSCRIPTION_DISCOUNT);
 
   async function onSubmit(values: SubscriptionDeliveryValues) {
-    // NOT: Gerçek bir ödeme/tekrarlayan tahsilat sağlayıcısı henüz bağlanmadı.
-    // Bu demo akış, checkout sayfasındaki soyut ödeme katmanıyla aynı mantığı izler.
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // DB'ye subscription kaydı
+    const { error } = await supabase.from("subscriptions").insert({
+      profile_id: user?.id ?? null,
+      product_id: (selectedProduct as any)?.id ?? (selectedProduct as any)?.slug ?? null,
+      frequency: selectedFrequency?.value ?? "monthly",
+      quantity: quantity,
+      full_name: values.fullName,
+      phone: values.phone,
+      address: values.address,
+      city: values.city,
+      postal_code: (values as any).postalCode ?? (values as any).postal_code ?? null,
+      status: "pending",
+      next_delivery_at: new Date(Date.now() + 7 * 86400000).toISOString(),
+    });
+
+    if (error) {
+      console.error("Abonelik kaydı hatası:", error);
+    }
+
     setSubmitted(values);
   }
 

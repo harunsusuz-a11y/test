@@ -1,9 +1,19 @@
 import { type NextRequest, NextResponse } from 'next/server'
 
+const PROTECTED_USER_ROUTES = [
+  '/hesabim',
+  '/favorilerim',
+  '/siparislerim',
+  '/odeme',
+]
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (!pathname.startsWith('/admin')) return NextResponse.next()
+  const isAdmin = pathname.startsWith('/admin')
+  const isUserProtected = PROTECTED_USER_ROUTES.some((r) => pathname.startsWith(r))
+
+  if (!isAdmin && !isUserProtected) return NextResponse.next()
 
   try {
     const { createServerClient } = await import('@supabase/ssr')
@@ -27,13 +37,27 @@ export async function proxy(request: NextRequest) {
     )
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.redirect(new URL('/giris', request.url))
+
+    if (!user) {
+      const loginUrl = isAdmin ? '/giris' : '/uye-giris'
+      const url = new URL(loginUrl, request.url)
+      url.searchParams.set('redirect', pathname)
+      return NextResponse.redirect(url)
+    }
+
     return response
   } catch {
-    return NextResponse.redirect(new URL('/giris', request.url))
+    const loginUrl = isAdmin ? '/giris' : '/uye-giris'
+    return NextResponse.redirect(new URL(loginUrl, request.url))
   }
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/hesabim/:path*',
+    '/favorilerim/:path*',
+    '/siparislerim/:path*',
+    '/odeme/:path*',
+  ],
 }

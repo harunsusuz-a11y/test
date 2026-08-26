@@ -2,38 +2,40 @@ import type { Metadata } from "next";
 import { Clock, Target, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FormunuBulQuiz } from "@/components/quiz/FormunuBulQuiz";
+import { getProductsServer } from "@/lib/data/products-server";
 
 export const metadata: Metadata = {
   title: "Formunu Bul",
-  description: "4 soruda sana en uygun Venti-Ate ürününü bul. Protein bar mı, fındık kreması mı? Hedefine ve rutinine göre kişiselleştirilmiş öneri.",
-  keywords: ["Venti-Ate quiz", "hangi protein bar", "sağlıklı atıştırmalık test", "fındık protein bar öneri"],
+  description: "4 soruda sana en uygun Venti-Ate ürününü bul.",
   alternates: { canonical: "/formunu-bul" },
-  openGraph: {
-    title: "Formunu Bul | Venti-Ate",
-    description: "4 soruda sana en uygun Venti-Ate ürününü bul.",
-  },
 };
 
-const points = [
-  { icon: Clock, label: "30 saniye" },
-  { icon: Target, label: "4 kısa soru" },
-  { icon: Sparkles, label: "Sana özel öneri" },
+const BENEFITS = [
+  { Icon: Clock, label: "4 Soruluk Test", desc: "1 dakikada tamamlanır" },
+  { Icon: Target, label: "Kişisel Sonuç", desc: "Hedefine özel öneri" },
+  { Icon: Sparkles, label: "Doğru Ürün", desc: "Deneme yanılma yok" },
 ];
 
-export default function Page() {
+async function QuizSection() {
+  const products = await getProductsServer();
+  return <FormunuBulQuiz products={products} />;
+}
+
+export default function FormunuBulPage() {
   return (
     <>
       <PageHeader eyebrow="Kısa Test" title="Formunu Bul" description="4 soruda sana en uygun Venti-Ate ürününü bulalım." />
-      <div className="mx-auto mb-10 flex max-w-md flex-wrap items-center justify-center gap-x-8 gap-y-2 px-5 pt-12">
-        {points.map(({ icon: Icon, label }) => (
-          <span key={label} className="flex items-center gap-1.5 text-xs font-semibold text-brown-dark/60">
+      <div className="mx-auto max-w-xl px-5 py-12 grid grid-cols-3 gap-4 text-center">
+        {BENEFITS.map(({ Icon, label, desc }) => (
+          <span key={label} className="flex flex-col items-center gap-1">
             <Icon size={14} className="text-green" aria-hidden="true" />
-            {label}
+            <span className="text-xs font-semibold text-brown-darker">{label}</span>
+            <span className="text-[10px] text-brown-dark/60">{desc}</span>
           </span>
         ))}
       </div>
       <div className="mx-auto max-w-4xl px-5 pb-24">
-        <FormunuBulQuiz />
+        <QuizSection />
       </div>
     </>
   );

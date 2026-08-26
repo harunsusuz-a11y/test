@@ -4,13 +4,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles } from "lucide-react";
 import { quizQuestions, quizResultCopy, type QuizOption } from "@/content/quiz";
-import { products } from "@/content/products";
-import { ProductCard } from "@/components/product/ProductCard";
+
+import { ProductCardDb } from "@/components/product/ProductCardDb";
 import { addAnswer, resolveWinner, emptyScores, type QuizScores } from "@/lib/utils/quiz";
 
 const optionLetters = ["A", "B", "C", "D"];
 
-export function FormunuBulQuiz() {
+import type { DbProduct } from "@/lib/data/products";
+
+export function FormunuBulQuiz({ products }: { products: DbProduct[] }) {
   const [step, setStep] = useState(0);
   const [scores, setScores] = useState<QuizScores>(emptyScores);
 
@@ -28,7 +30,7 @@ export function FormunuBulQuiz() {
 
   if (finished) {
     const winner = resolveWinner(scores);
-    const recommended = products.filter((p) => p.category === winner);
+    const recommended = products.filter((p) => p.slug.includes(winner === "protein-bar" ? "bar" : "krema"));
     const copy = quizResultCopy[winner];
 
     return (
@@ -47,7 +49,7 @@ export function FormunuBulQuiz() {
 
         <div className="mx-auto mt-10 grid max-w-2xl gap-6 sm:grid-cols-2">
           {(recommended.length > 0 ? recommended : products).map((p) => (
-            <ProductCard key={p.slug} product={p} />
+            <ProductCardDb key={p.slug} product={p as any} />
           ))}
         </div>
 
