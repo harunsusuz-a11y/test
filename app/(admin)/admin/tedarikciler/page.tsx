@@ -3,11 +3,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 interface Supplier {
-  id: string; name: string; email: string | null; phone: string | null;
+  id: string; name: string; contact_name: string | null; email: string | null; phone: string | null;
   address: string | null; tax_number: string | null; website: string | null;
   is_active: boolean; notes: string | null; created_at: string;
 }
-const EMPTY = { name:"", email:"", phone:"", address:"", tax_number:"", website:"", is_active:true, notes:"" };
+const EMPTY = { name:"", contact_name:"", email:"", phone:"", address:"", tax_number:"", website:"", is_active:true, notes:"" };
 
 export default function AdminTedarikciler() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -56,13 +56,13 @@ export default function AdminTedarikciler() {
               {suppliers.map(s => (
                 <tr key={s.id}>
                   <td className="adm-td--strong">{s.name}</td>
-                  <td className="adm-text-muted">{s.email || "—"}</td>
+                  <td className="adm-text-muted">{s.contact_name || "—"}</td><td className="adm-text-muted">{s.email || "—"}</td>
                   <td className="adm-text-muted">{s.phone || "—"}</td>
                   <td className="adm-mono adm-text-muted">{s.tax_number || "—"}</td>
                   <td><span className={`adm-badge ${s.is_active?"adm-badge--green":"adm-badge--muted"}`}>{s.is_active?"Aktif":"Pasif"}</span></td>
                   <td>
                     <div style={{ display:"flex", gap:4, justifyContent:"flex-end" }}>
-                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ name:s.name, email:s.email||"", phone:s.phone||"", address:s.address||"", tax_number:s.tax_number||"", website:s.website||"", is_active:s.is_active, notes:s.notes||"" }); setEditId(s.id); setOpen(true); }}>Düzenle</button>
+                      <button className="adm-btn adm-btn--ghost adm-btn--sm" onClick={() => { setEditing({ name:s.name, contact_name:s.contact_name||"", email:s.email||"", phone:s.phone||"", address:s.address||"", tax_number:s.tax_number||"", website:s.website||"", is_active:s.is_active, notes:s.notes||"" }); setEditId(s.id); setOpen(true); }}>Düzenle</button>
                       <button className="adm-btn adm-btn--danger adm-btn--sm" onClick={() => remove(s.id)}>Sil</button>
                     </div>
                   </td>
@@ -86,6 +86,7 @@ export default function AdminTedarikciler() {
                 <div className="adm-field"><label className="adm-label-text">Vergi No</label><input className="adm-input" value={editing.tax_number} onChange={e => setEditing({...editing,tax_number:e.target.value})} /></div>
               </div>
               <div className="adm-field-row">
+                <div className="adm-field"><label className="adm-label-text">Yetkili Adı</label><input className="adm-input" value={editing.contact_name||""} onChange={e => setEditing({...editing,contact_name:e.target.value})} /></div>
                 <div className="adm-field"><label className="adm-label-text">E-posta</label><input className="adm-input" type="email" value={editing.email} onChange={e => setEditing({...editing,email:e.target.value})} /></div>
                 <div className="adm-field"><label className="adm-label-text">Telefon</label><input className="adm-input" value={editing.phone} onChange={e => setEditing({...editing,phone:e.target.value})} /></div>
               </div>

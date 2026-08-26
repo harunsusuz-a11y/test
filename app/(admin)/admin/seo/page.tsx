@@ -6,11 +6,11 @@ import { SkeletonTable } from "@/components/admin/ui/Skeleton";
 import { Search, AlertTriangle, CheckCircle, ExternalLink, Save } from "lucide-react";
 
 type SeoRecord = {
-  id: string; entity_type: string; entity_id: string | null; entity_slug: string | null;
-  meta_title: string | null; meta_description: string | null; canonical_url: string | null;
-  og_title: string | null; og_description: string | null;
-  robots_index: boolean; robots_follow: boolean;
-  created_at: string; updated_at: string | null;
+  id: string; entity_type: string; entity_id: string; entity_slug: string | null;
+  meta_title: string | null; meta_description: string | null; meta_keywords: string | null;
+  canonical_url: string | null; robots_index: boolean; robots_follow: boolean;
+  og_title: string | null; og_description: string | null; og_image: string | null;
+  schema_type: string | null; schema_data: Record<string, unknown> | null;
 };
 
 type SeoIssue = { type: string; message: string; entity: string; severity: "error"|"warning" };
@@ -23,7 +23,7 @@ export default function SeoPage() {
   const [tab, setTab] = useState<"records"|"analysis"|"global">("records");
   const [editing, setEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<SeoRecord>>({});
-  const [globalSettings, setGlobalSettings] = useState({ site_title:"", site_description:"", default_og_image:"", robots_txt:"", google_verification:"", google_analytics:"" });
+  const [globalSettings, setGlobalSettings] = useState({ site_meta_title:"", site_meta_description:"", default_og_image:"", robots_txt:"", google_verification:"", google_analytics:"" });
   const [savingGlobal, setSavingGlobal] = useState(false);
   const supabase = createClient();
 
