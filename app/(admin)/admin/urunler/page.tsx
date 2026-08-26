@@ -115,7 +115,7 @@ export default function UrunlerPage() {
             : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-100 text-xl">🌰</div>}
           <div>
             <p className="font-medium text-stone-800">{p.name}</p>
-            <p className="text-xs text-stone-400">{p.slug}</p>
+            <p className="adm-char-count">{p.slug}</p>
           </div>
         </div>
       ),
@@ -124,7 +124,7 @@ export default function UrunlerPage() {
       id: "fiyat", header: "Fiyat",
       cell: ({ row: { original: p } }) => (
         <div>
-          <p className="font-semibold text-stone-800">{fmt(p.price)}</p>
+          <p className="font-semibold">{fmt(p.price)}</p>
           {p.compare_at_price && <p className="text-xs text-stone-400 line-through">{fmt(p.compare_at_price)}</p>}
         </div>
       ),
@@ -133,13 +133,13 @@ export default function UrunlerPage() {
       id: "stok", header: "Stok",
       cell: ({ row: { original: p } }) => {
         const inv = (p.inventory ?? [])[0];
-        if (!inv) return <span className="text-xs text-stone-400">—</span>;
+        if (!inv) return <span className="adm-char-count">—</span>;
         const isLow = inv.quantity <= inv.critical_level;
         return (
           <div className="flex items-center gap-1.5">
             {isLow && <AlertTriangle size={12} className="text-orange-500" />}
             <span className={`font-medium ${isLow ? "text-orange-600" : "text-stone-700"}`}>{inv.quantity}</span>
-            <span className="text-xs text-stone-400">adet</span>
+            <span className="adm-char-count">adet</span>
           </div>
         );
       },
@@ -169,13 +169,13 @@ export default function UrunlerPage() {
       id: "islemler", header: "",
       cell: ({ row: { original: p } }) => (
         <div className="flex gap-1">
-          <button onClick={() => openEdit(p)} className="rounded-lg p-1.5 hover:bg-stone-100" title="Düzenle">
+          <button onClick={() => openEdit(p)} className="rounded-lg p-1.5" style={{background:"transparent",color:"var(--adm-text-3)"}} title="Düzenle">
             <Edit2 size={14} className="text-stone-500" />
           </button>
-          <button onClick={() => duplicate(p)} className="rounded-lg p-1.5 hover:bg-stone-100" title="Kopyala">
+          <button onClick={() => duplicate(p)} className="rounded-lg p-1.5" style={{background:"transparent",color:"var(--adm-text-3)"}} title="Kopyala">
             <Copy size={14} className="text-stone-500" />
           </button>
-          <button onClick={() => toggleStatus(p)} className="rounded-lg p-1.5 hover:bg-stone-100"
+          <button onClick={() => toggleStatus(p)} className="rounded-lg p-1.5" style={{background:"transparent",color:"var(--adm-text-3)"}}
             title={p.status === "active" ? "Arşivle" : "Aktif et"}>
             {p.status === "active"
               ? <EyeOff size={14} className="text-stone-500" />
@@ -194,9 +194,9 @@ export default function UrunlerPage() {
   function TagInput({ value, onChange, placeholder }: { value: string[]; onChange: (v: string[]) => void; placeholder?: string }) {
     const [input, setInput] = useState("");
     return (
-      <div className="flex flex-wrap gap-1.5 rounded-xl border border-stone-200 bg-white px-3 py-2">
+      <div className="adm-tag-input-wrap flex flex-wrap gap-1.5 rounded-xl px-3 py-2">
         {value.map((tag, i) => (
-          <span key={i} className="flex items-center gap-1 rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-700">
+          <span key={i} className="adm-tag-chip flex items-center gap-1 rounded-full px-2 py-0.5 text-xs">
             {tag}
             <button onClick={() => onChange(value.filter((_, j) => j !== i))} className="text-stone-400 hover:text-stone-600">×</button>
           </span>
@@ -209,7 +209,7 @@ export default function UrunlerPage() {
               if (t) { onChange([...value, t]); setInput(""); }
             }
           }}
-          className="min-w-[120px] flex-1 bg-transparent text-sm outline-none placeholder:text-stone-300"
+          className="min-w-[120px] flex-1 bg-transparent text-sm outline-none"
         />
       </div>
     );
@@ -237,24 +237,24 @@ export default function UrunlerPage() {
       {/* Ürün Düzenleme Drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50 flex">
-          <div className="flex-1 bg-black/30" onClick={() => setDrawerOpen(false)} />
-          <div className="flex h-full w-full max-w-2xl flex-col bg-white shadow-2xl">
+          <div className="flex-1 bg-black/60" onClick={() => setDrawerOpen(false)} />
+          <div className="adm-drawer flex h-full w-full max-w-2xl flex-col shadow-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between border-b px-6 py-4">
-              <h2 className="font-semibold text-stone-800">
+            <div className="adm-drawer-header flex items-center justify-between px-6 py-4">
+              <h2 className="font-semibold">
                 {editing.id ? "Ürün Düzenle" : "Yeni Ürün"}
               </h2>
-              <button onClick={() => setDrawerOpen(false)} className="rounded-lg p-1.5 hover:bg-stone-100">
+              <button onClick={() => setDrawerOpen(false)} className="rounded-lg p-1.5" style={{background:"transparent",color:"var(--adm-text-3)"}}>
                 <X size={18} />
               </button>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b px-6 text-sm">
+            <div className="adm-drawer-tabs flex px-6 text-sm">
               {(["temel","icerik","seo","stok"] as const).map((tab) => (
                 <button key={tab} onClick={() => setActiveTab(tab)}
                   className={`-mb-px border-b-2 px-4 py-3 font-medium capitalize transition ${
-                    activeTab === tab ? "border-stone-800 text-stone-800" : "border-transparent text-stone-400 hover:text-stone-600"
+                    activeTab === tab ? "adm-drawer-tab-active border-b-2 border-b-transparent" : "adm-drawer-tab-inactive border-b-2 border-b-transparent"
                   }`}>
                   {tab === "temel" ? "Temel" : tab === "icerik" ? "İçerik" : tab === "seo" ? "SEO" : "Stok"}
                 </button>
@@ -267,96 +267,96 @@ export default function UrunlerPage() {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <label className="text-xs font-medium text-stone-500">Ürün Adı *</label>
+                      <label className="adm-drawer-label text-xs font-medium">Ürün Adı *</label>
                       <input value={editing.name ?? ""} onChange={(e) => {
                         const name = e.target.value;
                         const slug = editing.id ? editing.slug : name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
                         setEditing((p) => ({ ...p, name, slug }));
-                      }} className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none focus:border-stone-400" />
+                      }} className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Slug *</label>
+                      <label className="adm-drawer-label text-xs font-medium">Slug *</label>
                       <input value={editing.slug ?? ""} onChange={(e) => setEditing((p) => ({ ...p, slug: e.target.value }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none focus:border-stone-400 font-mono" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm font-mono" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Durum</label>
+                      <label className="adm-drawer-label text-xs font-medium">Durum</label>
                       <select value={editing.status ?? "active"} onChange={(e) => setEditing((p) => ({ ...p, status: e.target.value }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none">
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm">
                         <option value="active">Aktif</option>
                         <option value="draft">Taslak</option>
                         <option value="archived">Arşiv</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Fiyat (₺) *</label>
+                      <label className="adm-drawer-label text-xs font-medium">Fiyat (₺) *</label>
                       <input type="number" value={editing.price ?? 0} onChange={(e) => setEditing((p) => ({ ...p, price: +e.target.value }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none focus:border-stone-400" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Karşılaştırma Fiyatı (₺)</label>
+                      <label className="adm-drawer-label text-xs font-medium">Karşılaştırma Fiyatı (₺)</label>
                       <input type="number" value={editing.compare_at_price ?? ""} onChange={(e) => setEditing((p) => ({ ...p, compare_at_price: e.target.value ? +e.target.value : null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none focus:border-stone-400" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Kategori</label>
+                      <label className="adm-drawer-label text-xs font-medium">Kategori</label>
                       <select value={editing.category_id ?? ""} onChange={(e) => setEditing((p) => ({ ...p, category_id: e.target.value || null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none">
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm">
                         <option value="">— Seç —</option>
                         {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Ağırlık (g)</label>
+                      <label className="adm-drawer-label text-xs font-medium">Ağırlık (g)</label>
                       <input type="number" value={editing.weight ?? ""} onChange={(e) => setEditing((p) => ({ ...p, weight: e.target.value ? +e.target.value : null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Protein %</label>
+                      <label className="adm-drawer-label text-xs font-medium">Protein %</label>
                       <input type="number" value={editing.protein_percent ?? ""} onChange={(e) => setEditing((p) => ({ ...p, protein_percent: e.target.value ? +e.target.value : null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Fındık %</label>
+                      <label className="adm-drawer-label text-xs font-medium">Fındık %</label>
                       <input type="number" value={editing.hazelnut_percent ?? ""} onChange={(e) => setEditing((p) => ({ ...p, hazelnut_percent: e.target.value ? +e.target.value : null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Aroma</label>
+                      <label className="adm-drawer-label text-xs font-medium">Aroma</label>
                       <input value={editing.flavor ?? ""} onChange={(e) => setEditing((p) => ({ ...p, flavor: e.target.value || null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-stone-500">Görsel URL</label>
+                      <label className="adm-drawer-label text-xs font-medium">Görsel URL</label>
                       <input value={editing.main_image_url ?? ""} onChange={(e) => setEditing((p) => ({ ...p, main_image_url: e.target.value || null }))}
-                        className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none font-mono text-xs" />
+                        className="mt-1 w-full rounded-xl px-3 py-2 text-sm font-mono text-xs" />
                     </div>
                     <div className="col-span-2 flex gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={editing.is_featured ?? false}
                           onChange={(e) => setEditing((p) => ({ ...p, is_featured: e.target.checked }))}
                           className="rounded" />
-                        <span className="text-sm text-stone-700">Öne Çıkan</span>
+                        <span className="checkbox-label text-sm">Öne Çıkan</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={editing.is_bestseller ?? false}
                           onChange={(e) => setEditing((p) => ({ ...p, is_bestseller: e.target.checked }))}
                           className="rounded" />
-                        <span className="text-sm text-stone-700">Çok Satan</span>
+                        <span className="checkbox-label text-sm">Çok Satan</span>
                       </label>
                     </div>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-stone-500">Kısa Açıklama</label>
+                    <label className="adm-drawer-label text-xs font-medium">Kısa Açıklama</label>
                     <textarea value={editing.short_description ?? ""} rows={2}
                       onChange={(e) => setEditing((p) => ({ ...p, short_description: e.target.value || null }))}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none resize-none" />
+                      className="mt-1 w-full rounded-xl px-3 py-2 text-sm resize-none" />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-stone-500">Açıklama</label>
+                    <label className="adm-drawer-label text-xs font-medium">Açıklama</label>
                     <textarea value={editing.description ?? ""} rows={4}
                       onChange={(e) => setEditing((p) => ({ ...p, description: e.target.value || null }))}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none resize-none" />
+                      className="mt-1 w-full rounded-xl px-3 py-2 text-sm resize-none" />
                   </div>
                 </>
               )}
@@ -364,30 +364,30 @@ export default function UrunlerPage() {
               {activeTab === "icerik" && (
                 <>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-stone-500">Öne Çıkan Noktalar <span className="text-stone-300">(Enter ile ekle)</span></label>
+                    <label className="adm-drawer-label mb-1 block text-xs font-medium">Öne Çıkan Noktalar <span className="text-stone-300">(Enter ile ekle)</span></label>
                     <TagInput value={editing.highlights ?? []} onChange={(v) => setEditing((p) => ({ ...p, highlights: v }))} placeholder="Nokta ekle..." />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-stone-500">İçerikler</label>
+                    <label className="adm-drawer-label mb-1 block text-xs font-medium">İçerikler</label>
                     <TagInput value={editing.ingredients ?? []} onChange={(v) => setEditing((p) => ({ ...p, ingredients: v }))} placeholder="İçerik ekle..." />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-stone-500">Kullanım İpuçları</label>
+                    <label className="adm-drawer-label mb-1 block text-xs font-medium">Kullanım İpuçları</label>
                     <TagInput value={editing.usage_tips ?? []} onChange={(v) => setEditing((p) => ({ ...p, usage_tips: v }))} placeholder="İpucu ekle..." />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-stone-500">SSS (JSON)</label>
+                    <label className="adm-drawer-label mb-1 block text-xs font-medium">SSS (JSON)</label>
                     <textarea
                       value={JSON.stringify(editing.faq ?? [], null, 2)} rows={6}
                       onChange={(e) => { try { setEditing((p) => ({ ...p, faq: JSON.parse(e.target.value) })); } catch {} }}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 font-mono text-xs outline-none resize-none" />
+                      className="mt-1 w-full rounded-xl px-3 py-2 font-mono text-xs resize-none" />
                   </div>
                   <div>
-                    <label className="mb-1 block text-xs font-medium text-stone-500">Besin Değerleri (JSON)</label>
+                    <label className="adm-drawer-label mb-1 block text-xs font-medium">Besin Değerleri (JSON)</label>
                     <textarea
                       value={JSON.stringify(editing.nutrition_per_100g ?? [], null, 2)} rows={5}
                       onChange={(e) => { try { setEditing((p) => ({ ...p, nutrition_per_100g: JSON.parse(e.target.value) })); } catch {} }}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 font-mono text-xs outline-none resize-none" />
+                      className="mt-1 w-full rounded-xl px-3 py-2 font-mono text-xs resize-none" />
                   </div>
                 </>
               )}
@@ -395,21 +395,21 @@ export default function UrunlerPage() {
               {activeTab === "seo" && (
                 <>
                   <div>
-                    <label className="text-xs font-medium text-stone-500">Meta Başlık</label>
+                    <label className="adm-drawer-label text-xs font-medium">Meta Başlık</label>
                     <input value={editing.meta_title ?? ""} onChange={(e) => setEditing((p) => ({ ...p, meta_title: e.target.value || null }))}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none" />
-                    <p className="mt-1 text-xs text-stone-400">{(editing.meta_title ?? "").length}/60</p>
+                      className="mt-1 w-full rounded-xl px-3 py-2 text-sm" />
+                    <p className="adm-char-count">{(editing.meta_title ?? "").length}/60</p>
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-stone-500">Meta Açıklama</label>
+                    <label className="adm-drawer-label text-xs font-medium">Meta Açıklama</label>
                     <textarea value={editing.meta_description ?? ""} rows={3}
                       onChange={(e) => setEditing((p) => ({ ...p, meta_description: e.target.value || null }))}
-                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm outline-none resize-none" />
-                    <p className="mt-1 text-xs text-stone-400">{(editing.meta_description ?? "").length}/160</p>
+                      className="mt-1 w-full rounded-xl px-3 py-2 text-sm resize-none" />
+                    <p className="adm-char-count">{(editing.meta_description ?? "").length}/160</p>
                   </div>
                   {/* SEO önizleme */}
-                  <div className="rounded-xl bg-stone-50 p-4">
-                    <p className="text-xs font-medium text-stone-400 mb-2">Google Önizleme</p>
+                  <div className="adm-seo-preview">
+                    <p className="adm-drawer-label text-xs font-medium mb-2">Google Önizleme</p>
                     <p className="text-blue-600 text-sm font-medium truncate">{editing.meta_title || editing.name || "Ürün Başlığı"}</p>
                     <p className="text-green-700 text-xs">ventiate.com › urun › {editing.slug}</p>
                     <p className="text-stone-500 text-xs mt-1 line-clamp-2">{editing.meta_description || editing.short_description || "Ürün açıklaması burada görünür..."}</p>
@@ -418,8 +418,8 @@ export default function UrunlerPage() {
               )}
 
               {activeTab === "stok" && (
-                <div className="rounded-xl bg-stone-50 p-4 text-sm text-stone-600">
-                  <p className="font-medium text-stone-700 mb-2">Stok Yönetimi</p>
+                <div className="adm-info-box">
+                  <p className="font-medium mb-2">Stok Yönetimi</p>
                   <p>Stok hareketleri Envanter sayfasından yönetilir.</p>
                   {editing.id && (
                     <a href={`/admin/envanter?product=${editing.id}`}
@@ -432,12 +432,12 @@ export default function UrunlerPage() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-end gap-3 border-t px-6 py-4">
-              <button onClick={() => setDrawerOpen(false)} className="rounded-xl border border-stone-200 px-4 py-2 text-sm font-medium text-stone-600 hover:bg-stone-50">
+            <div className="adm-drawer-footer flex items-center justify-end gap-3 px-6 py-4">
+              <button onClick={() => setDrawerOpen(false)} className="adm-btn-cancel rounded-xl px-4 py-2 text-sm font-medium">
                 İptal
               </button>
               <button onClick={save} disabled={saving}
-                className="flex items-center gap-2 rounded-xl bg-stone-800 px-5 py-2 text-sm font-medium text-white hover:bg-stone-700 disabled:opacity-50">
+                className="adm-btn-save flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-medium disabled:opacity-50">
                 <Save size={14} /> {saving ? "Kaydediliyor…" : "Kaydet"}
               </button>
             </div>

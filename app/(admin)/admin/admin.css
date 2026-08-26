@@ -580,3 +580,105 @@ html, body { height: 100%; }
   .adm-grid-2, .adm-grid-3 { grid-template-columns: 1fr; }
   .adm-field-row, .adm-field-row-3 { grid-template-columns: 1fr; }
 }
+
+/* ── Drawer (ürün düzenleme) — dark override ─────────────────────────── */
+.adm-drawer {
+  background: var(--adm-surface);
+  color: var(--adm-text);
+}
+.adm-drawer .adm-drawer-header {
+  border-bottom: 1px solid var(--adm-border);
+}
+.adm-drawer .adm-drawer-tabs {
+  border-bottom: 1px solid var(--adm-border);
+}
+.adm-drawer .adm-drawer-footer {
+  border-top: 1px solid var(--adm-border);
+}
+.adm-drawer input,
+.adm-drawer textarea,
+.adm-drawer select {
+  background: var(--adm-surface-3) !important;
+  border: 1px solid var(--adm-border-2) !important;
+  color: var(--adm-text) !important;
+  outline: none;
+}
+.adm-drawer input::placeholder,
+.adm-drawer textarea::placeholder {
+  color: var(--adm-text-4) !important;
+}
+.adm-drawer input:focus,
+.adm-drawer textarea:focus,
+.adm-drawer select:focus {
+  border-color: var(--adm-accent) !important;
+}
+.adm-drawer select option {
+  background: var(--adm-surface-3);
+  color: var(--adm-text);
+}
+.adm-drawer label,
+.adm-drawer .adm-drawer-label {
+  color: var(--adm-text-3) !important;
+}
+.adm-drawer .adm-drawer-tab-active {
+  border-bottom-color: var(--adm-accent) !important;
+  color: var(--adm-accent) !important;
+}
+.adm-drawer .adm-drawer-tab-inactive {
+  color: var(--adm-text-3);
+  border-bottom-color: transparent;
+}
+.adm-drawer .adm-drawer-tab-inactive:hover {
+  color: var(--adm-text-2);
+}
+.adm-drawer .adm-tag-chip {
+  background: var(--adm-surface-4);
+  color: var(--adm-text-2);
+  border: 1px solid var(--adm-border);
+}
+.adm-drawer .adm-tag-input-wrap {
+  background: var(--adm-surface-3);
+  border: 1px solid var(--adm-border-2);
+}
+.adm-drawer .adm-seo-preview {
+  background: var(--adm-surface-3);
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.adm-drawer .adm-char-count {
+  color: var(--adm-text-4);
+  font-size: 11px;
+  margin-top: 2px;
+}
+.adm-drawer .adm-btn-cancel {
+  background: transparent;
+  border: 1px solid var(--adm-border-2);
+  color: var(--adm-text-2);
+}
+.adm-drawer .adm-btn-cancel:hover {
+  background: var(--adm-surface-3);
+}
+.adm-drawer .adm-btn-save {
+  background: var(--adm-accent);
+  color: #000;
+  border: none;
+  font-weight: 600;
+}
+.adm-drawer .adm-btn-save:hover {
+  background: var(--adm-accent-h);
+}
+.adm-drawer .adm-info-box {
+  background: var(--adm-surface-3);
+  border: 1px solid var(--adm-border);
+  border-radius: 8px;
+  padding: 14px;
+  color: var(--adm-text-2);
+  font-size: 13px;
+}
+.adm-drawer input[type="checkbox"] {
+  accent-color: var(--adm-accent);
+}
+.adm-drawer .checkbox-label {
+  color: var(--adm-text-2);
+}
