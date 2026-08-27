@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata }
+import { buildMetadata } from "@/lib/seo/metadata"; from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SubscriptionFlow } from "@/components/subscription/SubscriptionFlow";
 import { Reveal } from "@/components/animations/Reveal";
