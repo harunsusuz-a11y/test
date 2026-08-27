@@ -1,31 +1,29 @@
-import type { Product } from "@/content/products";
+import type { DbProduct } from "@/lib/data/products";
 
 /**
  * Ürün bazlı renk kimliği. Her ürün, marka paletinin (brandbook) içinden
  * kendi accent tonunu alır — palet dışına çıkılmaz:
  * - protein-bar (tiramisu): şeftali/karamel dünyası
  * - findik-kremasi: yeşil/taze dünya
- * Yeni kategori eklenirse buraya bir satır eklemek yeterli.
  */
 export type ProductTheme = {
-  /** Hero ve koyu bölümlerin zemini */
   heroBg: string;
-  /** Vurgu rengi (eyebrow, halkalar, rozetler) — Tailwind class parçası */
   accentText: string;
   accentBg: string;
   accentBorder: string;
-  /** Hero'daki dev tipografinin stroke rengi (CSS değeri) */
   strokeColor: string;
 };
 
-const THEMES: Record<Product["category"], ProductTheme> = {
-  "protein-bar": {
-    heroBg: "bg-brown-darker",
-    accentText: "text-peach",
-    accentBg: "bg-peach",
-    accentBorder: "border-peach",
-    strokeColor: "#F9C89E",
-  },
+const DEFAULT_THEME: ProductTheme = {
+  heroBg: "bg-brown-darker",
+  accentText: "text-peach",
+  accentBg: "bg-peach",
+  accentBorder: "border-peach",
+  strokeColor: "#F9C89E",
+};
+
+const THEMES: Record<string, ProductTheme> = {
+  "protein-bar": DEFAULT_THEME,
   "findik-kremasi": {
     heroBg: "bg-brown-dark",
     accentText: "text-green-light",
@@ -35,6 +33,23 @@ const THEMES: Record<Product["category"], ProductTheme> = {
   },
 };
 
-export function getProductTheme(product: Product): ProductTheme {
-  return THEMES[product.category];
+/**
+ * Ürün kategorisine göre tema döner.
+ * category null/undefined/tanımsız ise protein-bar teması (default) kullanılır.
+ * Slug üzerinden de tahmin yapar (DB'de category kolonu boş olsa bile).
+ */
+export function getProductTheme(product: DbProduct | { category?: string | null; slug?: string }): ProductTheme {
+  // 1. Direkt category eşleşmesi
+  const cat = (product as any).category as string | null | undefined;
+  if (cat && THEMES[cat]) return THEMES[cat];
+
+  // 2. Slug'dan tahmin (DB'de category null ise)
+  const slug = (product as any).slug as string | undefined;
+  if (slug) {
+    if (slug.includes("krema")) return THEMES["findik-kremasi"];
+    if (slug.includes("bar") || slug.includes("tiramisu") || slug.includes("kakao")) return THEMES["protein-bar"];
+  }
+
+  // 3. Her koşulda güvenli fallback
+  return DEFAULT_THEME;
 }
