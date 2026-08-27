@@ -10,7 +10,19 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ventiate.co
 export const BRAND = "Venti-Ate";
 export const TAGLINE = "Fındığın rafine hali";
 
-const DEFAULT_OG_IMAGE = "/og-image.jpg"; // 1200×630
+export const DEFAULT_OG_IMAGE = "/og-image.jpg"; // 1200×630
+
+export const BASE_KEYWORDS = [
+  "Venti-Ate",
+  "protein bar",
+  "fındık kreması",
+  "Giresun fındığı",
+  "sağlıklı atıştırmalık",
+  "fındık protein bar",
+  "yüksek proteinli atıştırmalık",
+  "doğal fındık kreması",
+  "palm yağsız fındık kreması",
+];
 
 export function buildMetadata({
   title,
@@ -19,6 +31,7 @@ export function buildMetadata({
   ogImage = DEFAULT_OG_IMAGE,
   keywords = [],
   noindex = false,
+  type = "website",
 }: {
   title: string;
   description: string;
@@ -26,14 +39,16 @@ export function buildMetadata({
   ogImage?: string;
   keywords?: string[];
   noindex?: boolean;
+  type?: "website" | "article";
 }): Metadata {
   const url = `${SITE_URL}${path}`;
   const ogImageAbs = ogImage.startsWith("http") ? ogImage : `${SITE_URL}${ogImage}`;
+  const fullTitle = title.includes(BRAND) ? title : `${title} | ${BRAND}`;
 
   return {
     title,
     description,
-    ...(keywords.length > 0 && { keywords }),
+    ...(keywords.length > 0 && { keywords: [...BASE_KEYWORDS, ...keywords] }),
     robots: noindex
       ? { index: false, follow: false }
       : {
@@ -44,23 +59,25 @@ export function buildMetadata({
             follow: true,
             "max-image-preview": "large",
             "max-snippet": -1,
+            "max-video-preview": -1,
           },
         },
     alternates: {
       canonical: url,
+      languages: { "tr-TR": url },
     },
     openGraph: {
-      type: "website",
+      type,
       locale: "tr_TR",
       url,
       siteName: BRAND,
-      title: `${title} | ${BRAND}`,
+      title: fullTitle,
       description,
       images: [{ url: ogImageAbs, width: 1200, height: 630, alt: `${title} — ${BRAND}` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${BRAND}`,
+      title: fullTitle,
       description,
       images: [ogImageAbs],
       creator: "@ventiate",
@@ -87,12 +104,11 @@ export function buildProductMetadata({
 }): Metadata {
   const keywords = [
     name,
-    "Venti-Ate",
-    "Giresun fındığı",
-    "sağlıklı atıştırmalık",
     category === "protein-bar" ? "protein bar" : "fındık kreması",
     "fındık bazlı",
     "doğal içerik",
+    `${name} satın al`,
+    `${name} fiyat`,
   ];
 
   const meta = buildMetadata({
@@ -105,9 +121,19 @@ export function buildProductMetadata({
 
   return {
     ...meta,
-    openGraph: {
-      ...meta.openGraph,
-      type: "website",
-    },
+    openGraph: { ...meta.openGraph, type: "website" },
   };
+}
+
+/** Hukuki / gizlilik sayfaları için */
+export function buildLegalMetadata({
+  title,
+  description,
+  path,
+}: {
+  title: string;
+  description: string;
+  path: string;
+}): Metadata {
+  return buildMetadata({ title, description, path, keywords: [] });
 }
