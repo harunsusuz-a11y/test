@@ -2,6 +2,8 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hakkımızda",
