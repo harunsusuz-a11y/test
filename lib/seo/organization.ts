@@ -40,6 +40,7 @@ export function getOrganizationJsonLd() {
       "@type": "ContactPoint",
       contactType: "customer service",
       availableLanguage: "Turkish",
+      contactOption: "TollFree",
     },
   };
 }
@@ -174,6 +175,61 @@ export function getFaqJsonLd(faqs: { question: string; answer: string }[]) {
       "@type": "Question",
       name: f.question,
       acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+}
+
+export function getLocalBusinessJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": ["Organization", "Brand"],
+    "@id": `${siteUrl}/#organization`,
+    name: "Venti-Ate",
+    url: siteUrl,
+    logo: {
+      "@type": "ImageObject",
+      url: `${siteUrl}/logo.svg`,
+      width: 200,
+      height: 60,
+    },
+    description: "Giresun fındığını merkeze alan protein bar ve fındık kreması markası.",
+    foundingDate: "2024",
+    areaServed: { "@type": "Country", name: "Turkey" },
+    sameAs: [
+      "https://www.instagram.com/ventiate",
+      "https://www.tiktok.com/@ventiate",
+    ],
+  };
+}
+
+export function getCollectionPageJsonLd({
+  name,
+  description,
+  url,
+  products,
+}: {
+  name: string;
+  description: string;
+  url: string;
+  products: { name: string; slug: string; price: number; image: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    description,
+    url: `${siteUrl}${url}`,
+    hasPart: products.map((p) => ({
+      "@type": "Product",
+      name: p.name,
+      url: `${siteUrl}/urun/${p.slug}`,
+      image: p.image.startsWith("http") ? p.image : `${siteUrl}${p.image}`,
+      offers: {
+        "@type": "Offer",
+        price: p.price.toFixed(2),
+        priceCurrency: "TRY",
+        availability: "https://schema.org/InStock",
+      },
     })),
   };
 }
