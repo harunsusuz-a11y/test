@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { TrustBadges } from "@/components/ui/TrustBadges";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
+import { getBreadcrumbJsonLd, getCollectionPageJsonLd } from "@/lib/seo/organization";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getProductsServer } from "@/lib/data/products-server";
 import { ProductCardDb } from "@/components/product/ProductCardDb";
@@ -33,6 +33,17 @@ const KATEGORILER = [
 export default async function MagazaPage() {
   const dbProducts = await getProductsServer();
 
+  const collectionLd = getCollectionPageJsonLd({
+    name: "Venti-Ate Mağaza",
+    description: "Tüm Venti-Ate ürünleri — protein bar ve fındık kreması.",
+    url: "/magaza",
+    products: products.map((p) => ({
+      name: p.name,
+      slug: p.slug,
+      price: p.price,
+      image: p.main_image_url ?? "",
+    })),
+  });
   const breadcrumb = getBreadcrumbJsonLd([
     { name: "Ana Sayfa", path: "/" },
     { name: "Mağaza", path: "/magaza" },
@@ -40,6 +51,7 @@ export default async function MagazaPage() {
 
   return (
     <>
+      <JsonLd data={collectionLd} />
       <JsonLd data={breadcrumb} />
       <PageHeader eyebrow="Ürün Ailesi" title="Mağaza" description="Fındık başrolde." />
 
