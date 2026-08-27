@@ -1,5 +1,3 @@
-import { JsonLd } from "@/components/seo/JsonLd";
-import { getFaqJsonLd, getBreadcrumbJsonLd } from "@/lib/seo/organization";
 import { getSettings } from "@/lib/settings";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
@@ -16,20 +14,8 @@ export default async function SSSPage() {
   const settings = await getSettings(["faq_items"]);
   const faqs = ((settings.faq_items ?? []) as { question: string; answer: string }[]);
 
-  const faqLd = getFaqJsonLd(faqs.length > 0 ? faqs : [
-    { question: "Ürünlerinizde hangi fındık kullanılıyor?", answer: "Giresun fındığı — dünyanın en kaliteli fındığı kabul edilen, Türkiye'nin Giresun iline özgü ürün." },
-    { question: "Protein barlar glutensiz mi?", answer: "Ürün etiketini ve içindekiler listesini kontrol ediniz; üretim hattında gluten içeren ürünler işlenebilir." },
-    { question: "Kargo ne zaman teslim edilir?", answer: "Siparişler 1-2 iş günü içinde kargolanır, teslimat 1-3 iş günü sürer." },
-  ]);
-  const breadcrumbLd = getBreadcrumbJsonLd([
-    { name: "Ana Sayfa", path: "/" },
-    { name: "SSS", path: "/sss" },
-  ]);
 
   return (
-    <>
-      <JsonLd data={faqLd} />
-      <JsonLd data={breadcrumbLd} />
     <main>
       <section className="pt-32 pb-6 px-6 max-w-3xl mx-auto">
         <p className="text-xs uppercase tracking-widest text-brown/50 mb-2">Destek</p>
@@ -44,6 +30,5 @@ export default async function SSSPage() {
         ))}
       </section>
     </main>
-    </>
   );
 }
