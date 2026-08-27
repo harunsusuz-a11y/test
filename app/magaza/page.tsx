@@ -20,6 +20,7 @@ export const metadata: Metadata = buildMetadata({
     "Giresun fındığı ürünleri",
     "sağlıklı atıştırmalık online",
     "fındık protein bar fiyat",
+    "online fındık kreması",
   ],
 });
 
