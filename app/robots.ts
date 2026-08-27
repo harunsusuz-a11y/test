@@ -6,8 +6,26 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
+        // Tüm arama motorları — indexlenecek sayfalar
         userAgent: "*",
-        allow: ["/", "/magaza", "/urun/", "/magaza/kategori/", "/hakkimizda", "/formunu-bul", "/abonelik", "/iletisim", "/sss"],
+        allow: [
+          "/",
+          "/magaza",
+          "/magaza/",
+          "/urun/",
+          "/magaza/kategori/",
+          "/hakkimizda",
+          "/formunu-bul",
+          "/abonelik",
+          "/iletisim",
+          "/sss",
+          "/iade-teslimat",
+          "/gizlilik",
+          "/kvkk",
+          "/cerez-politikasi",
+          "/mesafeli-satis",
+          "/on-bilgilendirme",
+        ],
         disallow: [
           "/admin/",
           "/giris/",
@@ -18,14 +36,30 @@ export default function robots(): MetadataRoute.Robots {
           "/favorilerim/",
           "/odeme/",
           "/siparis-basarili/",
+          "/arama/",
           "/_next/",
           "/static/",
+          "/*?*",
         ],
       },
       {
-        // AI botlarını dışla
-        userAgent: ["GPTBot", "CCBot", "anthropic-ai", "Claude-Web"],
+        // AI içerik tarayıcıları — tam engel
+        userAgent: [
+          "GPTBot",
+          "CCBot",
+          "anthropic-ai",
+          "Claude-Web",
+          "Omgilibot",
+          "FacebookBot",
+          "Bytespider",
+          "PetalBot",
+        ],
         disallow: "/",
+      },
+      {
+        // Google özel — image preview izni
+        userAgent: "Googlebot-Image",
+        allow: ["/images/", "/og-image.jpg"],
       },
     ],
     sitemap: `${BASE}/sitemap.xml`,
