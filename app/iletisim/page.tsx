@@ -18,7 +18,14 @@ export default async function IletisimPage() {
   const instagram = (settings.contact_instagram as string) ?? "";
   const address = (settings.contact_address as string) ?? "";
 
+  const breadcrumbLd = getBreadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "İletişim", path: "/iletisim" },
+  ]);
+
   return (
+    <>
+      <JsonLd data={breadcrumbLd} />
     <main>
       <PageHeader
         title="İletişim"
@@ -80,5 +87,6 @@ export default async function IletisimPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
