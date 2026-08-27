@@ -1,10 +1,13 @@
 import { getSettings } from "@/lib/settings";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Sıkça Sorulan Sorular | Venti-Ate",
-  description: "Venti-Ate ürünleri, kargo, iade ve abonelik hakkında merak ettiklerin.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "Sıkça Sorulan Sorular",
+  description:
+    "Venti-Ate ürünleri, kargo, iade ve abonelik hakkında en çok merak edilen soruların yanıtları.",
+  path: "/sss",
+  keywords: ["Venti-Ate SSS", "protein bar kargo", "iade koşulları", "abonelik iptal"],
+});
 
 export default async function SSSPage() {
   const settings = await getSettings(["faq_items"]);
