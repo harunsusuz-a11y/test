@@ -35,7 +35,8 @@ export function ProductSlider({ products }: { products: DbProduct[] }) {
   }, [products]);
 
   function fmt(n: number) {
-    return new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", maximumFractionDigits: 0 }).format(n);
+    const s = new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+    return s.endsWith(",00") ? s.slice(0, -3) : s;
   }
 
   return (

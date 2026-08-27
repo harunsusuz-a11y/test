@@ -35,19 +35,46 @@ export function ProcessSteps() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+        {/* MD ve üstü: yatay hat + ikonlar */}
+        <div className="hidden md:grid md:grid-cols-4 gap-0">
+          {STEPS.map((step, i) => (
+            <div key={i} className="flex flex-col items-center text-center px-4">
+              {/* Üst satır: çizgi + ikon dairesi */}
+              <div className="flex w-full items-center mb-6">
+                {/* Sol çizgi */}
+                <div className={`flex-1 h-px ${i === 0 ? "opacity-0" : "bg-[#F9C89E]/20"}`} />
+                {/* Numara + ikon */}
+                <div className="relative flex-shrink-0">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#F9C89E]/30 bg-[#F9C89E]/10">
+                    <step.Icon size={22} className="text-[#F9C89E]" />
+                  </div>
+                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#F9C89E] text-[10px] font-black text-[#56312D]">
+                    {i + 1}
+                  </span>
+                </div>
+                {/* Sağ çizgi */}
+                <div className={`flex-1 h-px ${i === STEPS.length - 1 ? "opacity-0" : "bg-[#F9C89E]/20"}`} />
+              </div>
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-[#F9C89E]">{step.title}</p>
+              <p className="text-sm leading-relaxed text-[#FFF6F0]/70">{step.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobil: 2 kolon grid */}
+        <div className="grid grid-cols-2 gap-6 md:hidden">
           {STEPS.map((step, i) => (
             <div key={i} className="flex flex-col items-center text-center">
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#F9C89E]/30 bg-[#F9C89E]/10">
-                <step.Icon size={24} className="text-[#F9C89E]" />
+              <div className="relative mb-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#F9C89E]/30 bg-[#F9C89E]/10">
+                  <step.Icon size={20} className="text-[#F9C89E]" />
+                </div>
+                <span className="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#F9C89E] text-[10px] font-black text-[#56312D]">
+                  {i + 1}
+                </span>
               </div>
-              {i < STEPS.length - 1 && (
-                <div className="absolute hidden md:block" style={{ width: "calc(25% - 2rem)", height: "1px", background: "rgba(249,200,158,0.2)", top: "2rem", left: `calc(${i * 25}% + 4rem)` }} />
-              )}
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#F9C89E]">
-                {String(i + 1).padStart(2, "0")} — {step.title}
-              </p>
-              <p className="text-sm leading-relaxed text-[#FFF6F0]/70">{step.desc}</p>
+              <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-[#F9C89E]">{step.title}</p>
+              <p className="text-xs leading-relaxed text-[#FFF6F0]/70">{step.desc}</p>
             </div>
           ))}
         </div>

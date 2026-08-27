@@ -149,7 +149,7 @@ export function Header() {
             aria-label={`Sepetim, ${count} ürün`}
             aria-haspopup="dialog"
           >
-            <ShoppingBag size={18} aria-hidden="true" />
+            <ShoppingBag size={20} aria-hidden="true" />
             <span className="hidden sm:inline">Sepetim</span>
             {count > 0 && (
               <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green px-1 text-xs font-bold text-cream">
@@ -164,7 +164,7 @@ export function Header() {
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={22} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
