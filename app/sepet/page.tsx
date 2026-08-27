@@ -1,15 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
-import { buildMetadata } from "@/lib/seo/metadata";
-
-export const metadata: Metadata = buildMetadata({
-  title: "Sepetim",
-  description: "Venti-Ate sepetiniz — ürünlerinizi inceleyin ve siparişinizi tamamlayın.",
-  path: "/sepet",
-  noindex: true,
-});
-
 
 import Link from "next/link";
 import Image from "next/image";
