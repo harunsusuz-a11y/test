@@ -2,8 +2,6 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
 
 export const metadata: Metadata = buildMetadata({
   title: "Hakkımızda",
@@ -20,14 +18,8 @@ export default async function HakkimizdaPage() {
   const values = (settings.brand_values as { title: string; description: string }[]) ?? [];
   const tagline = (settings.brand_tagline as string) ?? "Fındığın rafine hali";
 
-  const breadcrumbLd = getBreadcrumbJsonLd([
-    { name: "Ana Sayfa", path: "/" },
-    { name: "Hakkımızda", path: "/hakkimizda" },
-  ]);
 
   return (
-    <>
-      <JsonLd data={breadcrumbLd} />
     <main>
       <PageHeader
         title="Hakkımızda"
@@ -52,6 +44,5 @@ export default async function HakkimizdaPage() {
         )}
       </section>
     </main>
-    </>
   );
 }
