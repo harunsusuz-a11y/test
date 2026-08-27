@@ -75,7 +75,7 @@ export function ProductSlider({ products }: { products: DbProduct[] }) {
           {products.map((p) => (
             <article key={p.slug}
               className="group flex-shrink-0 w-64 md:w-72 bg-white overflow-hidden"
-              style={{ clipPath: "polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)" }}>
+              >
               <Link href={`/urun/${p.slug}`} className="block aspect-square overflow-hidden bg-[#F9C89E]/20">
                 {p.main_image_url ? (
                   <Image src={p.main_image_url} alt={p.name} width={400} height={400}
@@ -103,7 +103,7 @@ export function ProductSlider({ products }: { products: DbProduct[] }) {
                   <button
                     onClick={() => { addItem({ slug: p.slug, name: p.name, price: p.price, image: p.main_image_url ?? "" }); openCartDrawer(p.slug); }}
                     className="rounded-none bg-[#56312D] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#FFF6F0] transition-all hover:bg-[#415D1F]"
-                    style={{ clipPath: "polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%)" }}>
+                    >
                     Ekle
                   </button>
                 </div>
