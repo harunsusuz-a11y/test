@@ -3,16 +3,12 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { SubscriptionFlow } from "@/components/subscription/SubscriptionFlow";
 import { Reveal } from "@/components/animations/Reveal";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Abonelik",
-  description: "Venti-Ate'i düzenli al, %10 indirim kazan. Fındık barı ve kremanı haftalık, iki haftada bir veya aylık kapına getir — taahhütsüz, istediğin an iptal et.",
-  keywords: ["Venti-Ate abonelik", "protein bar abonelik", "fındık kreması abonelik", "sağlıklı abonelik kutusu", "aylık protein bar"],
-  alternates: { canonical: "/abonelik" },
-  openGraph: {
-    title: "Abonelik | Venti-Ate",
-    description: "Fındığın hiç bitmesin. %10 abonelik indirimi, ücretsiz kargo, taahhütsüz iptal.",
-  },
-};
+  description: "Venti-Ate'i düzenli al, %10 indirim kazan. Haftalık, iki haftada bir veya aylık — taahhütsüz, istediğin an iptal et.",
+  path: "/abonelik",
+  keywords: ["Venti-Ate abonelik", "protein bar abonelik", "fındık kreması abonelik", "aylık protein bar", "abonelik iptal"],
+});
 
 const benefits = [
   { label: "%10 Abonelik İndirimi", description: "Her teslimatta otomatik uygulanır" },
