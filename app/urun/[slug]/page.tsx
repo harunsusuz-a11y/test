@@ -39,6 +39,11 @@ export async function generateStaticParams() {
     const dbProducts = await getProductsServer();
     if (dbProducts.length > 0) return dbProducts.map((p) => ({ slug: p.slug }));
   } catch {}
+  // Supabase build'de erişilemezse statik içerik dosyasından slug'ları al
+  try {
+    const { products } = await import("@/content/products");
+    return products.map((p) => ({ slug: p.slug }));
+  } catch {}
   return [];
 }
 
