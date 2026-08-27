@@ -4,11 +4,13 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FormunuBulQuiz } from "@/components/quiz/FormunuBulQuiz";
 import { getProductsServer } from "@/lib/data/products-server";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Formunu Bul",
-  description: "4 soruda sana en uygun Venti-Ate ürününü bul.",
-  alternates: { canonical: "/formunu-bul" },
-};
+  description:
+    "4 soruda sana en uygun Venti-Ate ürününü bul. Hedefine göre protein bar mı, fındık kreması mı daha iyi?",
+  path: "/formunu-bul",
+  keywords: ["hangi ürün benim için doğru", "protein bar mı krema mı", "fındık ürün testi"],
+});
 
 const BENEFITS = [
   { Icon: Clock, label: "4 Soruluk Test", desc: "1 dakikada tamamlanır" },
