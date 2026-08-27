@@ -6,5 +6,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-// ok
+// ready
 export default nextConfig;
