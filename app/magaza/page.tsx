@@ -37,7 +37,7 @@ export default async function MagazaPage() {
     name: "Venti-Ate Mağaza",
     description: "Tüm Venti-Ate ürünleri — protein bar ve fındık kreması.",
     url: "/magaza",
-    products: products.map((p) => ({
+    products: dbProducts.map((p) => ({
       name: p.name,
       slug: p.slug,
       price: p.price,
