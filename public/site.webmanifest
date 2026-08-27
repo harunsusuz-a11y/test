@@ -1,35 +1,53 @@
 {
+  "id": "/",
   "name": "Venti-Ate",
   "short_name": "Venti-Ate",
   "description": "Giresun fındığını merkeze alan protein bar ve fındık kreması markası.",
-  "start_url": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
   "background_color": "#FFF6F0",
   "theme_color": "#56312D",
   "orientation": "portrait-primary",
   "lang": "tr",
+  "dir": "ltr",
   "categories": ["food", "shopping", "health"],
+  "prefer_related_applications": false,
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "screenshots": [
-    { "src": "/og-image.jpg", "sizes": "1200x630", "type": "image/jpeg", "label": "Venti-Ate ana sayfa" }
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "label": "Venti-Ate ana sayfa",
+      "form_factor": "wide"
+    }
   ],
   "shortcuts": [
     {
       "name": "Mağaza",
       "short_name": "Mağaza",
       "description": "Tüm ürünleri gör",
-      "url": "/magaza",
+      "url": "/magaza?source=pwa-shortcut",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Formunu Bul",
       "short_name": "Test",
       "description": "Sana uygun ürünü bul",
-      "url": "/formunu-bul",
+      "url": "/formunu-bul?source=pwa-shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Abonelik",
+      "short_name": "Abone",
+      "description": "Düzenli teslimat kur",
+      "url": "/abonelik?source=pwa-shortcut",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
