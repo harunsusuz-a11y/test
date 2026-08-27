@@ -2,10 +2,13 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "İletişim | Venti-Ate",
-  description: "Bize ulaşın — sipariş, iş birliği veya her türlü soru için.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "İletişim",
+  description:
+    "Venti-Ate ile iletişime geçin — sipariş, iş birliği veya her türlü soru için buradayız.",
+  path: "/iletisim",
+  keywords: ["Venti-Ate iletişim", "müşteri hizmetleri"],
+});
 
 export default async function IletisimPage() {
   const settings = await getSettings(["contact_email", "contact_phone", "contact_instagram", "contact_address"]);
