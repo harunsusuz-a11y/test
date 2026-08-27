@@ -1,5 +1,5 @@
-import type { Metadata }
-import { buildMetadata } from "@/lib/seo/metadata"; from "next";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo/metadata";
 import { Clock, Target, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FormunuBulQuiz } from "@/components/quiz/FormunuBulQuiz";
