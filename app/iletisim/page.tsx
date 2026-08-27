@@ -2,8 +2,6 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { getBreadcrumbJsonLd } from "@/lib/seo/organization";
 
 export const metadata: Metadata = buildMetadata({
   title: "İletişim",
@@ -21,14 +19,8 @@ export default async function IletisimPage() {
   const instagram = (settings.contact_instagram as string) ?? "";
   const address = (settings.contact_address as string) ?? "";
 
-  const breadcrumbLd = getBreadcrumbJsonLd([
-    { name: "Ana Sayfa", path: "/" },
-    { name: "İletişim", path: "/iletisim" },
-  ]);
 
   return (
-    <>
-      <JsonLd data={breadcrumbLd} />
     <main>
       <PageHeader
         title="İletişim"
@@ -90,6 +82,5 @@ export default async function IletisimPage() {
         </div>
       </section>
     </main>
-    </>
   );
 }
