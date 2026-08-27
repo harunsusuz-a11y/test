@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -8,7 +10,6 @@ export const metadata: Metadata = buildMetadata({
   noindex: true,
 });
 
-"use client";
 
 import Link from "next/link";
 import Image from "next/image";
