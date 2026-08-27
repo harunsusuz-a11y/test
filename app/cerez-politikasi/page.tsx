@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata }
+import { buildMetadata } from "@/lib/seo/metadata"; from "next";
 import { LegalPageLayout } from "@/components/legal/LegalPageLayout";
 import { legalPages } from "@/content/legal";
 
