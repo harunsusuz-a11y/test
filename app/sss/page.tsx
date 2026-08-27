@@ -1,8 +1,8 @@
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getFaqJsonLd, getBreadcrumbJsonLd } from "@/lib/seo/organization";
 import { getSettings } from "@/lib/settings";
-import type { Metadata }
-import { buildMetadata } from "@/lib/seo/metadata"; from "next";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildMetadata({
   title: "Sıkça Sorulan Sorular",
