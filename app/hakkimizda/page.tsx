@@ -2,10 +2,13 @@ import { getSettings } from "@/lib/settings";
 import { PageHeader } from "@/components/ui/PageHeader";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Hakkımızda | Venti-Ate",
-  description: "Venti-Ate'nin hikayesi, değerleri ve fındığa olan bağlılığı.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "Hakkımızda",
+  description:
+    "Venti-Ate'nin hikayesi, Giresun fındığına olan bağlılığı ve sağlıklı atıştırmalık kategorisindeki farkı.",
+  path: "/hakkimizda",
+  keywords: ["Venti-Ate hakkında", "marka hikayesi", "Giresun fındığı marka", "sağlıklı atıştırmalık marka"],
+});
 
 export default async function HakkimizdaPage() {
   const settings = await getSettings(["brand_short_story", "brand_values", "brand_tagline"]);
