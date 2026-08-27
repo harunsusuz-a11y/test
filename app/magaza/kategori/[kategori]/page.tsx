@@ -1,5 +1,3 @@
-"use server";
-
 import { getProductsServer } from "@/lib/data/products-server";
 import { ProductCardDb } from "@/components/product/ProductCardDb";
 import { PageHeader } from "@/components/ui/PageHeader";
