@@ -17,7 +17,14 @@ export default async function HakkimizdaPage() {
   const values = (settings.brand_values as { title: string; description: string }[]) ?? [];
   const tagline = (settings.brand_tagline as string) ?? "Fındığın rafine hali";
 
+  const breadcrumbLd = getBreadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "Hakkımızda", path: "/hakkimizda" },
+  ]);
+
   return (
+    <>
+      <JsonLd data={breadcrumbLd} />
     <main>
       <PageHeader
         title="Hakkımızda"
@@ -42,5 +49,6 @@ export default async function HakkimizdaPage() {
         )}
       </section>
     </main>
+    </>
   );
 }
