@@ -118,7 +118,7 @@ export function Footer() {
             {/* Sosyal */}
             <div className="flex items-center gap-3">
               <a
-                href="https://instagram.com/ventiate"
+                href="https://instagram.com/ventiate.co"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
