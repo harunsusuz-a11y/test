@@ -14,7 +14,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function IletisimPage() {
   const settings = await getSettings(["contact_email", "contact_phone", "contact_instagram", "contact_address"]);
 
-  const email = (settings.contact_email as string) ?? "info@ventiateprotein.com";
+  const email = (settings.contact_email as string) ?? "info@venti-ate.com";
   const phone = (settings.contact_phone as string) ?? "";
   const instagram = (settings.contact_instagram as string) ?? "";
   const address = (settings.contact_address as string) ?? "";
