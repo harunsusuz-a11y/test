@@ -1,8 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/fraunces/standard-italic.css";
-import "@fontsource-variable/fraunces";
-import "@fontsource-variable/outfit";
-import "@fontsource-variable/bricolage-grotesque";
 import "./globals.css";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { ExitIntentPopup } from "@/components/overlays/ExitIntentPopup";
