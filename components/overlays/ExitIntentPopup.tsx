@@ -160,7 +160,7 @@ export function ExitIntentPopup() {
 
         <div className="px-8 pb-8 pt-2 text-center">
           <p className="text-[11px] font-bold uppercase tracking-widest2 text-green">Gitmeden önce</p>
-          <h2 id="exit-intent-title" className="mt-2 font-display text-2xl font-extrabold text-brown-darker">
+          <h2 id="exit-intent-title" className="mt-2 font-display text-2xl font-bold text-brown-darker">
             İlk kutuna %10 bizden.
           </h2>
           <p className="mt-2 text-sm text-brown-dark/70">

@@ -50,7 +50,7 @@ export function NutritionCard({ product, theme }: { product: Product; theme: Pro
       {/* Etiket kartı */}
       <div ref={ref} className="rounded-3xl border border-brown/10 bg-white/60 p-7 shadow-sm">
         <div className="flex items-baseline justify-between border-b-2 border-brown-darker pb-3">
-          <h3 className="font-display text-xl font-extrabold text-brown-darker">Besin Değerleri</h3>
+          <h3 className="font-display text-xl font-bold text-brown-darker">Besin Değerleri</h3>
           <span className="text-xs font-semibold text-brown-dark/50">100g için</span>
         </div>
         <dl className="mt-4 space-y-4">
@@ -78,7 +78,7 @@ export function NutritionCard({ product, theme }: { product: Product; theme: Pro
 
       {/* İçindekiler chip'leri */}
       <div>
-        <h3 className="font-display text-xl font-extrabold text-brown-darker">İçindekiler</h3>
+        <h3 className="font-display text-xl font-bold text-brown-darker">İçindekiler</h3>
         <ul className="mt-4 flex flex-wrap gap-2.5">
           {product.ingredients.map((ing) => (
             <li

@@ -23,7 +23,7 @@ export function ProductReviews({ reviews, averageRating }: { reviews: Review[]; 
     <section aria-labelledby="reviews-heading" className="mt-20 border-t border-brown/10 pt-14">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 id="reviews-heading" className="font-display text-2xl font-extrabold text-brown-darker">
+          <h2 id="reviews-heading" className="font-display text-2xl font-bold text-brown-darker">
             Müşteri Yorumları
           </h2>
           {averageRating && (

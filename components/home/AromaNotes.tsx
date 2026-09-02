@@ -61,7 +61,7 @@ export function AromaNotes() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Lezzet Notaları</p>
-        <h2 id="aroma-heading" className="mt-3 max-w-lg font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
+        <h2 id="aroma-heading" className="mt-3 max-w-lg font-display text-3xl font-bold text-brown-darker sm:text-4xl">
           Her ısırıkta farklı bir katman.
         </h2>
       </motion.div>
@@ -88,7 +88,7 @@ export function AromaNotes() {
             </motion.div>
           </AnimatePresence>
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brown-darker/70 to-transparent p-6">
-            <span className="font-display text-2xl font-extrabold text-cream">{activeNote.label}</span>
+            <span className="font-display text-2xl font-bold text-cream">{activeNote.label}</span>
           </div>
         </div>
 

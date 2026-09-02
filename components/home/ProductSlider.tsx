@@ -46,7 +46,7 @@ export function ProductSlider({ products }: { products: DbProduct[] }) {
         <div className="mb-10 flex items-end justify-between">
           <div>
             <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#415D1F]">Ürünler</p>
-            <h2 className="font-display text-4xl font-extrabold text-[#56312D] md:text-5xl"
+            <h2 className="font-display text-4xl font-bold text-[#56312D] md:text-5xl"
               style={{ fontFamily: "var(--font-fraunces, Georgia, serif)" }}>
               Keşfedin
             </h2>

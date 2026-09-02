@@ -6,7 +6,7 @@ export function Newsletter() {
     <section className="mx-auto max-w-3xl px-5 py-28 text-center">
       <Reveal>
       <p className="text-xs font-bold uppercase tracking-widest2 text-green">Venti Kulübü</p>
-      <h2 className="mt-3 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
+      <h2 className="mt-3 font-display text-3xl font-bold text-brown-darker sm:text-4xl">
         Yeni aromayı ilk sen tat.
       </h2>
       <p className="mx-auto mt-4 max-w-md text-brown-dark/70">

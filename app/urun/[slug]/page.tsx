@@ -174,7 +174,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest2 text-green">{product.flavor}</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">{product.name}</h2>
+            <h2 className="mt-2 font-display text-3xl font-bold text-brown-darker sm:text-4xl">{product.name}</h2>
 
             {avgRating && (
               <a href="#yorumlar" className="mt-2 flex w-fit items-center gap-1.5 text-sm text-brown-dark/70 hover:text-brown-darker">
@@ -241,7 +241,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {/* 6 — Besin etiketi + içindekiler + doku hotspot'ları */}
       <section id="besin" className="mx-auto max-w-6xl scroll-mt-32 px-5 py-20">
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Formül</p>
-        <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+        <h2 className="mb-8 mt-2 font-display text-2xl font-bold text-brown-darker sm:text-3xl">
           Etikette ne varsa, burada da o var.
         </h2>
         <NutritionCard product={product as any} theme={theme} />
@@ -253,7 +253,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {/* 7 — Nasıl Tüketilir */}
       <section className="mx-auto max-w-6xl px-5 pb-20">
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Kullanım</p>
-        <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Nasıl Tüketilir?</h2>
+        <h2 className="mb-6 mt-2 font-display text-2xl font-bold text-brown-darker">Nasıl Tüketilir?</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {((product.usageTips ?? product.usage_tips ?? []) as string[]).map((tip: string, i: number) => (
             <Reveal key={tip} delay={i * 45}>
@@ -272,7 +272,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {/* 8 — Yorumlar */}
       <section id="yorumlar" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-20">
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Yorumlar</p>
-        <h2 className="mb-8 mt-2 font-display text-2xl font-extrabold text-brown-darker sm:text-3xl">
+        <h2 className="mb-8 mt-2 font-display text-2xl font-bold text-brown-darker sm:text-3xl">
           İlk ısıranlar ne dedi?
         </h2>
         <ReviewsPanel
@@ -293,7 +293,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {/* 9 — SSS */}
       <section id="sss" className="mx-auto max-w-6xl scroll-mt-32 px-5 pb-24">
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">SSS</p>
-        <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Sıkça Sorulan Sorular</h2>
+        <h2 className="mb-6 mt-2 font-display text-2xl font-bold text-brown-darker">Sıkça Sorulan Sorular</h2>
         <ProductFaq items={product.faq} />
       </section>
 
@@ -304,7 +304,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       {related.length > 0 && (
         <section className="mx-auto max-w-6xl px-5 py-20">
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Keşfet</p>
-          <h2 className="mb-6 mt-2 font-display text-2xl font-extrabold text-brown-darker">Benzer Ürünler</h2>
+          <h2 className="mb-6 mt-2 font-display text-2xl font-bold text-brown-darker">Benzer Ürünler</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((p, i) => (
               <Reveal key={p.slug} delay={i * 45}>

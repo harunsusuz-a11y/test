@@ -19,7 +19,7 @@ export function PageHeader({
       {eyebrow && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-2 left-0 select-none whitespace-nowrap font-display text-[18vw] font-extrabold uppercase leading-none opacity-10 sm:text-[11vw]"
+          className="pointer-events-none absolute -top-2 left-0 select-none whitespace-nowrap font-display text-[18vw] font-bold uppercase leading-none opacity-10 sm:text-[11vw]"
           style={{ WebkitTextStroke: "1.5px #F9C89E", color: "transparent" }}
         >
           {eyebrow}
@@ -34,7 +34,7 @@ export function PageHeader({
 
       <div className="relative mx-auto max-w-6xl px-5 pb-14 pt-24 sm:pb-16 sm:pt-28">
         {eyebrow && <p className="text-xs font-bold uppercase tracking-widest2 text-peach">{eyebrow}</p>}
-        <h1 className="mt-3 max-w-3xl -translate-x-0.5 font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:translate-x-2 sm:text-6xl">
+        <h1 className="mt-3 max-w-3xl -translate-x-0.5 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:translate-x-2 sm:text-6xl">
           {title}
         </h1>
         {description && <p className="mt-5 max-w-xl text-lg text-cream/70">{description}</p>}

@@ -56,7 +56,7 @@ export function ReviewsPanel({
       {/* Özet + dağılım */}
       <div className="rounded-3xl border border-brown/10 bg-white/60 p-7">
         <div className="flex items-end gap-3">
-          <span className="font-display text-5xl font-extrabold text-brown-darker">
+          <span className="font-display text-5xl font-bold text-brown-darker">
             {averageRating?.toFixed(1) ?? "—"}
           </span>
           <div className="pb-1.5">

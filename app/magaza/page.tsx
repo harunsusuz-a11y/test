@@ -81,7 +81,7 @@ export default async function MagazaPage() {
         <div className="flex items-center justify-between rounded-2xl border border-brown/10 bg-cream px-6 py-5">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-peach">Deneme Paketi</p>
-            <p className="mt-1 font-display text-lg font-extrabold text-brown-darker">
+            <p className="mt-1 font-display text-lg font-bold text-brown-darker">
               Bar + Krema — ikisini birlikte dene, %10 indirimli.
             </p>
           </div>

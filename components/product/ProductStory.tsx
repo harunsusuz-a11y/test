@@ -95,7 +95,7 @@ export function ProductStory({ product, theme }: { product: Product; theme: Prod
             </div>
             <div data-scene-txt>
               <p className={`text-xs font-bold uppercase tracking-widest2 ${theme.accentText}`}>{scene.eyebrow}</p>
-              <h3 className="mt-3 font-display text-3xl font-extrabold sm:text-4xl">{scene.title}</h3>
+              <h3 className="mt-3 font-display text-3xl font-bold sm:text-4xl">{scene.title}</h3>
               <p className="mt-4 max-w-md leading-relaxed text-cream/70">{scene.text}</p>
             </div>
           </div>

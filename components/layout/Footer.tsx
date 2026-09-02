@@ -77,7 +77,7 @@ export function Footer() {
           <ul className="grid grid-cols-2 divide-x divide-y divide-cream/[0.06] sm:grid-cols-4 sm:divide-y-0">
             {TRUST_ITEMS.map((item) => (
               <li key={item.label} className="flex flex-col items-center gap-1 px-4 py-5 text-center">
-                <span className="font-display text-lg font-extrabold text-peach">{item.label}</span>
+                <span className="font-display text-lg font-bold text-peach">{item.label}</span>
                 <span className="text-[11px] uppercase tracking-widest text-cream/40">{item.sub}</span>
               </li>
             ))}
@@ -88,7 +88,7 @@ export function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1fr_auto_auto_auto] lg:gap-8">
           <div className="flex flex-col gap-5">
             <Link href="/" aria-label="Venti-Ate Ana Sayfa">
-              <span className="inline-block font-display text-2xl font-extrabold leading-none tracking-tight text-peach">venti&#8209;ate</span>
+              <span className="inline-block font-display text-2xl font-bold leading-none tracking-tight text-peach">venti&#8209;ate</span>
             </Link>
             <p className="max-w-[18rem] text-sm leading-relaxed text-cream/55">{tagline} — Giresun fındığından üretilen, gerçek içerikli, yüksek proteinli atıştırmalıklar.</p>
             <div className="flex items-center gap-3">

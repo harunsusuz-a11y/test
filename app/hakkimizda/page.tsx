@@ -17,7 +17,7 @@ export default function HakkimizdaPage() {
       </p>
 
       {/* Başlık */}
-      <h1 className="font-display text-4xl font-extrabold leading-tight text-brown-darker md:text-5xl">
+      <h1 className="font-display text-4xl font-bold leading-tight text-brown-darker md:text-5xl">
         Kökümüz Giresun'da.
         <br />
         Fındık başrolde.
@@ -57,7 +57,7 @@ export default function HakkimizdaPage() {
 
       {/* Kapanış sloganı */}
       <div className="mt-14 border-t border-brown/10 pt-10">
-        <p className="font-display text-2xl font-extrabold italic text-brown-darker md:text-3xl">
+        <p className="font-display text-2xl font-bold italic text-brown-darker md:text-3xl">
           Venti Ate, fındığın rafine hali.
         </p>
       </div>

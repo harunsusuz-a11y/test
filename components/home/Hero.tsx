@@ -47,7 +47,7 @@ export function Hero() {
           Giresun Fındığından
         </div>
 
-        <h1 className="max-w-2xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
+        <h1 className="max-w-2xl font-display text-5xl font-bold leading-[0.95] tracking-tight sm:text-7xl">
           <span className="inline-block">Fındığın</span>{" "}
           <span className="relative inline-block">
             rafine

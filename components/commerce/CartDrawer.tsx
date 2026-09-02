@@ -102,7 +102,7 @@ export function CartDrawer() {
           />
           <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-cream shadow-2xl shadow-brown-darker/30 motion-safe:animate-[slideInRight_.3s_cubic-bezier(.16,1,.3,1)]">
             <div className="flex items-center justify-between border-b border-brown/10 px-5 py-4">
-              <p className="font-display text-lg font-extrabold text-brown-darker">
+              <p className="font-display text-lg font-bold text-brown-darker">
                 Sepetim <span className="text-sm font-semibold text-brown-dark/50">({totalCount} ürün)</span>
               </p>
               <button type="button" onClick={() => setOpen(false)} aria-label="Kapat"

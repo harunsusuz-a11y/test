@@ -52,7 +52,7 @@ function Ring({ stat, animate }: { stat: Stat; animate: boolean }) {
           transform="rotate(-90 50 50)"
           className="text-green"
         />
-        <text x="50" y="54" textAnchor="middle" className="fill-current font-display text-[22px] font-extrabold text-brown-darker">
+        <text x="50" y="54" textAnchor="middle" className="fill-current font-display text-[22px] font-bold text-brown-darker">
           %{value}
         </text>
       </svg>

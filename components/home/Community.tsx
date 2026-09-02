@@ -20,7 +20,7 @@ export function Community() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest2 text-green">Topluluk</p>
-          <h2 id="community-heading" className="mt-3 font-display text-3xl font-extrabold text-brown-darker sm:text-4xl">
+          <h2 id="community-heading" className="mt-3 font-display text-3xl font-bold text-brown-darker sm:text-4xl">
             {handle}
           </h2>
         </div>

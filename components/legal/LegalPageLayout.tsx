@@ -8,7 +8,7 @@ type LegalContent = {
 export function LegalPageLayout({ content }: { content: LegalContent }) {
   return (
     <article className="mx-auto max-w-3xl px-5 py-16">
-      <h1 className="font-display text-3xl font-extrabold text-brown-darker">{content.title}</h1>
+      <h1 className="font-display text-3xl font-bold text-brown-darker">{content.title}</h1>
       <p className="mt-4 text-brown-dark/80">{content.intro}</p>
 
       <div

@@ -129,7 +129,7 @@ export function ScrollStory() {
             className="relative flex h-full max-w-6xl flex-col justify-end px-5 pb-16 mx-auto sm:pb-24"
           >
             <p className="mb-3 text-xs font-bold uppercase tracking-widest2 text-peach">{scene.eyebrow}</p>
-            <p className="max-w-lg font-display text-3xl font-extrabold leading-tight text-cream sm:text-5xl">
+            <p className="max-w-lg font-display text-3xl font-bold leading-tight text-cream sm:text-5xl">
               {scene.caption}
             </p>
           </div>

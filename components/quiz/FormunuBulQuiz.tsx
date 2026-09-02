@@ -44,7 +44,7 @@ export function FormunuBulQuiz({ products }: { products: DbProduct[] }) {
           <Sparkles size={22} className="text-green" aria-hidden="true" />
         </span>
         <p className="text-xs font-bold uppercase tracking-widest2 text-green">Sonucun</p>
-        <h2 className="mt-3 font-display text-3xl font-extrabold text-brown-darker">{copy.title}</h2>
+        <h2 className="mt-3 font-display text-3xl font-bold text-brown-darker">{copy.title}</h2>
         <p className="mx-auto mt-3 max-w-md text-brown-dark/70">{copy.description}</p>
 
         <div className="mx-auto mt-10 grid max-w-2xl gap-6 sm:grid-cols-2">
@@ -92,7 +92,7 @@ export function FormunuBulQuiz({ products }: { products: DbProduct[] }) {
           <p className="mb-2 text-xs font-semibold uppercase tracking-widest2 text-green">
             Soru {step + 1} / {quizQuestions.length}
           </p>
-          <h2 className="font-display text-2xl font-extrabold text-brown-darker">{current.question}</h2>
+          <h2 className="font-display text-2xl font-bold text-brown-darker">{current.question}</h2>
 
           <div className="mt-6 space-y-3">
             {current.options.map((opt, i) => (

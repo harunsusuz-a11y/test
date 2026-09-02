@@ -199,7 +199,7 @@ export default function CartPage() {
           {/* Özet */}
           <Reveal delay={150} className="h-fit lg:sticky lg:top-28">
             <div className="card-solid rounded-2xl p-7">
-              <h2 className="font-display text-xl font-extrabold text-brown-darker">Sipariş Özeti</h2>
+              <h2 className="font-display text-xl font-bold text-brown-darker">Sipariş Özeti</h2>
 
               {totals.couponValid && couponCode ? (
                 <p className="mt-4 flex items-center justify-between rounded-2xl bg-peach/20 px-4 py-3 text-xs font-semibold text-brown-darker">
