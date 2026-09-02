@@ -24,7 +24,7 @@ const config: Config = {
         ink: "#241310",
       },
       fontFamily: {
-        display: ["var(--font-display)", "ui-serif", "Georgia", "serif"],
+        display: ["var(--font-display)", "ui-sans-serif", "system-ui", "sans-serif"],
         body: ["var(--font-body)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       letterSpacing: {
