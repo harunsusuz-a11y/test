@@ -6,7 +6,6 @@ import { ProcessSteps } from "@/components/home/ProcessSteps";
 import { InstagramGrid } from "@/components/home/InstagramGrid";
 import { Newsletter } from "@/components/home/Newsletter";
 import { ProofTicker } from "@/components/home/ProofTicker";
-import { SubscriptionToast } from "@/components/overlays/SubscriptionToast";
 import { getProductsServer } from "@/lib/data/products-server";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -32,7 +31,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <SubscriptionToast />
       <HeroSlider />
       <ProofTicker />
       <ProductSlider products={products} />
