@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { BadgePercent, Check, Gift, Minus, Plus, ShoppingBag, Trash2, Truck, X } from "lucide-react";
+import { BadgePercent, Check, Gift, Minus, Plus, Trash2, Truck, X } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useUiStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils/format";
@@ -45,7 +45,6 @@ export function CartDrawer() {
   const bundleSuggestion = useMemo(() => { if (!totals.bundleMissingCategory) return null; return null; }, [totals.bundleMissingCategory]);
   const totalCount = lines.reduce((n, l) => n + l.quantity, 0);
 
-  // Sepet boşsa hiç render etme
   if (lines.length === 0) return null;
 
   async function applyCoupon(e: React.FormEvent) {
@@ -63,38 +62,41 @@ export function CartDrawer() {
 
   return (
     <>
-      {/* ── Sağ alt sepet kutusu ── */}
+      {/* ── Sağ kenar ince şerit ── */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Sepeti aç, ${totalCount} ürün`}
-          className="fixed bottom-6 right-6 z-[80] flex items-center gap-3 rounded-2xl bg-brown-darker px-5 py-3.5 shadow-xl shadow-brown-darker/30 transition hover:bg-green"
+          className="group fixed right-0 top-1/2 z-[80] -translate-y-1/2 flex flex-col items-center justify-center gap-1.5 rounded-l-xl bg-brown-darker py-6 w-7 hover:w-14 transition-all duration-300 shadow-lg shadow-brown-darker/30 overflow-hidden"
         >
-          <div className="relative">
-            <ShoppingBag size={20} className="text-cream" aria-hidden="true" />
-            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-peach px-1 text-[11px] font-bold text-brown-darker">
-              {totalCount}
-            </span>
-          </div>
-          <div className="text-left">
-            <p className="text-xs font-bold text-cream">Sepetim</p>
-            <p className="text-xs text-cream/70">{formatPrice(totals.total)}</p>
-          </div>
+          {/* Ürün sayısı rozeti */}
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-peach text-[10px] font-bold text-brown-darker">
+            {totalCount}
+          </span>
+          {/* Dikey yazı — normal halde görünür, hover'da kaybolur */}
+          <span
+            className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-cream/80 transition-opacity duration-200 group-hover:opacity-0"
+            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+          >
+            Sepet
+          </span>
+          {/* Hover'da fiyat */}
+          <span className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-bold text-cream text-center px-1 leading-tight">
+            {formatPrice(totals.total)}
+          </span>
         </button>
       )}
 
-      {/* ── Açık sepet paneli (overlay + drawer) ── */}
+      {/* ── Açık drawer ── */}
       {open && (
         <div className="fixed inset-0 z-[80]" role="dialog" aria-modal="true" aria-label="Sepetim">
-          {/* Backdrop */}
           <button
             type="button"
             aria-label="Sepeti kapat"
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-brown-darker/40 motion-safe:animate-[fadeIn_.2s_ease-out]"
           />
-          {/* Panel */}
           <div className="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col bg-cream shadow-2xl shadow-brown-darker/30 motion-safe:animate-[slideInRight_.3s_cubic-bezier(.16,1,.3,1)]">
             <div className="flex items-center justify-between border-b border-brown/10 px-5 py-4">
               <p className="font-display text-lg font-extrabold text-brown-darker">
