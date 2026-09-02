@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Instagram, Send } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 type NavGroup = { title: string; links: { label: string; href: string }[] };
 
@@ -13,7 +13,6 @@ const DEFAULT_NAV: NavGroup[] = [
       { label: "Tüm Ürünler", href: "/magaza" },
       { label: "Protein Bar", href: "/magaza/kategori/protein-bar" },
       { label: "Fındık Kreması", href: "/magaza/kategori/findik-kremasi" },
-      { label: "Abonelik", href: "/abonelik" },
       { label: "Formunu Bul", href: "/formunu-bul" },
     ],
   },
@@ -47,9 +46,6 @@ const TRUST_ITEMS = [
 export function Footer() {
   const [footerNav, setFooterNav] = useState<NavGroup[]>(DEFAULT_NAV);
   const [tagline, setTagline] = useState("Fındığın rafine hali");
-  const [email, setEmail] = useState("");
-  const [subState, setSubState] = useState<"idle" | "loading" | "ok" | "err">("idle");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     Promise.all([
@@ -59,7 +55,7 @@ export function Footer() {
       if (settings?.brand_tagline) setTagline(settings.brand_tagline as string);
       if (items?.length) {
         const alisveris = items.filter((i) =>
-          ["/magaza", "/abonelik", "/sepet", "/formunu-bul", "/magaza/kategori/protein-bar", "/magaza/kategori/findik-kremasi"].includes(i.url)
+          ["/magaza", "/sepet", "/formunu-bul", "/magaza/kategori/protein-bar", "/magaza/kategori/findik-kremasi"].includes(i.url)
         );
         const marka = items.filter((i) =>
           ["/hakkimizda", "/sss", "/iletisim"].includes(i.url)
@@ -75,22 +71,6 @@ export function Footer() {
       }
     });
   }, []);
-
-  async function handleSubscribe(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email || subState === "loading" || subState === "ok") return;
-    setSubState("loading");
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      setSubState(res.ok ? "ok" : "err");
-    } catch {
-      setSubState("err");
-    }
-  }
 
   return (
     <footer className="relative overflow-hidden bg-[#1a0d0b] text-cream/80">
@@ -121,11 +101,10 @@ export function Footer() {
 
       {/* ── Ana gövde ── */}
       <div className="relative mx-auto max-w-6xl px-5 pt-14 pb-10">
-        <div className="grid gap-12 lg:grid-cols-[1fr_auto_auto_auto_1fr] lg:gap-8">
+        <div className="grid gap-12 lg:grid-cols-[1fr_auto_auto_auto] lg:gap-8">
 
           {/* Marka blok */}
           <div className="flex flex-col gap-5">
-            {/* Wordmark */}
             <Link href="/" aria-label="Venti-Ate Ana Sayfa">
               <span
                 className="inline-block font-display text-2xl font-extrabold leading-none tracking-tight text-peach"
@@ -159,37 +138,6 @@ export function Footer() {
                 </svg>
               </a>
             </div>
-
-            {/* Bülten — inline, kompakt */}
-            <form onSubmit={handleSubscribe} className="mt-1">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-cream/40">Bülten</p>
-              {subState === "ok" ? (
-                <p className="text-sm text-green-light">Teşekkürler, listeye eklendi.</p>
-              ) : (
-                <div className="flex">
-                  <input
-                    ref={inputRef}
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e-posta adresin"
-                    className="h-9 flex-1 min-w-0 rounded-l-md border border-cream/10 bg-white/[0.04] px-3 text-sm text-cream placeholder:text-cream/25 focus:border-peach/40 focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    disabled={subState === "loading"}
-                    aria-label="Abone ol"
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-r-md bg-peach text-brown-darker transition hover:bg-peach/80 disabled:opacity-50"
-                  >
-                    <Send size={14} />
-                  </button>
-                </div>
-              )}
-              {subState === "err" && (
-                <p className="mt-1 text-xs text-red-400">Bir hata oluştu, tekrar dene.</p>
-              )}
-            </form>
           </div>
 
           {/* Nav grupları */}
