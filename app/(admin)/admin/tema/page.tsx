@@ -144,8 +144,6 @@ export default function TemaPage() {
   const card: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
   const label: React.CSSProperties = { fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 };
 
-  function NavEditor({ items, setItems, menu }: { items: NavItem[]; setItems: (i: NavItem[]) => void; menu: "header" | "footer" }) {
-  
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -166,6 +164,7 @@ export default function TemaPage() {
     }
   }
 
+  function NavEditor({ items, setItems, menu }: { items: NavItem[]; setItems: (i: NavItem[]) => void; menu: "header" | "footer" }) {
   return (
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
