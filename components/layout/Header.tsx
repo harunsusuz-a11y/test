@@ -95,7 +95,11 @@ export function Header() {
             floating ? "text-cream" : "text-brown-darker"
           }`}
         >
-          venti&#8209;ate
+          {logoUrl ? (
+            <img src={logoUrl} alt="Venti-Ate" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+          ) : (
+            <>venti&#8209;ate</>
+          )}
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex" aria-label="Ana navigasyon">
