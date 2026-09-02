@@ -33,7 +33,7 @@ export function getOrganizationJsonLd() {
       "Sağlıklı atıştırmalık",
     ],
     sameAs: [
-      "https://www.instagram.com/ventiate.co",
+      "https://www.instagram.com/ventiate.co.co",
       "https://www.tiktok.com/@ventiate",
     ],
     contactPoint: {
@@ -196,7 +196,7 @@ export function getLocalBusinessJsonLd() {
     foundingDate: "2024",
     areaServed: { "@type": "Country", name: "Turkey" },
     sameAs: [
-      "https://www.instagram.com/ventiate.co",
+      "https://www.instagram.com/ventiate.co.co",
       "https://www.tiktok.com/@ventiate",
     ],
   };

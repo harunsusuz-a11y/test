@@ -19,7 +19,7 @@ export function InstagramGrid() {
             <Instagram size={20} className="text-[#F9C89E]" />
             <span className="text-sm font-semibold text-[#FFF6F0]">@ventiate.co</span>
           </div>
-          <Link href="https://instagram.com/ventiate.co" target="_blank" rel="noopener noreferrer"
+          <Link href="https://instagram.com/ventiate.co.co" target="_blank" rel="noopener noreferrer"
             className="text-xs font-semibold uppercase tracking-widest text-[#F9C89E] hover:text-[#FFF6F0] transition-colors">
             Takip Et →
           </Link>
@@ -27,7 +27,7 @@ export function InstagramGrid() {
 
         <div className="grid grid-cols-3 gap-1 md:grid-cols-6">
           {POSTS.map((post, i) => (
-            <Link key={i} href="https://instagram.com/ventiate.co" target="_blank" rel="noopener noreferrer"
+            <Link key={i} href="https://instagram.com/ventiate.co.co" target="_blank" rel="noopener noreferrer"
               className="group relative aspect-square overflow-hidden bg-[#F9C89E]/10">
               <img src={post.image} alt={post.caption}
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
