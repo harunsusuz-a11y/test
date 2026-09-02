@@ -62,27 +62,30 @@ export function CartDrawer() {
 
   return (
     <>
-      {/* ── Sağ kenar ince şerit ── */}
+      {/* ── Sağ kenar şerit ── */}
       {!open && (
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Sepeti aç, ${totalCount} ürün`}
-          className="group fixed right-0 top-1/2 z-[80] -translate-y-1/2 flex flex-col items-center justify-center gap-1.5 rounded-l-xl bg-brown-darker py-6 w-7 hover:w-14 transition-all duration-300 shadow-lg shadow-brown-darker/30 overflow-hidden"
+          className="fixed right-0 top-1/2 z-[80] -translate-y-1/2 flex flex-col items-center justify-center gap-3 rounded-l-2xl bg-brown-darker px-3 py-8 shadow-xl shadow-brown-darker/40 transition-all duration-300 hover:px-5 group"
+          style={{ minHeight: "160px" }}
         >
-          {/* Ürün sayısı rozeti */}
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-peach text-[10px] font-bold text-brown-darker">
+          {/* Rozet */}
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-peach text-xs font-bold text-brown-darker">
             {totalCount}
           </span>
-          {/* Dikey yazı — normal halde görünür, hover'da kaybolur */}
+          {/* Dikey "SEPET" yazısı */}
           <span
-            className="whitespace-nowrap text-[10px] font-bold uppercase tracking-widest text-cream/80 transition-opacity duration-200 group-hover:opacity-0"
+            className="text-[11px] font-bold uppercase tracking-[0.2em] text-cream"
             style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
           >
             Sepet
           </span>
-          {/* Hover'da fiyat */}
-          <span className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[10px] font-bold text-cream text-center px-1 leading-tight">
+          {/* Fiyat — hover'da belirginleşir */}
+          <span className="text-[10px] font-semibold text-cream/60 group-hover:text-cream/90 transition-colors"
+            style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+          >
             {formatPrice(totals.total)}
           </span>
         </button>
