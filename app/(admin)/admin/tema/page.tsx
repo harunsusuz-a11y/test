@@ -140,8 +140,8 @@ export default function TemaPage() {
 
   const T = (key: keyof ThemeSettings, value: unknown) => setTheme(t => ({ ...t, [key]: value }));
 
-  const input: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
-  const card: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
+  const input: React.CSSProperties = { background:"var(--adm-bg)", border:"1px solid var(--adm-border)", borderRadius:7, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
+  const card: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid var(--adm-border)", borderRadius:10, padding:20, marginBottom:16 };
   const label: React.CSSProperties = { fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 };
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -178,7 +178,7 @@ export default function TemaPage() {
         </div>
 
         {newItem?.menu === menu && (
-          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(200,162,107,0.3)", borderRadius:8, padding:14, marginBottom:12, display:"flex", gap:8, alignItems:"flex-end" }}>
+          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(200,162,107,0.5)", borderRadius:8, padding:14, marginBottom:12, display:"flex", gap:8, alignItems:"flex-end" }}>
             <div style={{ flex:1 }}>
               <label style={label}>Başlık</label>
               <input style={input} value={newItem.label} onChange={e => setNewItem(n => n ? {...n, label:e.target.value} : null)} placeholder="Mağaza" />
@@ -188,7 +188,7 @@ export default function TemaPage() {
               <input style={input} value={newItem.url} onChange={e => setNewItem(n => n ? {...n, url:e.target.value} : null)} placeholder="/magaza" />
             </div>
             <button onClick={addItem} style={{ padding:"8px 14px", borderRadius:6, background:"#c8a26b", border:"none", color:"#000", cursor:"pointer", fontWeight:700, fontSize:12 }}>Ekle</button>
-            <button onClick={() => setNewItem(null)} style={{ padding:"8px 10px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"var(--adm-text-muted)", cursor:"pointer" }}><X size={12}/></button>
+            <button onClick={() => setNewItem(null)} style={{ padding:"8px 10px", borderRadius:6, background:"transparent", border:"1px solid var(--adm-border)", color:"var(--adm-text-muted)", cursor:"pointer" }}><X size={12}/></button>
           </div>
         )}
 
@@ -203,12 +203,12 @@ export default function TemaPage() {
             onDragEnd={() => { setDragging(null); setDragOver(null); }}
             style={{
               display:"flex", alignItems:"center", gap:10,
-              background: dragging===item.id ? "rgba(200,162,107,0.06)" : dragOver===item.id ? "rgba(200,162,107,0.1)" : "rgba(255,255,255,0.02)",
+              background: dragging===item.id ? "rgba(200,162,107,0.1)" : dragOver===item.id ? "rgba(200,162,107,0.15)" : "var(--adm-bg)",
               border:`1px solid ${dragOver===item.id ? "rgba(200,162,107,0.4)" : "var(--adm-border)"}`,
               borderRadius:8, padding:"10px 12px", marginBottom:6, cursor:"grab",
               opacity: dragging===item.id ? 0.5 : 1, transition:"all .15s",
             }}>
-            <GripVertical size={14} color="#3a3a45" style={{ flexShrink:0 }} />
+            <GripVertical size={14} color="var(--adm-text-muted)" style={{ flexShrink:0 }} />
             <span style={{ flex:1, fontSize:13, color: item.is_active ? "var(--adm-text)":"var(--adm-text-muted)" }}>{item.label}</span>
             <span style={{ fontSize:11, color:"var(--adm-text-muted)", fontFamily:"monospace" }}>{item.url}</span>
             <button onClick={() => toggleItem(item.id, item.is_active, menu)}
@@ -221,7 +221,7 @@ export default function TemaPage() {
             </button>
           </div>
         ))}
-        <p style={{ fontSize:11, color:"#3a3a45", textAlign:"center", marginTop:8 }}>Sürükleyerek sırayı değiştirin</p>
+        <p style={{ fontSize:11, color:"var(--adm-text-muted)", textAlign:"center", marginTop:8 }}>Sürükleyerek sırayı değiştirin</p>
       </div>
     );
   }
@@ -235,7 +235,7 @@ export default function TemaPage() {
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={() => setPreview(p => !p)}
-            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:8, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:8, border:"1px solid var(--adm-border)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {preview ? <EyeOff size={14}/> : <Eye size={14}/>} {preview ? "Önizlemeyi Kapat":"Önizle"}
           </button>
           <button onClick={saveTheme} disabled={saving}
@@ -247,7 +247,7 @@ export default function TemaPage() {
 
       {/* Önizleme bandı */}
       {preview && (
-        <div style={{ marginBottom:24, borderRadius:10, overflow:"hidden", border:"1px solid rgba(255,255,255,0.08)" }}>
+        <div style={{ marginBottom:24, borderRadius:10, overflow:"hidden", border:"1px solid var(--adm-border)" }}>
           <div style={{ background:theme.primary_color, color:theme.accent_color, padding:"8px 20px", fontSize:12, textAlign:"center" }}>
             {theme.announcement_text}
           </div>
@@ -273,7 +273,7 @@ export default function TemaPage() {
       <div style={{ display:"flex", gap:6, marginBottom:24 }}>
         {TABS.map((t, i) => (
           <button key={i} onClick={() => setTab(i)}
-            style={{ padding:"8px 16px", borderRadius:8, border: tab===i ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
+            style={{ padding:"8px 16px", borderRadius:8, border: tab===i ? "1px solid #c8a26b":"1px solid var(--adm-border)",
               background: tab===i ? "rgba(200,162,107,0.12)":"transparent",
               color: tab===i ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {t}
@@ -297,7 +297,7 @@ export default function TemaPage() {
                 <label style={label}>{l}</label>
                 <div style={{ display:"flex", gap:8, alignItems:"center" }}>
                   <input type="color" value={theme[key] as string} onChange={e => T(key, e.target.value)}
-                    style={{ width:40, height:36, padding:2, borderRadius:6, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", cursor:"pointer" }} />
+                    style={{ width:40, height:36, padding:2, borderRadius:6, border:"1px solid var(--adm-border)", background:"transparent", cursor:"pointer" }} />
                   <input style={{ ...input, flex:1 }} value={theme[key] as string}
                     onChange={e => T(key, e.target.value)} placeholder="#000000" />
                 </div>
@@ -363,7 +363,7 @@ export default function TemaPage() {
               </div>
             </div>
             {theme.logo_url && (
-              <div style={{ marginTop:12, background:"rgba(255,255,255,0.03)", borderRadius:8, padding:16, display:"inline-block" }}>
+              <div style={{ marginTop:12, background:"var(--adm-bg)", borderRadius:8, padding:16, display:"inline-block" }}>
                 <img src={theme.logo_url} alt="Logo önizleme" style={{ maxWidth:theme.logo_width, maxHeight:60, objectFit:"contain" }} />
               </div>
             )}
