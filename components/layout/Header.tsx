@@ -10,7 +10,6 @@ import { useUiStore } from "@/store/ui-store";
 export function Header() {
   const [mainNav, setMainNav] = useState([
     { label: "Mağaza", href: "/magaza" },
-    { label: "Abonelik", href: "/abonelik" },
     { label: "Formunu Bul", href: "/formunu-bul" },
     { label: "Hakkımızda", href: "/hakkimizda" },
   ]);
