@@ -212,7 +212,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               ))}
             </ul>
 
-            {/* Cam kart: adet + tek seferlik/abonelik toggle'ı */}
             <BuyBox product={product as any} theme={theme} />
 
             <StatRings proteinPercent={(product.proteinPercent ?? product.protein_percent) ?? 0} hazelnutPercent={(product.hazelnutPercent ?? product.hazelnut_percent) ?? 0} />
