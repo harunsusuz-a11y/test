@@ -140,9 +140,9 @@ export default function TemaPage() {
 
   const T = (key: keyof ThemeSettings, value: unknown) => setTheme(t => ({ ...t, [key]: value }));
 
-  const input: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"#f2f2f3", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
-  const card: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
-  const label: React.CSSProperties = { fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 };
+  const input: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
+  const card: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
+  const label: React.CSSProperties = { fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 };
 
   function NavEditor({ items, setItems, menu }: { items: NavItem[]; setItems: (i: NavItem[]) => void; menu: "header" | "footer" }) {
   
@@ -169,7 +169,7 @@ export default function TemaPage() {
   return (
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
-          <span style={{ fontSize:14, fontWeight:600, color:"#f2f2f3" }}>
+          <span style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)" }}>
             {menu === "header" ? "Header Navigasyon" : "Footer Navigasyon"}
           </span>
           <button onClick={() => setNewItem({ label:"", url:"", menu })}
@@ -179,7 +179,7 @@ export default function TemaPage() {
         </div>
 
         {newItem?.menu === menu && (
-          <div style={{ background:"#151518", border:"1px solid rgba(200,162,107,0.3)", borderRadius:8, padding:14, marginBottom:12, display:"flex", gap:8, alignItems:"flex-end" }}>
+          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(200,162,107,0.3)", borderRadius:8, padding:14, marginBottom:12, display:"flex", gap:8, alignItems:"flex-end" }}>
             <div style={{ flex:1 }}>
               <label style={label}>Başlık</label>
               <input style={input} value={newItem.label} onChange={e => setNewItem(n => n ? {...n, label:e.target.value} : null)} placeholder="Mağaza" />
@@ -189,12 +189,12 @@ export default function TemaPage() {
               <input style={input} value={newItem.url} onChange={e => setNewItem(n => n ? {...n, url:e.target.value} : null)} placeholder="/magaza" />
             </div>
             <button onClick={addItem} style={{ padding:"8px 14px", borderRadius:6, background:"#c8a26b", border:"none", color:"#000", cursor:"pointer", fontWeight:700, fontSize:12 }}>Ekle</button>
-            <button onClick={() => setNewItem(null)} style={{ padding:"8px 10px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"#9b9ba4", cursor:"pointer" }}><X size={12}/></button>
+            <button onClick={() => setNewItem(null)} style={{ padding:"8px 10px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"var(--adm-text-muted)", cursor:"pointer" }}><X size={12}/></button>
           </div>
         )}
 
         {items.length === 0 ? (
-          <p style={{ color:"#6b6b76", fontSize:13, textAlign:"center", padding:"20px 0" }}>Menü boş.</p>
+          <p style={{ color:"var(--adm-text-muted)", fontSize:13, textAlign:"center", padding:"20px 0" }}>Menü boş.</p>
         ) : items.map(item => (
           <div key={item.id}
             draggable
@@ -205,15 +205,15 @@ export default function TemaPage() {
             style={{
               display:"flex", alignItems:"center", gap:10,
               background: dragging===item.id ? "rgba(200,162,107,0.06)" : dragOver===item.id ? "rgba(200,162,107,0.1)" : "rgba(255,255,255,0.02)",
-              border:`1px solid ${dragOver===item.id ? "rgba(200,162,107,0.4)" : "rgba(255,255,255,0.06)"}`,
+              border:`1px solid ${dragOver===item.id ? "rgba(200,162,107,0.4)" : "var(--adm-border)"}`,
               borderRadius:8, padding:"10px 12px", marginBottom:6, cursor:"grab",
               opacity: dragging===item.id ? 0.5 : 1, transition:"all .15s",
             }}>
             <GripVertical size={14} color="#3a3a45" style={{ flexShrink:0 }} />
-            <span style={{ flex:1, fontSize:13, color: item.is_active ? "#f2f2f3":"#6b6b76" }}>{item.label}</span>
-            <span style={{ fontSize:11, color:"#6b6b76", fontFamily:"monospace" }}>{item.url}</span>
+            <span style={{ flex:1, fontSize:13, color: item.is_active ? "var(--adm-text)":"var(--adm-text-muted)" }}>{item.label}</span>
+            <span style={{ fontSize:11, color:"var(--adm-text-muted)", fontFamily:"monospace" }}>{item.url}</span>
             <button onClick={() => toggleItem(item.id, item.is_active, menu)}
-              style={{ fontSize:11, padding:"2px 8px", borderRadius:4, border:`1px solid ${item.is_active ? "#4ade80":"#6b6b76"}`, background: item.is_active ? "rgba(74,222,128,0.1)":"transparent", color: item.is_active ? "#4ade80":"#6b6b76", cursor:"pointer" }}>
+              style={{ fontSize:11, padding:"2px 8px", borderRadius:4, border:`1px solid ${item.is_active ? "#4ade80":"var(--adm-text-muted)"}`, background: item.is_active ? "rgba(74,222,128,0.1)":"transparent", color: item.is_active ? "#4ade80":"var(--adm-text-muted)", cursor:"pointer" }}>
               {item.is_active ? "Aktif":"Pasif"}
             </button>
             <button onClick={() => deleteItem(item.id)}
@@ -232,11 +232,11 @@ export default function TemaPage() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <Palette size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Tema & Görünüm Editörü</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Tema & Görünüm Editörü</span>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={() => setPreview(p => !p)}
-            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:8, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 14px", borderRadius:8, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {preview ? <EyeOff size={14}/> : <Eye size={14}/>} {preview ? "Önizlemeyi Kapat":"Önizle"}
           </button>
           <button onClick={saveTheme} disabled={saving}
@@ -276,7 +276,7 @@ export default function TemaPage() {
           <button key={i} onClick={() => setTab(i)}
             style={{ padding:"8px 16px", borderRadius:8, border: tab===i ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
               background: tab===i ? "rgba(200,162,107,0.12)":"transparent",
-              color: tab===i ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: tab===i ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {t}
           </button>
         ))}
@@ -285,7 +285,7 @@ export default function TemaPage() {
       {/* Renkler */}
       {tab === 0 && (
         <div style={card}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Renk Paleti</p>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Renk Paleti</p>
           <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:16 }}>
             {[
               { key:"primary_color" as const, label:"Ana Renk (Kahve)" },
@@ -317,21 +317,21 @@ export default function TemaPage() {
       {/* Fontlar */}
       {tab === 1 && (
         <div style={card}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Tipografi</p>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Tipografi</p>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
             <div>
               <label style={label}>Başlık Fontu</label>
               <select style={input} value={theme.font_heading} onChange={e => T("font_heading", e.target.value)}>
                 {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
               </select>
-              <p style={{ marginTop:10, fontSize:24, color:"#f2f2f3", fontFamily:theme.font_heading }}>Fındığın Rafine Hali</p>
+              <p style={{ marginTop:10, fontSize:24, color:"var(--adm-text)", fontFamily:theme.font_heading }}>Fındığın Rafine Hali</p>
             </div>
             <div>
               <label style={label}>Gövde Fontu</label>
               <select style={input} value={theme.font_body} onChange={e => T("font_body", e.target.value)}>
                 {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
               </select>
-              <p style={{ marginTop:10, fontSize:14, color:"#9b9ba4", fontFamily:theme.font_body }}>Giresun fındığından üretilen doğal ürünler. %25 protein, gerçek lezzet.</p>
+              <p style={{ marginTop:10, fontSize:14, color:"var(--adm-text-muted)", fontFamily:theme.font_body }}>Giresun fındığından üretilen doğal ürünler. %25 protein, gerçek lezzet.</p>
             </div>
           </div>
         </div>
@@ -341,7 +341,7 @@ export default function TemaPage() {
       {tab === 2 && (
         <div>
           <div style={card}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Logo</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>Logo</p>
             <div style={{ display:"flex", gap:8, marginBottom:12 }}>
               <button
                 type="button"
@@ -370,13 +370,13 @@ export default function TemaPage() {
             )}
           </div>
           <div style={card}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Duyuru Çubuğu</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>Duyuru Çubuğu</p>
             <div style={{ display:"grid", gap:12 }}>
               <div>
                 <label style={label}>Duyuru Metni</label>
                 <input style={input} value={theme.announcement_text} onChange={e => T("announcement_text", e.target.value)} />
               </div>
-              <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
+              <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"var(--adm-text-muted)" }}>
                 <input type="checkbox" checked={theme.announcement_active} onChange={e => T("announcement_active", e.target.checked)} style={{ accentColor:"#c8a26b" }} />
                 Duyuru çubuğunu göster
               </label>
@@ -401,7 +401,7 @@ export default function TemaPage() {
       {tab === 4 && (
         <div>
           <div style={card}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Footer Bilgileri</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>Footer Bilgileri</p>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
               {[
                 { key:"footer_tagline" as const, label:"Slogan", placeholder:"Fındığın rafine hali." },
@@ -416,7 +416,7 @@ export default function TemaPage() {
             </div>
           </div>
           <div style={card}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Sosyal Medya</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>Sosyal Medya</p>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
               {[
                 { key:"instagram" as const, label:"Instagram URL" },

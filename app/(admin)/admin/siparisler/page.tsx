@@ -15,7 +15,7 @@ type Order = {
 
 const STATUS_COLORS: Record<string, string> = {
   pending:"#f59e0b", confirmed:"#60a5fa", processing:"#a78bfa",
-  shipped:"#c8a26b", delivered:"#4ade80", cancelled:"#f87171", refunded:"#9b9ba4",
+  shipped:"#c8a26b", delivered:"#4ade80", cancelled:"#f87171", refunded:"var(--adm-text-muted)",
 };
 const STATUS_TR: Record<string, string> = {
   pending:"Bekliyor", confirmed:"Onaylandı", processing:"Hazırlanıyor",
@@ -90,23 +90,23 @@ export default function SiparislerPage() {
       cell: ({ row }) => (
         <div>
           <div style={{ fontWeight:500 }}>{row.original.full_name}</div>
-          <div style={{ fontSize:11, color:"#6b6b76" }}>{row.original.email}</div>
+          <div style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{row.original.email}</div>
         </div>
       )},
     { accessorKey: "city", header: "Şehir",
-      cell: ({ getValue }) => <span style={{ color:"#9b9ba4" }}>{(getValue() as string) ?? "-"}</span> },
+      cell: ({ getValue }) => <span style={{ color:"var(--adm-text-muted)" }}>{(getValue() as string) ?? "-"}</span> },
     { accessorKey: "total", header: "Tutar", enableSorting: true,
       cell: ({ getValue }) => <span style={{ fontWeight:600 }}>₺{Number(getValue()).toFixed(2)}</span> },
     { accessorKey: "status", header: "Durum",
       cell: ({ getValue }) => {
         const s = getValue() as string;
-        return <span style={{ fontSize:12, fontWeight:600, color: STATUS_COLORS[s]??"#9b9ba4",
-          background:`${STATUS_COLORS[s]??"#9b9ba4"}18`, padding:"3px 10px", borderRadius:20 }}>
+        return <span style={{ fontSize:12, fontWeight:600, color: STATUS_COLORS[s]??"var(--adm-text-muted)",
+          background:`${STATUS_COLORS[s]??"var(--adm-text-muted)"}18`, padding:"3px 10px", borderRadius:20 }}>
           {STATUS_TR[s] ?? s}
         </span>;
       }},
     { accessorKey: "created_at", header: "Tarih", enableSorting: true,
-      cell: ({ getValue }) => <span style={{ fontSize:12, color:"#6b6b76" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
+      cell: ({ getValue }) => <span style={{ fontSize:12, color:"var(--adm-text-muted)" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
     { id: "actions", header: "",
       cell: ({ row }) => (
         <div style={{ display:"flex", gap:6 }}>
@@ -135,8 +135,8 @@ export default function SiparislerPage() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <ShoppingBag size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Siparişler</span>
-          <span style={{ fontSize:13, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Siparişler</span>
+          <span style={{ fontSize:13, color:"var(--adm-text-muted)", background:"rgba(0,0,0,0.03)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
         </div>
       </div>
 
@@ -146,7 +146,7 @@ export default function SiparislerPage() {
           <button key={f.value} onClick={() => { setStatusFilter(f.value); setPage(1); }}
             style={{ padding:"6px 14px", borderRadius:20, border: statusFilter===f.value ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
               background: statusFilter===f.value ? "rgba(200,162,107,0.12)":"transparent",
-              color: statusFilter===f.value ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: statusFilter===f.value ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {f.label}
           </button>
         ))}
@@ -167,18 +167,18 @@ export default function SiparislerPage() {
       {selectedOrder && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }}
           onClick={() => setSelectedOrder(null)}>
-          <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:440, maxWidth:"90vw" }}
+          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:440, maxWidth:"90vw" }}
             onClick={e => e.stopPropagation()}>
-            <h3 style={{ fontSize:17, fontWeight:700, color:"#f2f2f3", marginBottom:6 }}>{selectedOrder.order_number}</h3>
-            <p style={{ fontSize:13, color:"#6b6b76", marginBottom:20 }}>{selectedOrder.full_name} · {selectedOrder.email}</p>
+            <h3 style={{ fontSize:17, fontWeight:700, color:"var(--adm-text)", marginBottom:6 }}>{selectedOrder.order_number}</h3>
+            <p style={{ fontSize:13, color:"var(--adm-text-muted)", marginBottom:20 }}>{selectedOrder.full_name} · {selectedOrder.email}</p>
             <div style={{ marginBottom:20 }}>
-              <p style={{ fontSize:12, color:"#6b6b76", marginBottom:8 }}>Durum Güncelle</p>
+              <p style={{ fontSize:12, color:"var(--adm-text-muted)", marginBottom:8 }}>Durum Güncelle</p>
               <div style={{ display:"flex", flexWrap:"wrap" as "wrap", gap:8 }}>
                 {Object.entries(STATUS_TR).map(([val, label]) => (
                   <button key={val} onClick={() => updateStatus(selectedOrder.id, val)} disabled={updating || selectedOrder.status === val}
                     style={{ padding:"6px 14px", borderRadius:8, border: selectedOrder.status===val ? `1px solid ${STATUS_COLORS[val]}` : "1px solid rgba(255,255,255,0.08)",
                       background: selectedOrder.status===val ? `${STATUS_COLORS[val]}22` : "transparent",
-                      color: selectedOrder.status===val ? STATUS_COLORS[val] : "#9b9ba4",
+                      color: selectedOrder.status===val ? STATUS_COLORS[val] : "var(--adm-text-muted)",
                       cursor: selectedOrder.status===val || updating ? "not-allowed":"pointer", fontSize:12, fontWeight: selectedOrder.status===val ? 700 : 400,
                       opacity: updating ? .6 : 1 }}>
                     {label}
@@ -187,9 +187,9 @@ export default function SiparislerPage() {
               </div>
             </div>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-              <span style={{ fontSize:18, fontWeight:700, color:"#f2f2f3" }}>₺{Number(selectedOrder.total).toFixed(2)}</span>
+              <span style={{ fontSize:18, fontWeight:700, color:"var(--adm-text)" }}>₺{Number(selectedOrder.total).toFixed(2)}</span>
               <button onClick={() => setSelectedOrder(null)}
-                style={{ padding:"7px 18px", borderRadius:7, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer" }}>
+                style={{ padding:"7px 18px", borderRadius:7, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer" }}>
                 Kapat
               </button>
             </div>

@@ -81,8 +81,8 @@ export default function SeoPage() {
     success("Global SEO ayarları kaydedildi");
   }
 
-  const inputStyle: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"#f2f2f3", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
-  const sectionStyle: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
+  const inputStyle: React.CSSProperties = { background:"#0f0f12", border:"1px solid rgba(255,255,255,0.1)", borderRadius:7, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", width:"100%", boxSizing:"border-box" };
+  const sectionStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20, marginBottom:16 };
 
   const errors = issues.filter(i => i.severity === "error");
   const warnings = issues.filter(i => i.severity === "warning");
@@ -91,7 +91,7 @@ export default function SeoPage() {
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
         <Search size={22} color="#c8a26b" />
-        <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>SEO Yönetimi</span>
+        <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>SEO Yönetimi</span>
       </div>
 
       {/* Tabs */}
@@ -100,7 +100,7 @@ export default function SeoPage() {
           <button key={t.id} onClick={() => setTab(t.id as typeof tab)}
             style={{ padding:"8px 18px", borderRadius:8, border: tab===t.id ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
               background: tab===t.id ? "rgba(200,162,107,0.12)":"transparent",
-              color: tab===t.id ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: tab===t.id ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {t.label}
           </button>
         ))}
@@ -109,33 +109,33 @@ export default function SeoPage() {
       {/* SEO Kayıtları */}
       {tab === "records" && (
         loading ? <SkeletonTable rows={6} cols={5}/> : (
-          <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
+          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
                 <tr style={{ background:"rgba(255,255,255,0.02)" }}>
                   {["Tür","Slug","Başlık","Açıklama","Index","İşlem"].map(h => (
-                    <th key={h} style={{ textAlign:"left", padding:"12px 14px", fontSize:11, color:"#6b6b76", fontWeight:500, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
+                    <th key={h} style={{ textAlign:"left", padding:"12px 14px", fontSize:11, color:"var(--adm-text-muted)", fontWeight:500, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {records.length === 0 ? (
-                  <tr><td colSpan={6} style={{ padding:40, textAlign:"center", color:"#6b6b76" }}>Kayıt bulunamadı.</td></tr>
+                  <tr><td colSpan={6} style={{ padding:40, textAlign:"center", color:"var(--adm-text-muted)" }}>Kayıt bulunamadı.</td></tr>
                 ) : records.map(r => (
                   <tr key={r.id} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
                     <td style={{ padding:"10px 14px" }}>
-                      <span style={{ fontSize:11, background:"rgba(255,255,255,0.05)", padding:"2px 8px", borderRadius:10, color:"#9b9ba4" }}>{r.entity_type}</span>
+                      <span style={{ fontSize:11, background:"rgba(0,0,0,0.03)", padding:"2px 8px", borderRadius:10, color:"var(--adm-text-muted)" }}>{r.entity_type}</span>
                     </td>
-                    <td style={{ padding:"10px 14px", fontSize:12, color:"#6b6b76", fontFamily:"monospace" }}>{r.entity_slug ?? r.entity_id ?? "-"}</td>
+                    <td style={{ padding:"10px 14px", fontSize:12, color:"var(--adm-text-muted)", fontFamily:"monospace" }}>{r.entity_slug ?? r.entity_id ?? "-"}</td>
                     <td style={{ padding:"10px 14px", fontSize:13 }}>
                       {r.meta_title ? (
                         <div>
-                          <span style={{ color: r.meta_title?.length > 60 ? "#f59e0b":"#f2f2f3" }}>{r.meta_title?.slice(0,50)}{r.meta_title?.length > 50 ? "…":""}</span>
-                          <span style={{ fontSize:10, color:"#6b6b76", marginLeft:6 }}>{r.meta_title?.length}/60</span>
+                          <span style={{ color: r.meta_title?.length > 60 ? "#f59e0b":"var(--adm-text)" }}>{r.meta_title?.slice(0,50)}{r.meta_title?.length > 50 ? "…":""}</span>
+                          <span style={{ fontSize:10, color:"var(--adm-text-muted)", marginLeft:6 }}>{r.meta_title?.length}/60</span>
                         </div>
                       ) : <span style={{ color:"#f87171", fontSize:12 }}>Eksik</span>}
                     </td>
-                    <td style={{ padding:"10px 14px", fontSize:12, color:"#9b9ba4" }}>
+                    <td style={{ padding:"10px 14px", fontSize:12, color:"var(--adm-text-muted)" }}>
                       {r.meta_description ? `${r.meta_description?.slice(0,40)}…` : <span style={{ color:"#f87171" }}>Eksik</span>}
                     </td>
                     <td style={{ padding:"10px 14px" }}>
@@ -164,7 +164,7 @@ export default function SeoPage() {
             <div style={{ textAlign:"center", padding:"60px 0" }}>
               <CheckCircle size={48} color="#4ade80" style={{ margin:"0 auto 16px" }} />
               <p style={{ color:"#4ade80", fontSize:16, fontWeight:600 }}>SEO sorunları bulunamadı!</p>
-              <p style={{ color:"#6b6b76", fontSize:13 }}>Tüm sayfalar SEO açısından temiz görünüyor.</p>
+              <p style={{ color:"var(--adm-text-muted)", fontSize:13 }}>Tüm sayfalar SEO açısından temiz görünüyor.</p>
             </div>
           ) : (
             <div>
@@ -176,8 +176,8 @@ export default function SeoPage() {
                   </h3>
                   {errors.map((issue, i) => (
                     <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"10px 14px", background:"rgba(248,113,113,0.05)", border:"1px solid rgba(248,113,113,0.15)", borderRadius:8, marginBottom:6, fontSize:13 }}>
-                      <span style={{ color:"#f2f2f3" }}>{issue.message}</span>
-                      <code style={{ color:"#6b6b76", fontSize:11 }}>{issue.entity}</code>
+                      <span style={{ color:"var(--adm-text)" }}>{issue.message}</span>
+                      <code style={{ color:"var(--adm-text-muted)", fontSize:11 }}>{issue.entity}</code>
                     </div>
                   ))}
                 </div>
@@ -189,8 +189,8 @@ export default function SeoPage() {
                   </h3>
                   {warnings.map((issue, i) => (
                     <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"10px 14px", background:"rgba(245,158,11,0.05)", border:"1px solid rgba(245,158,11,0.15)", borderRadius:8, marginBottom:6, fontSize:13 }}>
-                      <span style={{ color:"#f2f2f3" }}>{issue.message}</span>
-                      <code style={{ color:"#6b6b76", fontSize:11 }}>{issue.entity}</code>
+                      <span style={{ color:"var(--adm-text)" }}>{issue.message}</span>
+                      <code style={{ color:"var(--adm-text-muted)", fontSize:11 }}>{issue.entity}</code>
                     </div>
                   ))}
                 </div>
@@ -204,7 +204,7 @@ export default function SeoPage() {
       {tab === "global" && (
         <div style={{ maxWidth:640 }}>
           <div style={sectionStyle}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Site Bilgileri</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Site Bilgileri</p>
             <div style={{ display:"grid", gap:14 }}>
               {[
                 { key:"site_title", label:"Site Başlığı", placeholder:"Venti-Ate — Fındığın Rafine Hali" },
@@ -212,7 +212,7 @@ export default function SeoPage() {
                 { key:"default_og_image", label:"Varsayılan OG Görseli URL", placeholder:"https://ventiate.com/og-image.jpg" },
               ].map(f => (
                 <div key={f.key}>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>{f.label}</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>{f.label}</label>
                   <input style={inputStyle} placeholder={f.placeholder}
                     value={globalSettings[f.key as keyof typeof globalSettings]}
                     onChange={e => setGlobalSettings(g => ({ ...g, [f.key]: e.target.value }))} />
@@ -221,14 +221,14 @@ export default function SeoPage() {
             </div>
           </div>
           <div style={sectionStyle}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Doğrulama & Analytics</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Doğrulama & Analytics</p>
             <div style={{ display:"grid", gap:14 }}>
               {[
                 { key:"google_verification", label:"Google Search Console Doğrulama Kodu", placeholder:"google-site-verification=..." },
                 { key:"google_analytics", label:"Google Analytics / GA4 ID", placeholder:"G-XXXXXXXXXX" },
               ].map(f => (
                 <div key={f.key}>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>{f.label}</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>{f.label}</label>
                   <input style={inputStyle} placeholder={f.placeholder}
                     value={globalSettings[f.key as keyof typeof globalSettings]}
                     onChange={e => setGlobalSettings(g => ({ ...g, [f.key]: e.target.value }))} />
@@ -237,7 +237,7 @@ export default function SeoPage() {
             </div>
           </div>
           <div style={sectionStyle}>
-            <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>robots.txt</p>
+            <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>robots.txt</p>
             <textarea style={{ ...inputStyle, minHeight:100, resize:"vertical" as "vertical", fontFamily:"monospace" }}
               value={globalSettings.robots_txt || "User-agent: *\nAllow: /\nDisallow: /admin/\nSitemap: https://ventiate.com/sitemap.xml"}
               onChange={e => setGlobalSettings(g => ({ ...g, robots_txt: e.target.value }))} />
@@ -253,9 +253,9 @@ export default function SeoPage() {
       {editing && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }}
           onClick={() => setEditing(null)}>
-          <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:560, maxWidth:"94vw", maxHeight:"90vh", overflowY:"auto" as "auto" }}
+          <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:14, padding:28, width:560, maxWidth:"94vw", maxHeight:"90vh", overflowY:"auto" as "auto" }}
             onClick={e => e.stopPropagation()}>
-            <h3 style={{ fontSize:16, fontWeight:700, color:"#f2f2f3", marginBottom:20 }}>SEO Kaydını Düzenle</h3>
+            <h3 style={{ fontSize:16, fontWeight:700, color:"var(--adm-text)", marginBottom:20 }}>SEO Kaydını Düzenle</h3>
             <div style={{ display:"grid", gap:14 }}>
               {[
                 { key:"meta_title", label:"SEO Başlığı (maks 60 karakter)" },
@@ -265,7 +265,7 @@ export default function SeoPage() {
                 { key:"canonical_url", label:"Canonical URL" },
               ].map(f => (
                 <div key={f.key}>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>{f.label}</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>{f.label}</label>
                   {f.key === "meta_description" || f.key === "og_description" ? (
                     <textarea style={{ ...inputStyle, minHeight:60, resize:"vertical" as "vertical" }}
                       value={(editForm as Record<string,string|null>)[f.key] ?? ""}
@@ -278,12 +278,12 @@ export default function SeoPage() {
                 </div>
               ))}
               <div style={{ display:"flex", gap:20 }}>
-                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
+                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"var(--adm-text-muted)" }}>
                   <input type="checkbox" checked={editForm.robots_index !== false}
                     onChange={e => setEditForm(f => ({ ...f, robots_index: e.target.checked }))} style={{ accentColor:"#c8a26b" }} />
                   Indexle (robots index)
                 </label>
-                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"#9b9ba4" }}>
+                <label style={{ display:"flex", alignItems:"center", gap:8, cursor:"pointer", fontSize:13, color:"var(--adm-text-muted)" }}>
                   <input type="checkbox" checked={editForm.robots_follow !== false}
                     onChange={e => setEditForm(f => ({ ...f, robots_follow: e.target.checked }))} style={{ accentColor:"#c8a26b" }} />
                   Takip et (robots follow)
@@ -296,7 +296,7 @@ export default function SeoPage() {
                 <Save size={14}/> Kaydet
               </button>
               <button onClick={() => setEditing(null)}
-                style={{ padding:"9px 18px", borderRadius:8, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer" }}>
+                style={{ padding:"9px 18px", borderRadius:8, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer" }}>
                 İptal
               </button>
             </div>

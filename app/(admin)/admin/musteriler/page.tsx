@@ -63,16 +63,16 @@ export default function MusterilerPage() {
         return (
           <div>
             <div style={{ fontWeight:500 }}>{c.first_name ?? "-"} {c.last_name ?? ""}</div>
-            <div style={{ fontSize:11, color:"#6b6b76" }}>{c.email}</div>
-            {c.phone && <div style={{ fontSize:11, color:"#6b6b76" }}>{c.phone}</div>}
+            <div style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{c.email}</div>
+            {c.phone && <div style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{c.phone}</div>}
           </div>
         );
       }},
     { accessorKey: "status", header: "Durum",
       cell: ({ getValue }) => {
         const s = getValue() as string;
-        return <span style={{ fontSize:12, fontWeight:600, color:STATUS_COLORS[s]??"#9b9ba4",
-          background:`${STATUS_COLORS[s]??"#9b9ba4"}18`, padding:"3px 10px", borderRadius:20 }}>
+        return <span style={{ fontSize:12, fontWeight:600, color:STATUS_COLORS[s]??"var(--adm-text-muted)",
+          background:`${STATUS_COLORS[s]??"var(--adm-text-muted)"}18`, padding:"3px 10px", borderRadius:20 }}>
           {STATUS_TR[s] ?? s}
         </span>;
       }},
@@ -88,7 +88,7 @@ export default function MusterilerPage() {
         </div>
       )},
     { accessorKey: "created_at", header: "Kayıt", enableSorting: true,
-      cell: ({ getValue }) => <span style={{ fontSize:12, color:"#6b6b76" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
+      cell: ({ getValue }) => <span style={{ fontSize:12, color:"var(--adm-text-muted)" }}>{new Date(getValue() as string).toLocaleDateString("tr-TR")}</span> },
   ];
 
   const bulkActions: BulkAction[] = [
@@ -109,8 +109,8 @@ export default function MusterilerPage() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <Users size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Müşteriler</span>
-          <span style={{ fontSize:13, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Müşteriler</span>
+          <span style={{ fontSize:13, color:"var(--adm-text-muted)", background:"rgba(0,0,0,0.03)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
         </div>
       </div>
 
@@ -122,7 +122,7 @@ export default function MusterilerPage() {
           { icon:<UserX size={16}/>, label:"Engelli", value:kpi.banned, color:"#f87171" },
           { icon:<Star size={16}/>, label:"Ort. Harcama", value:`₺${kpi.avgSpent.toFixed(2)}`, color:"#a78bfa" },
         ].map((k,i) => (
-          <div key={i} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:16 }}>
+          <div key={i} style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:16 }}>
             <div style={{ display:"flex", alignItems:"center", gap:8, color:k.color, marginBottom:8 }}>{k.icon}<span style={{ fontSize:12 }}>{k.label}</span></div>
             <div style={{ fontSize:22, fontWeight:700, color:k.color }}>{k.value}</div>
           </div>
@@ -135,7 +135,7 @@ export default function MusterilerPage() {
           <button key={f.value} onClick={() => { setStatusFilter(f.value); setPage(1); }}
             style={{ padding:"6px 14px", borderRadius:20, border: statusFilter===f.value ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
               background: statusFilter===f.value ? "rgba(200,162,107,0.12)":"transparent",
-              color: statusFilter===f.value ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: statusFilter===f.value ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {f.label}
           </button>
         ))}

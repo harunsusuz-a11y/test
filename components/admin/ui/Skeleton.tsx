@@ -31,7 +31,7 @@ export function SkeletonRow({ cols = 4 }: { cols?: number }) {
 
 export function SkeletonTable({ rows = 5, cols = 5 }: { rows?: number; cols?: number }) {
   return (
-    <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
+    <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
       {/* Header */}
       <div style={{ display:"grid", gridTemplateColumns:`repeat(${cols},1fr)`, gap:16, padding:"12px 16px", borderBottom:"1px solid rgba(255,255,255,0.06)", background:"rgba(255,255,255,0.02)" }}>
         {Array.from({ length: cols }).map((_, i) => <Skeleton key={i} height={12} width="60%" />)}
@@ -44,7 +44,7 @@ export function SkeletonTable({ rows = 5, cols = 5 }: { rows?: number; cols?: nu
 
 export function SkeletonCard({ lines = 3 }: { lines?: number }) {
   return (
-    <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 }}>
+    <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 }}>
       <Skeleton height={20} width="40%" borderRadius={8} />
       <div style={{ marginTop:12, display:"flex", flexDirection:"column", gap:8 }}>
         {Array.from({ length: lines }).map((_, i) => (
@@ -60,7 +60,7 @@ export function SkeletonKpiGrid({ count = 4 }: { count?: number }) {
   return (
     <div style={{ display:"grid", gridTemplateColumns:`repeat(${count},1fr)`, gap:16 }}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 }}>
+        <div key={i} style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 }}>
           <Skeleton height={12} width="50%" />
           <Skeleton height={28} width="70%" borderRadius={8} />
           <Skeleton height={11} width="40%" />

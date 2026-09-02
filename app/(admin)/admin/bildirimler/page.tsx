@@ -38,7 +38,7 @@ export default function BildirimlerPage() {
   }
 
   const TYPE_COLORS: Record<string,string> = {
-    order:"#c8a26b", stock:"#f87171", system:"#60a5fa", customer:"#4ade80", default:"#9b9ba4"
+    order:"#c8a26b", stock:"#f87171", system:"#60a5fa", customer:"#4ade80", default:"var(--adm-text-muted)"
   };
   const TYPE_LABELS: Record<string,string> = {
     order:"Sipariş", stock:"Stok", system:"Sistem", customer:"Müşteri"
@@ -49,34 +49,34 @@ export default function BildirimlerPage() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <Bell size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Bildirim Merkezi</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Bildirim Merkezi</span>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           {(["all","unread"] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
               style={{ padding:"6px 14px", borderRadius:6, border: filter===f ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.1)",
                 background: filter===f ? "rgba(200,162,107,0.1)":"transparent",
-                color: filter===f ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                color: filter===f ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
               {f==="all"?"Tümü":"Okunmamış"}
             </button>
           ))}
           <button onClick={markAllRead}
-            style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             <CheckCheck size={14} /> Tümünü Oku
           </button>
         </div>
       </div>
 
-      {loading ? <p style={{ color:"#6b6b76" }}>Yükleniyor…</p> :
+      {loading ? <p style={{ color:"var(--adm-text-muted)" }}>Yükleniyor…</p> :
         notifs.length === 0 ? (
           <div style={{ textAlign:"center", padding:"60px 0" }}>
             <Bell size={40} color="#3a3a45" style={{ margin:"0 auto 16px" }} />
-            <p style={{ color:"#6b6b76" }}>Bildirim yok</p>
+            <p style={{ color:"var(--adm-text-muted)" }}>Bildirim yok</p>
           </div>
         ) : notifs.map(n => (
           <div key={n.id} style={{
-            background: n.is_read ? "#1a1a1f" : "rgba(200,162,107,0.05)",
-            border: `1px solid ${n.is_read ? "rgba(255,255,255,0.08)" : "rgba(200,162,107,0.2)"}`,
+            background: n.is_read ? "var(--adm-surface)" : "rgba(200,162,107,0.05)",
+            border: `1px solid ${n.is_read ? "var(--adm-border)" : "rgba(200,162,107,0.2)"}`,
             borderRadius:10, padding:16, marginBottom:10,
             display:"flex", alignItems:"flex-start", gap:12
           }}>
@@ -86,10 +86,10 @@ export default function BildirimlerPage() {
             }} />
             <div style={{ flex:1 }}>
               <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
-                <span style={{ fontSize:13, fontWeight:600, color:"#f2f2f3" }}>{n.title}</span>
-                <span style={{ fontSize:11, color:"#6b6b76" }}>{new Date(n.created_at).toLocaleString("tr-TR")}</span>
+                <span style={{ fontSize:13, fontWeight:600, color:"var(--adm-text)" }}>{n.title}</span>
+                <span style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{new Date(n.created_at).toLocaleString("tr-TR")}</span>
               </div>
-              <p style={{ fontSize:13, color:"#9b9ba4", margin:0 }}>{n.message}</p>
+              <p style={{ fontSize:13, color:"var(--adm-text-muted)", margin:0 }}>{n.message}</p>
               <span style={{ fontSize:11, color: TYPE_COLORS[n.type]??TYPE_COLORS.default, marginTop:6, display:"block" }}>
                 {TYPE_LABELS[n.type] ?? n.type}
               </span>

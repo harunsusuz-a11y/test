@@ -40,28 +40,28 @@ export default function AramalarPage() {
     load();
   }, [supabase]);
 
-  const cardStyle: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 };
+  const cardStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 };
 
   return (
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
         <Search size={22} color="#c8a26b" />
-        <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Arama Yönetimi</span>
+        <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Arama Yönetimi</span>
       </div>
 
-      {loading ? <p style={{ color:"#6b6b76" }}>Yükleniyor…</p> : (
+      {loading ? <p style={{ color:"var(--adm-text-muted)" }}>Yükleniyor…</p> : (
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
           <div style={cardStyle}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
               <TrendingUp size={16} color="#c8a26b" />
-              <span style={{ fontSize:15, fontWeight:600, color:"#f2f2f3" }}>En Çok Arananlar</span>
+              <span style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)" }}>En Çok Arananlar</span>
             </div>
-            {topSearches.length === 0 ? <p style={{ color:"#6b6b76", fontSize:13 }}>Veri yok</p> :
+            {topSearches.length === 0 ? <p style={{ color:"var(--adm-text-muted)", fontSize:13 }}>Veri yok</p> :
               topSearches.map((s, i) => (
                 <div key={s.query} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-                    <span style={{ fontSize:11, color:"#6b6b76", width:20 }}>#{i+1}</span>
-                    <span style={{ fontSize:13, color:"#f2f2f3" }}>{s.query}</span>
+                    <span style={{ fontSize:11, color:"var(--adm-text-muted)", width:20 }}>#{i+1}</span>
+                    <span style={{ fontSize:13, color:"var(--adm-text)" }}>{s.query}</span>
                   </div>
                   <span style={{ fontSize:12, color:"#c8a26b", fontWeight:600 }}>{s.count}x</span>
                 </div>
@@ -71,9 +71,9 @@ export default function AramalarPage() {
           <div style={cardStyle}>
             <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
               <AlertCircle size={16} color="#f87171" />
-              <span style={{ fontSize:15, fontWeight:600, color:"#f2f2f3" }}>Sonuç Bulunamayan</span>
+              <span style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)" }}>Sonuç Bulunamayan</span>
             </div>
-            {noResults.length === 0 ? <p style={{ color:"#6b6b76", fontSize:13 }}>Veri yok</p> :
+            {noResults.length === 0 ? <p style={{ color:"var(--adm-text-muted)", fontSize:13 }}>Veri yok</p> :
               noResults.map(s => (
                 <div key={s.query} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
                   <span style={{ fontSize:13, color:"#f87171" }}>{s.query}</span>
@@ -83,23 +83,23 @@ export default function AramalarPage() {
           </div>
 
           <div style={{ ...cardStyle, gridColumn:"1 / -1" }}>
-            <p style={{ fontSize:15, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Son Aramalar</p>
+            <p style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Son Aramalar</p>
             <table style={{ width:"100%", borderCollapse:"collapse" }}>
               <thead>
                 <tr style={{ borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
                   {["Arama Terimi","Sonuç Sayısı","Tarih"].map(h => (
-                    <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:12, color:"#6b6b76", fontWeight:500 }}>{h}</th>
+                    <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:12, color:"var(--adm-text-muted)", fontWeight:500 }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {recent.map((s, i) => (
                   <tr key={i} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-                    <td style={{ padding:"8px 12px", fontSize:13, color:"#f2f2f3" }}>{s.query}</td>
+                    <td style={{ padding:"8px 12px", fontSize:13, color:"var(--adm-text)" }}>{s.query}</td>
                     <td style={{ padding:"8px 12px", fontSize:13, color: s.results_count === 0 ? "#f87171" : "#4ade80" }}>
                       {s.results_count}
                     </td>
-                    <td style={{ padding:"8px 12px", fontSize:12, color:"#6b6b76" }}>
+                    <td style={{ padding:"8px 12px", fontSize:12, color:"var(--adm-text-muted)" }}>
                       {new Date(s.created_at).toLocaleString("tr-TR")}
                     </td>
                   </tr>

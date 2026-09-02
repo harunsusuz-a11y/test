@@ -83,15 +83,15 @@ function applyAdminTheme(theme: "dark"|"light") {
   if (theme === "light") {
     root.style.setProperty("--adm-bg", "#f0f0f3");
     root.style.setProperty("--adm-surface", "#ffffff");
-    root.style.setProperty("--adm-text", "#111118");
-    root.style.setProperty("--adm-text-muted", "#6b6b76");
+    root.style.setProperty("--adm-text", "var(--adm-text)");
+    root.style.setProperty("--adm-text-muted", "var(--adm-text-muted)");
     root.style.setProperty("--adm-border", "rgba(0,0,0,0.08)");
   } else {
-    root.style.setProperty("--adm-bg", "#0a0a0d");
-    root.style.setProperty("--adm-surface", "#1a1a1f");
-    root.style.setProperty("--adm-text", "#f2f2f3");
-    root.style.setProperty("--adm-text-muted", "#9b9ba4");
-    root.style.setProperty("--adm-border", "rgba(255,255,255,0.08)");
+    root.style.setProperty("--adm-bg", "var(--adm-bg)");
+    root.style.setProperty("--adm-surface", "var(--adm-surface)");
+    root.style.setProperty("--adm-text", "var(--adm-text)");
+    root.style.setProperty("--adm-text-muted", "var(--adm-text-muted)");
+    root.style.setProperty("--adm-border", "var(--adm-border)");
   }
 }
 
@@ -251,7 +251,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               onClick={toggleTheme}
               title={theme === "dark" ? "Açık temaya geç" : "Koyu temaya geç"}
-              style={{ background:"transparent", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, padding:"6px 10px", color:"#9b9ba4", cursor:"pointer", fontSize:14, lineHeight:1 }}>
+              style={{ background:"transparent", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, padding:"6px 10px", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:14, lineHeight:1 }}>
               {theme === "dark" ? "☀️" : "🌙"}
             </button>
             <div style={{ position: "relative" }}>

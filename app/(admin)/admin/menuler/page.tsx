@@ -57,13 +57,13 @@ export default function MenulerPage() {
   }
 
   const topItems = items.filter(i => !i.parent_id);
-  const inputStyle: React.CSSProperties = { background:"#151518", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#f2f2f3", fontSize:13, padding:"8px 12px" };
+  const inputStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"var(--adm-text)", fontSize:13, padding:"8px 12px" };
 
   return (
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
         <Menu size={22} color="#c8a26b" />
-        <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Menü Yönetimi</span>
+        <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Menü Yönetimi</span>
       </div>
 
       <div style={{ display:"grid", gridTemplateColumns:"220px 1fr", gap:20 }}>
@@ -73,19 +73,19 @@ export default function MenulerPage() {
             <button key={m.id} onClick={() => setSelectedMenu(m.id)}
               style={{ width:"100%", textAlign:"left", padding:"10px 14px", borderRadius:8,
                 border: selectedMenu===m.id ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
-                background: selectedMenu===m.id ? "rgba(200,162,107,0.1)":"#1a1a1f",
-                color: selectedMenu===m.id ? "#c8a26b":"#f2f2f3", cursor:"pointer", marginBottom:8,
+                background: selectedMenu===m.id ? "rgba(200,162,107,0.1)":"var(--adm-surface)",
+                color: selectedMenu===m.id ? "#c8a26b":"var(--adm-text)", cursor:"pointer", marginBottom:8,
                 display:"block" }}>
               <p style={{ margin:0, fontSize:13, fontWeight:600 }}>{m.name}</p>
-              <p style={{ margin:0, fontSize:11, color:"#6b6b76" }}>{m.location}</p>
+              <p style={{ margin:0, fontSize:11, color:"var(--adm-text-muted)" }}>{m.location}</p>
             </button>
           ))}
         </div>
 
         {/* Sağ: Menü öğeleri */}
-        <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
+        <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-            <span style={{ fontSize:15, fontWeight:600, color:"#f2f2f3" }}>Menü Öğeleri</span>
+            <span style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)" }}>Menü Öğeleri</span>
             <button onClick={() => setShowItemForm(s => !s)}
               style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:6, background:"#c8a26b", border:"none", color:"#000", cursor:"pointer", fontWeight:700, fontSize:13 }}>
               <Plus size={14}/> Öğe Ekle
@@ -93,20 +93,20 @@ export default function MenulerPage() {
           </div>
 
           {showItemForm && (
-            <div style={{ background:"#151518", border:"1px solid rgba(200,162,107,0.2)", borderRadius:8, padding:16, marginBottom:16 }}>
+            <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(200,162,107,0.2)", borderRadius:8, padding:16, marginBottom:16 }}>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
                 <div>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Başlık *</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Başlık *</label>
                   <input style={{ ...inputStyle, width:"100%", boxSizing:"border-box" as "border-box" }}
                     value={itemForm.label} onChange={e => setItemForm(f => ({...f, label:e.target.value}))} placeholder="Mağaza" />
                 </div>
                 <div>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>URL</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>URL</label>
                   <input style={{ ...inputStyle, width:"100%", boxSizing:"border-box" as "border-box" }}
                     value={itemForm.url} onChange={e => setItemForm(f => ({...f, url:e.target.value}))} placeholder="/magaza" />
                 </div>
                 <div>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Üst Öğe</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Üst Öğe</label>
                   <select style={{ ...inputStyle, width:"100%", boxSizing:"border-box" as "border-box" }}
                     value={itemForm.parent_id} onChange={e => setItemForm(f => ({...f, parent_id:e.target.value}))}>
                     <option value="">— Üst Seviye —</option>
@@ -114,7 +114,7 @@ export default function MenulerPage() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Hedef</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Hedef</label>
                   <select style={{ ...inputStyle, width:"100%", boxSizing:"border-box" as "border-box" }}
                     value={itemForm.target} onChange={e => setItemForm(f => ({...f, target:e.target.value}))}>
                     <option value="_self">Aynı sekme</option>
@@ -128,7 +128,7 @@ export default function MenulerPage() {
                   <Save size={14}/>{saving ? "…":"Kaydet"}
                 </button>
                 <button onClick={() => setShowItemForm(false)}
-                  style={{ padding:"7px 14px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                  style={{ padding:"7px 14px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
                   İptal
                 </button>
               </div>
@@ -136,20 +136,20 @@ export default function MenulerPage() {
           )}
 
           {items.length === 0 ? (
-            <p style={{ color:"#6b6b76", textAlign:"center", padding:"30px 0", fontSize:13 }}>Öğe yok. Eklemek için "Öğe Ekle"ye tıklayın.</p>
+            <p style={{ color:"var(--adm-text-muted)", textAlign:"center", padding:"30px 0", fontSize:13 }}>Öğe yok. Eklemek için "Öğe Ekle"ye tıklayın.</p>
           ) : topItems.map(item => {
             const children = items.filter(i => i.parent_id === item.id);
             return (
               <div key={item.id} style={{ marginBottom:8 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:8, padding:"10px 14px" }}>
                   <GripVertical size={14} color="#3a3a45" />
-                  <span style={{ flex:1, fontSize:13, color: item.is_active ? "#f2f2f3":"#6b6b76", fontWeight:500 }}>
+                  <span style={{ flex:1, fontSize:13, color: item.is_active ? "var(--adm-text)":"var(--adm-text-muted)", fontWeight:500 }}>
                     {item.label}
-                    {item.url && <span style={{ fontSize:11, color:"#6b6b76", marginLeft:8 }}>{item.url}</span>}
+                    {item.url && <span style={{ fontSize:11, color:"var(--adm-text-muted)", marginLeft:8 }}>{item.url}</span>}
                   </span>
-                  {children.length > 0 && <ChevronRight size={14} color="#6b6b76" />}
+                  {children.length > 0 && <ChevronRight size={14} color="var(--adm-text-muted)" />}
                   <button onClick={() => toggleItem(item.id, item.is_active)}
-                    style={{ fontSize:11, padding:"3px 8px", borderRadius:4, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color: item.is_active ? "#4ade80":"#6b6b76", cursor:"pointer" }}>
+                    style={{ fontSize:11, padding:"3px 8px", borderRadius:4, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color: item.is_active ? "#4ade80":"var(--adm-text-muted)", cursor:"pointer" }}>
                     {item.is_active ? "Aktif":"Pasif"}
                   </button>
                   <button onClick={() => deleteItem(item.id)}
@@ -159,9 +159,9 @@ export default function MenulerPage() {
                 </div>
                 {children.map(child => (
                   <div key={child.id} style={{ display:"flex", alignItems:"center", gap:10, background:"rgba(255,255,255,0.02)", border:"1px solid rgba(255,255,255,0.04)", borderRadius:7, padding:"8px 14px", marginTop:4, marginLeft:28 }}>
-                    <span style={{ flex:1, fontSize:12, color:"#9b9ba4" }}>
+                    <span style={{ flex:1, fontSize:12, color:"var(--adm-text-muted)" }}>
                       ↳ {child.label}
-                      {child.url && <span style={{ fontSize:11, color:"#6b6b76", marginLeft:8 }}>{child.url}</span>}
+                      {child.url && <span style={{ fontSize:11, color:"var(--adm-text-muted)", marginLeft:8 }}>{child.url}</span>}
                     </span>
                     <button onClick={() => deleteItem(child.id)}
                       style={{ background:"rgba(248,113,113,0.1)", border:"none", borderRadius:5, padding:"3px 7px", color:"#f87171", cursor:"pointer" }}>

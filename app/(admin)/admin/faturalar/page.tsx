@@ -12,7 +12,7 @@ type Invoice = {
   orders?: { order_number: string; full_name: string; email: string } | null;
 };
 
-const STATUS_COLORS: Record<string,string> = { draft:"#9b9ba4", issued:"#60a5fa", paid:"#4ade80", cancelled:"#f87171", overdue:"#f59e0b" };
+const STATUS_COLORS: Record<string,string> = { draft:"var(--adm-text-muted)", issued:"#60a5fa", paid:"#4ade80", cancelled:"#f87171", overdue:"#f59e0b" };
 const STATUS_TR: Record<string,string> = { draft:"Taslak", issued:"Kesildi", paid:"Ödendi", cancelled:"İptal", overdue:"Gecikmiş" };
 
 export default function FaturalarPage() {
@@ -69,11 +69,11 @@ export default function FaturalarPage() {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <FileText size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Fatura Yönetimi</span>
-          <span style={{ fontSize:13, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Fatura Yönetimi</span>
+          <span style={{ fontSize:13, color:"var(--adm-text-muted)", background:"rgba(0,0,0,0.03)", padding:"3px 10px", borderRadius:20 }}>{total}</span>
         </div>
         <button onClick={exportCSV}
-          style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+          style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
           <Download size={14}/> CSV İndir
         </button>
       </div>
@@ -86,8 +86,8 @@ export default function FaturalarPage() {
           { label:"Bekleyen", value:kpi.pending, color:"#60a5fa", icon:<Clock size={16}/> },
           { label:"Gecikmiş", value:kpi.overdue, color:"#f87171", icon:<XCircle size={16}/> },
         ].map((k,i) => (
-          <div key={i} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:18 }}>
-            <div style={{ display:"flex", alignItems:"center", gap:8, color:k.color, marginBottom:8 }}>{k.icon}<span style={{ fontSize:12, color:"#6b6b76" }}>{k.label}</span></div>
+          <div key={i} style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:18 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8, color:k.color, marginBottom:8 }}>{k.icon}<span style={{ fontSize:12, color:"var(--adm-text-muted)" }}>{k.label}</span></div>
             <div style={{ fontSize:22, fontWeight:700, color:k.color }}>{k.value}</div>
           </div>
         ))}
@@ -99,44 +99,44 @@ export default function FaturalarPage() {
           <button key={f.value} onClick={() => { setFilter(f.value); setPage(1); }}
             style={{ padding:"6px 14px", borderRadius:20, border: filter===f.value ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
               background: filter===f.value ? "rgba(200,162,107,0.12)":"transparent",
-              color: filter===f.value ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: filter===f.value ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {f.label}
           </button>
         ))}
       </div>
 
       {loading ? <SkeletonTable rows={8} cols={6}/> : (
-        <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
+        <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, overflow:"hidden" }}>
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr style={{ background:"rgba(255,255,255,0.02)" }}>
                 {["Fatura No","Sipariş","Müşteri","Tutar","KDV","Durum","Tarih","İşlem"].map(h => (
-                  <th key={h} style={{ textAlign:"left", padding:"12px 14px", fontSize:11, color:"#6b6b76", fontWeight:500, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
+                  <th key={h} style={{ textAlign:"left", padding:"12px 14px", fontSize:11, color:"var(--adm-text-muted)", fontWeight:500, borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {invoices.length === 0 ? (
-                <tr><td colSpan={8} style={{ padding:48, textAlign:"center", color:"#6b6b76", fontSize:13 }}>Fatura bulunamadı.</td></tr>
+                <tr><td colSpan={8} style={{ padding:48, textAlign:"center", color:"var(--adm-text-muted)", fontSize:13 }}>Fatura bulunamadı.</td></tr>
               ) : invoices.map(inv => (
                 <tr key={inv.id} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
                   <td style={{ padding:"11px 14px" }}>
                     <code style={{ fontSize:12, color:"#c8a26b" }}>{inv.invoice_number ?? "-"}</code>
                   </td>
-                  <td style={{ padding:"11px 14px", fontSize:12, color:"#9b9ba4" }}>{inv.orders?.order_number ?? "-"}</td>
+                  <td style={{ padding:"11px 14px", fontSize:12, color:"var(--adm-text-muted)" }}>{inv.orders?.order_number ?? "-"}</td>
                   <td style={{ padding:"11px 14px" }}>
-                    <div style={{ fontSize:13, color:"#f2f2f3" }}>{inv.orders?.full_name ?? "-"}</div>
-                    <div style={{ fontSize:11, color:"#6b6b76" }}>{inv.orders?.email}</div>
+                    <div style={{ fontSize:13, color:"var(--adm-text)" }}>{inv.orders?.full_name ?? "-"}</div>
+                    <div style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{inv.orders?.email}</div>
                   </td>
-                  <td style={{ padding:"11px 14px", fontSize:13, fontWeight:600, color:"#f2f2f3" }}>₺{Number(inv.amount).toFixed(2)}</td>
-                  <td style={{ padding:"11px 14px", fontSize:13, color:"#9b9ba4" }}>₺{Number(inv.tax_amount ?? 0).toFixed(2)}</td>
+                  <td style={{ padding:"11px 14px", fontSize:13, fontWeight:600, color:"var(--adm-text)" }}>₺{Number(inv.amount).toFixed(2)}</td>
+                  <td style={{ padding:"11px 14px", fontSize:13, color:"var(--adm-text-muted)" }}>₺{Number(inv.tax_amount ?? 0).toFixed(2)}</td>
                   <td style={{ padding:"11px 14px" }}>
-                    <span style={{ fontSize:11, fontWeight:600, color:STATUS_COLORS[inv.status]??"#9b9ba4",
-                      background:`${STATUS_COLORS[inv.status]??"#9b9ba4"}18`, padding:"3px 10px", borderRadius:20 }}>
+                    <span style={{ fontSize:11, fontWeight:600, color:STATUS_COLORS[inv.status]??"var(--adm-text-muted)",
+                      background:`${STATUS_COLORS[inv.status]??"var(--adm-text-muted)"}18`, padding:"3px 10px", borderRadius:20 }}>
                       {STATUS_TR[inv.status] ?? inv.status}
                     </span>
                   </td>
-                  <td style={{ padding:"11px 14px", fontSize:12, color:"#6b6b76" }}>{new Date(inv.created_at).toLocaleDateString("tr-TR")}</td>
+                  <td style={{ padding:"11px 14px", fontSize:12, color:"var(--adm-text-muted)" }}>{new Date(inv.created_at).toLocaleDateString("tr-TR")}</td>
                   <td style={{ padding:"11px 14px" }}>
                     <div style={{ display:"flex", gap:5 }}>
                       {inv.status !== "paid" && (
@@ -164,12 +164,12 @@ export default function FaturalarPage() {
       {total > PAGE_SIZE && (
         <div style={{ display:"flex", justifyContent:"center", gap:8, marginTop:16 }}>
           <button onClick={() => setPage(p => Math.max(1,p-1))} disabled={page===1}
-            style={{ padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color: page===1 ? "#3a3a45":"#9b9ba4", cursor: page===1 ? "not-allowed":"pointer" }}>
+            style={{ padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color: page===1 ? "#3a3a45":"var(--adm-text-muted)", cursor: page===1 ? "not-allowed":"pointer" }}>
             ← Önceki
           </button>
-          <span style={{ padding:"6px 14px", color:"#6b6b76", fontSize:13 }}>{page} / {Math.ceil(total/PAGE_SIZE)}</span>
+          <span style={{ padding:"6px 14px", color:"var(--adm-text-muted)", fontSize:13 }}>{page} / {Math.ceil(total/PAGE_SIZE)}</span>
           <button onClick={() => setPage(p => p+1)} disabled={page*PAGE_SIZE >= total}
-            style={{ padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color: page*PAGE_SIZE>=total ? "#3a3a45":"#9b9ba4", cursor: page*PAGE_SIZE>=total ? "not-allowed":"pointer" }}>
+            style={{ padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color: page*PAGE_SIZE>=total ? "#3a3a45":"var(--adm-text-muted)", cursor: page*PAGE_SIZE>=total ? "not-allowed":"pointer" }}>
             Sonraki →
           </button>
         </div>

@@ -78,11 +78,11 @@ export function DataTable<T extends { id: string }>({
   const s = {
     wrap: { background:"#0f0f12", borderRadius:12, border:"1px solid rgba(255,255,255,0.07)", overflow:"hidden" } as React.CSSProperties,
     toolbar: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"14px 16px", borderBottom:"1px solid rgba(255,255,255,0.06)", gap:12, flexWrap:"wrap" as "wrap" } as React.CSSProperties,
-    search: { display:"flex", alignItems:"center", gap:8, background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, padding:"7px 12px", minWidth:220 } as React.CSSProperties,
-    input: { background:"transparent", border:"none", outline:"none", color:"#f2f2f3", fontSize:13, width:"100%" } as React.CSSProperties,
-    btn: { display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:7, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:13, whiteSpace:"nowrap" as "nowrap" } as React.CSSProperties,
+    search: { display:"flex", alignItems:"center", gap:8, background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:8, padding:"7px 12px", minWidth:220 } as React.CSSProperties,
+    input: { background:"transparent", border:"none", outline:"none", color:"var(--adm-text)", fontSize:13, width:"100%" } as React.CSSProperties,
+    btn: { display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:7, border:"1px solid rgba(255,255,255,0.08)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13, whiteSpace:"nowrap" as "nowrap" } as React.CSSProperties,
     dangerBtn: { display:"flex", alignItems:"center", gap:6, padding:"7px 14px", borderRadius:7, border:"1px solid rgba(248,113,113,0.3)", background:"rgba(248,113,113,0.08)", color:"#f87171", cursor:"pointer", fontSize:13, whiteSpace:"nowrap" as "nowrap" } as React.CSSProperties,
-    th: { padding:"11px 14px", textAlign:"left" as "left", fontSize:12, fontWeight:500, color:"#6b6b76", borderBottom:"1px solid rgba(255,255,255,0.06)", background:"rgba(255,255,255,0.02)", userSelect:"none" as "none" } as React.CSSProperties,
+    th: { padding:"11px 14px", textAlign:"left" as "left", fontSize:12, fontWeight:500, color:"var(--adm-text-muted)", borderBottom:"1px solid rgba(255,255,255,0.06)", background:"rgba(255,255,255,0.02)", userSelect:"none" as "none" } as React.CSSProperties,
     td: { padding:"11px 14px", fontSize:13, color:"#e2e2e8", borderBottom:"1px solid rgba(255,255,255,0.04)" } as React.CSSProperties,
     pager: { display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", borderTop:"1px solid rgba(255,255,255,0.06)" } as React.CSSProperties,
   };
@@ -94,7 +94,7 @@ export function DataTable<T extends { id: string }>({
         <div style={{ display:"flex", gap:10, alignItems:"center", flexWrap:"wrap" as "wrap" }}>
           {onSearch && (
             <div style={s.search}>
-              <Search size={14} color="#6b6b76" />
+              <Search size={14} color="var(--adm-text-muted)" />
               <input style={s.input} placeholder={searchPlaceholder} value={search}
                 onChange={e => handleSearch(e.target.value)} />
             </div>
@@ -152,7 +152,7 @@ export function DataTable<T extends { id: string }>({
             {loading ? (
               <tr>
                 <td colSpan={allColumns.length} style={{ ...s.td, textAlign:"center", padding:48 }}>
-                  <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, color:"#6b6b76" }}>
+                  <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, color:"var(--adm-text-muted)" }}>
                     <Loader2 size={18} style={{ animation:"spin 1s linear infinite" }} />
                     <span>Yükleniyor…</span>
                   </div>
@@ -160,7 +160,7 @@ export function DataTable<T extends { id: string }>({
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={allColumns.length} style={{ ...s.td, textAlign:"center", padding:56, color:"#6b6b76" }}>
+                <td colSpan={allColumns.length} style={{ ...s.td, textAlign:"center", padding:56, color:"var(--adm-text-muted)" }}>
                   {emptyMessage}
                 </td>
               </tr>
@@ -181,7 +181,7 @@ export function DataTable<T extends { id: string }>({
       {/* Pagination */}
       {totalPages > 1 && (
         <div style={s.pager}>
-          <span style={{ fontSize:13, color:"#6b6b76" }}>
+          <span style={{ fontSize:13, color:"var(--adm-text-muted)" }}>
             {Math.min((page-1)*pageSize+1, total)}–{Math.min(page*pageSize, total)} / {total} kayıt
           </span>
           <div style={{ display:"flex", gap:6 }}>
@@ -195,7 +195,7 @@ export function DataTable<T extends { id: string }>({
                 <button key={p} onClick={() => onPageChange?.(p)}
                   style={{ padding:"5px 11px", borderRadius:7, border: p===page ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
                     background: p===page ? "rgba(200,162,107,0.12)":"transparent",
-                    color: p===page ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                    color: p===page ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
                   {p}
                 </button>
               ) : null;

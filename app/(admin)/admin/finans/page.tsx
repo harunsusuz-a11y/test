@@ -12,7 +12,7 @@ const TYPE_LABELS: Record<string,string> = {
 };
 const TYPE_COLORS: Record<string,string> = {
   sale:"#4ade80", refund:"#f87171", commission:"#f59e0b",
-  shipping:"#60a5fa", tax:"#a78bfa", discount:"#f87171", adjustment:"#9b9ba4"
+  shipping:"#60a5fa", tax:"#a78bfa", discount:"#f87171", adjustment:"var(--adm-text-muted)"
 };
 
 export default function FinansPage() {
@@ -65,26 +65,26 @@ export default function FinansPage() {
     a.download = `finans_${range}gun.csv`; a.click();
   }
 
-  const cardStyle: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 };
+  const cardStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 };
 
   return (
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <DollarSign size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Finans & Muhasebe</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Finans & Muhasebe</span>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           {["7","30","90","365"].map(r => (
             <button key={r} onClick={() => setRange(r)}
               style={{ padding:"6px 12px", borderRadius:6, border: range===r ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.1)",
                 background: range===r ? "rgba(200,162,107,0.1)":"transparent",
-                color: range===r ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                color: range===r ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
               {r}g
             </button>
           ))}
           <button onClick={exportCSV}
-            style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+            style={{ display:"flex", alignItems:"center", gap:6, padding:"6px 14px", borderRadius:6, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             <Download size={14} /> CSV
           </button>
         </div>
@@ -95,21 +95,21 @@ export default function FinansPage() {
         <div style={cardStyle}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
             <TrendingUp size={16} color="#4ade80" />
-            <span style={{ fontSize:13, color:"#6b6b76" }}>Toplam Gelir</span>
+            <span style={{ fontSize:13, color:"var(--adm-text-muted)" }}>Toplam Gelir</span>
           </div>
           <div style={{ fontSize:26, fontWeight:700, color:"#4ade80" }}>₺{totals.revenue.toFixed(2)}</div>
         </div>
         <div style={cardStyle}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
             <TrendingDown size={16} color="#f87171" />
-            <span style={{ fontSize:13, color:"#6b6b76" }}>Toplam Gider</span>
+            <span style={{ fontSize:13, color:"var(--adm-text-muted)" }}>Toplam Gider</span>
           </div>
           <div style={{ fontSize:26, fontWeight:700, color:"#f87171" }}>₺{totals.expenses.toFixed(2)}</div>
         </div>
         <div style={cardStyle}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
             <DollarSign size={16} color="#c8a26b" />
-            <span style={{ fontSize:13, color:"#6b6b76" }}>Net Kâr</span>
+            <span style={{ fontSize:13, color:"var(--adm-text-muted)" }}>Net Kâr</span>
           </div>
           <div style={{ fontSize:26, fontWeight:700, color: totals.net >= 0 ? "#4ade80":"#f87171" }}>
             ₺{totals.net.toFixed(2)}
@@ -120,7 +120,7 @@ export default function FinansPage() {
       {/* Grafik */}
       {!loading && chartData.length > 0 && (
         <div style={{ ...cardStyle, marginBottom:24 }}>
-          <p style={{ fontSize:15, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Gelir / Gider Trendi</p>
+          <p style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Gelir / Gider Trendi</p>
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={chartData}>
               <defs>
@@ -133,10 +133,10 @@ export default function FinansPage() {
                   <stop offset="95%" stopColor="#f87171" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="date" tick={{ fill:"#6b6b76", fontSize:11 }} />
-              <YAxis tick={{ fill:"#6b6b76", fontSize:11 }} />
-              <Tooltip contentStyle={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" />
+              <XAxis dataKey="date" tick={{ fill:"var(--adm-text-muted)", fontSize:11 }} />
+              <YAxis tick={{ fill:"var(--adm-text-muted)", fontSize:11 }} />
+              <Tooltip contentStyle={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8 }} />
               <Area type="monotone" dataKey="gelir" stroke="#4ade80" fill="url(#gelir)" name="Gelir (₺)" />
               <Area type="monotone" dataKey="gider" stroke="#f87171" fill="url(#gider)" name="Gider (₺)" />
             </AreaChart>
@@ -146,15 +146,15 @@ export default function FinansPage() {
 
       {/* İşlem Geçmişi */}
       <div style={cardStyle}>
-        <p style={{ fontSize:15, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>İşlem Geçmişi</p>
-        {loading ? <p style={{ color:"#6b6b76" }}>Yükleniyor…</p> : txs.length === 0 ? (
-          <p style={{ color:"#6b6b76", textAlign:"center", padding:"20px 0" }}>İşlem bulunamadı.</p>
+        <p style={{ fontSize:15, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>İşlem Geçmişi</p>
+        {loading ? <p style={{ color:"var(--adm-text-muted)" }}>Yükleniyor…</p> : txs.length === 0 ? (
+          <p style={{ color:"var(--adm-text-muted)", textAlign:"center", padding:"20px 0" }}>İşlem bulunamadı.</p>
         ) : (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr>
                 {["Tür","Tutar","Açıklama","Tarih"].map(h => (
-                  <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:12, color:"#6b6b76", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
+                  <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:12, color:"var(--adm-text-muted)", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -162,16 +162,16 @@ export default function FinansPage() {
               {txs.slice(0,50).map(t => (
                 <tr key={t.id} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
                   <td style={{ padding:"10px 12px" }}>
-                    <span style={{ fontSize:12, fontWeight:600, color: TYPE_COLORS[t.type] ??"#9b9ba4",
-                      background:`${(TYPE_COLORS[t.type] ??"#9b9ba4")}18`, padding:"2px 8px", borderRadius:4 }}>
+                    <span style={{ fontSize:12, fontWeight:600, color: TYPE_COLORS[t.type] ??"var(--adm-text-muted)",
+                      background:`${(TYPE_COLORS[t.type] ??"var(--adm-text-muted)")}18`, padding:"2px 8px", borderRadius:4 }}>
                       {TYPE_LABELS[t.type] ?? t.type}
                     </span>
                   </td>
                   <td style={{ padding:"10px 12px", fontSize:13, fontWeight:600, color: ["sale"].includes(t.type) ? "#4ade80":"#f87171" }}>
                     {["sale"].includes(t.type) ? "+" : "-"}₺{Number(t.amount).toFixed(2)}
                   </td>
-                  <td style={{ padding:"10px 12px", fontSize:13, color:"#9b9ba4" }}>{t.description ?? "-"}</td>
-                  <td style={{ padding:"10px 12px", fontSize:12, color:"#6b6b76" }}>
+                  <td style={{ padding:"10px 12px", fontSize:13, color:"var(--adm-text-muted)" }}>{t.description ?? "-"}</td>
+                  <td style={{ padding:"10px 12px", fontSize:12, color:"var(--adm-text-muted)" }}>
                     {new Date(t.created_at).toLocaleDateString("tr-TR")}
                   </td>
                 </tr>

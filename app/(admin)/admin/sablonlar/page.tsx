@@ -47,12 +47,12 @@ export default function SablonlarPage() {
     { id:"notification", label:"Bildirim Şablonları", icon:<Bell size={14}/> },
   ];
 
-  const inputStyle: React.CSSProperties = { width:"100%", background:"#151518", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#f2f2f3", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
-  const cardStyle: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20, marginBottom:12 };
+  const inputStyle: React.CSSProperties = { width:"100%", background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
+  const cardStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20, marginBottom:12 };
 
   return (
     <div style={{ padding:24 }}>
-      <div style={{ fontSize:22, fontWeight:700, color:"#f2f2f3", marginBottom:24 }}>E-posta & Şablon Yönetimi</div>
+      <div style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)", marginBottom:24 }}>E-posta & Şablon Yönetimi</div>
 
       <div style={{ display:"flex", gap:8, marginBottom:24 }}>
         {tabs.map(t => (
@@ -60,30 +60,30 @@ export default function SablonlarPage() {
             style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8,
               border: tab===t.id ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.1)",
               background: tab===t.id ? "rgba(200,162,107,0.1)":"transparent",
-              color: tab===t.id ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+              color: tab===t.id ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
             {t.icon}{t.label}
           </button>
         ))}
       </div>
 
-      {loading ? <p style={{ color:"#6b6b76" }}>Yükleniyor…</p> : templates.length === 0 ? (
-        <p style={{ color:"#6b6b76", textAlign:"center", padding:"40px 0" }}>Şablon bulunamadı.</p>
+      {loading ? <p style={{ color:"var(--adm-text-muted)" }}>Yükleniyor…</p> : templates.length === 0 ? (
+        <p style={{ color:"var(--adm-text-muted)", textAlign:"center", padding:"40px 0" }}>Şablon bulunamadı.</p>
       ) : templates.map(t => (
         <div key={t.id} style={cardStyle}>
           {editing === t.id ? (
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <div>
-                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Şablon Adı</label>
+                <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Şablon Adı</label>
                 <input style={inputStyle} value={editData.name??""} onChange={e => setEditData(d => ({...d, name:e.target.value}))} />
               </div>
               {tab !== "sms" && (
                 <div>
-                  <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Konu</label>
+                  <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Konu</label>
                   <input style={inputStyle} value={editData.subject??""} onChange={e => setEditData(d => ({...d, subject:e.target.value}))} />
                 </div>
               )}
               <div>
-                <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>
+                <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>
                   {tab === "email" ? "HTML İçerik" : "İçerik"}
                 </label>
                 <textarea style={{ ...inputStyle, minHeight:120, resize:"vertical" }}
@@ -99,7 +99,7 @@ export default function SablonlarPage() {
                   <Save size={14} />{saving ? "…" : "Kaydet"}
                 </button>
                 <button onClick={() => setEditing(null)}
-                  style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:6, background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                  style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:6, background:"rgba(0,0,0,0.03)", border:"1px solid rgba(255,255,255,0.1)", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
                   <X size={14} />İptal
                 </button>
               </div>
@@ -108,15 +108,15 @@ export default function SablonlarPage() {
             <div>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
                 <div>
-                  <span style={{ fontSize:14, fontWeight:600, color:"#f2f2f3" }}>{t.name}</span>
-                  {t.subject && <span style={{ fontSize:12, color:"#6b6b76", marginLeft:12 }}>{t.subject}</span>}
+                  <span style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)" }}>{t.name}</span>
+                  {t.subject && <span style={{ fontSize:12, color:"var(--adm-text-muted)", marginLeft:12 }}>{t.subject}</span>}
                 </div>
                 <div style={{ display:"flex", gap:8, alignItems:"center" }}>
                   <span style={{ fontSize:11, color: t.is_active ? "#4ade80":"#f87171", background: t.is_active ? "rgba(74,222,128,0.1)":"rgba(248,113,113,0.1)", padding:"3px 8px", borderRadius:4 }}>
                     {t.is_active ? "Aktif":"Pasif"}
                   </span>
                   <button onClick={() => startEdit(t)}
-                    style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, padding:"5px 10px", color:"#9b9ba4", cursor:"pointer" }}>
+                    style={{ background:"rgba(0,0,0,0.03)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, padding:"5px 10px", color:"var(--adm-text-muted)", cursor:"pointer" }}>
                     <Edit2 size={14} />
                   </button>
                 </div>
@@ -124,13 +124,13 @@ export default function SablonlarPage() {
               {t.variables && t.variables.length > 0 && (
                 <div style={{ display:"flex", gap:6, flexWrap:"wrap" as "wrap" }}>
                   {t.variables.map((v: string) => (
-                    <code key={v} style={{ fontSize:11, background:"rgba(255,255,255,0.05)", padding:"2px 8px", borderRadius:4, color:"#c8a26b" }}>
+                    <code key={v} style={{ fontSize:11, background:"rgba(0,0,0,0.03)", padding:"2px 8px", borderRadius:4, color:"#c8a26b" }}>
                       {`{{${v}}}`}
                     </code>
                   ))}
                 </div>
               )}
-              <div style={{ marginTop:10, fontSize:13, color:"#9b9ba4", maxHeight:60, overflow:"hidden", WebkitLineClamp:2, display:"-webkit-box", WebkitBoxOrient:"vertical" as "vertical" }}>
+              <div style={{ marginTop:10, fontSize:13, color:"var(--adm-text-muted)", maxHeight:60, overflow:"hidden", WebkitLineClamp:2, display:"-webkit-box", WebkitBoxOrient:"vertical" as "vertical" }}>
                 {tab==="email" ? (t.body_html ?? "").replace(/<[^>]+>/g,"") : t.body}
               </div>
             </div>

@@ -67,11 +67,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 animation:"slideIn .25s ease-out" }}>
               <span style={{ color:c.icon, flexShrink:0, marginTop:1 }}>{ICONS[t.type]}</span>
               <div style={{ flex:1, minWidth:0 }}>
-                <p style={{ margin:0, fontSize:13, fontWeight:600, color:"#f2f2f3" }}>{t.title}</p>
-                {t.message && <p style={{ margin:"3px 0 0", fontSize:12, color:"#9b9ba4" }}>{t.message}</p>}
+                <p style={{ margin:0, fontSize:13, fontWeight:600, color:"var(--adm-text)" }}>{t.title}</p>
+                {t.message && <p style={{ margin:"3px 0 0", fontSize:12, color:"var(--adm-text-muted)" }}>{t.message}</p>}
               </div>
               <button onClick={() => dismiss(t.id)}
-                style={{ background:"transparent", border:"none", color:"#6b6b76", cursor:"pointer", padding:2, flexShrink:0 }}>
+                style={{ background:"transparent", border:"none", color:"var(--adm-text-muted)", cursor:"pointer", padding:2, flexShrink:0 }}>
                 <X size={14} />
               </button>
             </div>

@@ -77,7 +77,7 @@ export default function EntegrasyonlarPage() {
     load();
   }
 
-  const inputStyle: React.CSSProperties = { width:"100%", background:"#151518", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#f2f2f3", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
+  const inputStyle: React.CSSProperties = { width:"100%", background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
 
   const typeGroups: Record<string, typeof INTEGRATION_CATALOG> = INTEGRATION_CATALOG.reduce((acc, c) => {
     if (!acc[c.type]) acc[c.type] = [];
@@ -91,12 +91,12 @@ export default function EntegrasyonlarPage() {
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:24 }}>
         <Puzzle size={22} color="#c8a26b" />
-        <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Entegrasyonlar</span>
+        <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Entegrasyonlar</span>
       </div>
 
       {Object.entries(typeGroups).map(([type, items]) => (
         <div key={type} style={{ marginBottom:32 }}>
-          <h3 style={{ fontSize:14, fontWeight:600, color:"#6b6b76", textTransform:"uppercase" as "uppercase", letterSpacing:1, marginBottom:12 }}>
+          <h3 style={{ fontSize:14, fontWeight:600, color:"var(--adm-text-muted)", textTransform:"uppercase" as "uppercase", letterSpacing:1, marginBottom:12 }}>
             {TYPE_LABELS[type] ?? type}
           </h3>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
@@ -105,13 +105,13 @@ export default function EntegrasyonlarPage() {
               const isExpanded = expanded === c.provider;
               return (
                 <div key={c.provider}
-                  style={{ background:"#1a1a1f", border:`1px solid ${connected?.is_active ? "rgba(74,222,128,0.2)":"rgba(255,255,255,0.08)"}`, borderRadius:10, overflow:"hidden" }}>
+                  style={{ background:"var(--adm-surface)", border:`1px solid ${connected?.is_active ? "rgba(74,222,128,0.2)":"var(--adm-border)"}`, borderRadius:10, overflow:"hidden" }}>
                   <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:16 }}>
                     <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                       <span style={{ fontSize:24 }}>{c.icon}</span>
                       <div>
-                        <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", margin:0 }}>{c.name}</p>
-                        <p style={{ fontSize:12, color: connected?.is_active ? "#4ade80":"#6b6b76", margin:0 }}>
+                        <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", margin:0 }}>{c.name}</p>
+                        <p style={{ fontSize:12, color: connected?.is_active ? "#4ade80":"var(--adm-text-muted)", margin:0 }}>
                           {connected?.is_active ? "Bağlı" : connected ? "Pasif" : "Bağlı değil"}
                         </p>
                       </div>
@@ -119,7 +119,7 @@ export default function EntegrasyonlarPage() {
                     <div style={{ display:"flex", gap:8, alignItems:"center" }}>
                       {connected && (
                         <button onClick={() => toggle(c.provider)}
-                          style={{ fontSize:12, padding:"4px 10px", borderRadius:5, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"#9b9ba4", cursor:"pointer" }}>
+                          style={{ fontSize:12, padding:"4px 10px", borderRadius:5, border:"1px solid rgba(255,255,255,0.1)", background:"transparent", color:"var(--adm-text-muted)", cursor:"pointer" }}>
                           {connected.is_active ? "Durdur" : "Aktifleştir"}
                         </button>
                       )}
@@ -135,7 +135,7 @@ export default function EntegrasyonlarPage() {
                       <div style={{ display:"grid", gap:10, marginBottom:12 }}>
                         {c.fields.map(f => (
                           <div key={f.key}>
-                            <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>{f.label}</label>
+                            <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>{f.label}</label>
                             <input type={f.key.includes("password")||f.key.includes("key")||f.key.includes("salt") ? "password":"text"}
                               style={inputStyle} placeholder={f.placeholder}
                               value={formValues[c.provider]?.[f.key] ?? ""}

@@ -49,14 +49,14 @@ export default function WebhooksPage() {
     load();
   }
 
-  const inputStyle: React.CSSProperties = { width:"100%", background:"#151518", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"#f2f2f3", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
+  const inputStyle: React.CSSProperties = { width:"100%", background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:6, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", boxSizing:"border-box" };
 
   return (
     <div style={{ padding:24 }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:24 }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
           <Zap size={22} color="#c8a26b" />
-          <span style={{ fontSize:22, fontWeight:700, color:"#f2f2f3" }}>Webhook Yönetimi</span>
+          <span style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)" }}>Webhook Yönetimi</span>
         </div>
         <button onClick={() => setShowForm(s => !s)}
           style={{ display:"flex", alignItems:"center", gap:6, padding:"8px 16px", borderRadius:8, background:"#c8a26b", border:"none", color:"#000", cursor:"pointer", fontWeight:700, fontSize:13 }}>
@@ -65,25 +65,25 @@ export default function WebhooksPage() {
       </div>
 
       {showForm && (
-        <div style={{ background:"#1a1a1f", border:"1px solid rgba(200,162,107,0.3)", borderRadius:10, padding:20, marginBottom:20 }}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Yeni Webhook</p>
+        <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(200,162,107,0.3)", borderRadius:10, padding:20, marginBottom:20 }}>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Yeni Webhook</p>
           <div style={{ display:"grid", gap:12 }}>
             <div>
-              <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>Ad</label>
+              <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>Ad</label>
               <input style={inputStyle} value={form.name} onChange={e => setForm(f => ({...f, name:e.target.value}))} placeholder="Webhook adı" />
             </div>
             <div>
-              <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 }}>URL</label>
+              <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:4 }}>URL</label>
               <input style={inputStyle} value={form.url} onChange={e => setForm(f => ({...f, url:e.target.value}))} placeholder="https://example.com/webhook" />
             </div>
             <div>
-              <label style={{ fontSize:12, color:"#6b6b76", display:"block", marginBottom:8 }}>Olaylar</label>
+              <label style={{ fontSize:12, color:"var(--adm-text-muted)", display:"block", marginBottom:8 }}>Olaylar</label>
               <div style={{ display:"flex", flexWrap:"wrap" as "wrap", gap:8 }}>
                 {ALL_EVENTS.map(ev => (
                   <label key={ev} style={{ display:"flex", alignItems:"center", gap:6, cursor:"pointer" }}>
                     <input type="checkbox" checked={form.events.includes(ev)}
                       onChange={e => setForm(f => ({ ...f, events: e.target.checked ? [...f.events,ev] : f.events.filter(x=>x!==ev) }))} />
-                    <span style={{ fontSize:12, color:"#9b9ba4" }}>{ev}</span>
+                    <span style={{ fontSize:12, color:"var(--adm-text-muted)" }}>{ev}</span>
                   </label>
                 ))}
               </div>
@@ -94,7 +94,7 @@ export default function WebhooksPage() {
                 {saving ? "…" : "Kaydet"}
               </button>
               <button onClick={() => setShowForm(false)}
-                style={{ padding:"8px 16px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                style={{ padding:"8px 16px", borderRadius:6, background:"transparent", border:"1px solid rgba(255,255,255,0.1)", color:"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
                 İptal
               </button>
             </div>
@@ -105,25 +105,25 @@ export default function WebhooksPage() {
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
         <div>
           {webhooks.length === 0 ? (
-            <p style={{ color:"#6b6b76", textAlign:"center", padding:"40px 0" }}>Webhook yok.</p>
+            <p style={{ color:"var(--adm-text-muted)", textAlign:"center", padding:"40px 0" }}>Webhook yok.</p>
           ) : webhooks.map(w => (
             <div key={w.id} onClick={() => loadLogs(w.id)}
-              style={{ background: selected===w.id ? "rgba(200,162,107,0.05)" : "#1a1a1f",
-                border: `1px solid ${selected===w.id ? "rgba(200,162,107,0.3)":"rgba(255,255,255,0.08)"}`,
+              style={{ background: selected===w.id ? "rgba(200,162,107,0.05)" : "var(--adm-surface)",
+                border: `1px solid ${selected===w.id ? "rgba(200,162,107,0.3)":"var(--adm-border)"}`,
                 borderRadius:10, padding:16, marginBottom:12, cursor:"pointer", transition:"all .2s" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
                 <div>
-                  <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", margin:"0 0 4px" }}>{w.name ?? w.url.slice(0,30)}</p>
-                  <p style={{ fontSize:12, color:"#6b6b76", margin:"0 0 8px", wordBreak:"break-all" as "break-all" }}>{w.url}</p>
+                  <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", margin:"0 0 4px" }}>{w.name ?? w.url.slice(0,30)}</p>
+                  <p style={{ fontSize:12, color:"var(--adm-text-muted)", margin:"0 0 8px", wordBreak:"break-all" as "break-all" }}>{w.url}</p>
                   <div style={{ display:"flex", flexWrap:"wrap" as "wrap", gap:4 }}>
                     {w.events.map(ev => (
-                      <code key={ev} style={{ fontSize:10, background:"rgba(255,255,255,0.05)", padding:"2px 6px", borderRadius:3, color:"#9b9ba4" }}>{ev}</code>
+                      <code key={ev} style={{ fontSize:10, background:"rgba(0,0,0,0.03)", padding:"2px 6px", borderRadius:3, color:"var(--adm-text-muted)" }}>{ev}</code>
                     ))}
                   </div>
                 </div>
                 <div style={{ display:"flex", gap:6, flexShrink:0, marginLeft:12 }}>
                   <button onClick={e => { e.stopPropagation(); toggle(w.id, w.is_active); }}
-                    style={{ background:"transparent", border:"none", cursor:"pointer", color: w.is_active ? "#4ade80":"#6b6b76", padding:4 }}>
+                    style={{ background:"transparent", border:"none", cursor:"pointer", color: w.is_active ? "#4ade80":"var(--adm-text-muted)", padding:4 }}>
                     {w.is_active ? <ToggleRight size={20}/> : <ToggleLeft size={20}/>}
                   </button>
                   <button onClick={e => { e.stopPropagation(); del(w.id); }}
@@ -137,19 +137,19 @@ export default function WebhooksPage() {
         </div>
 
         {/* Log Paneli */}
-        <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:16 }}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:12 }}>
+        <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:16 }}>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:12 }}>
             {selected ? "Webhook Logları" : "Bir webhook seçin"}
           </p>
-          {logs.length === 0 && selected && <p style={{ color:"#6b6b76", fontSize:13 }}>Log bulunamadı.</p>}
+          {logs.length === 0 && selected && <p style={{ color:"var(--adm-text-muted)", fontSize:13 }}>Log bulunamadı.</p>}
           {logs.map(l => (
             <div key={l.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
               {l.success ? <CheckCircle size={14} color="#4ade80"/> : <XCircle size={14} color="#f87171"/>}
               <div style={{ flex:1 }}>
-                <span style={{ fontSize:12, color:"#f2f2f3" }}>{l.event}</span>
-                <span style={{ fontSize:11, color:"#6b6b76", marginLeft:8 }}>{l.response_status} · {l.duration_ms}ms</span>
+                <span style={{ fontSize:12, color:"var(--adm-text)" }}>{l.event}</span>
+                <span style={{ fontSize:11, color:"var(--adm-text-muted)", marginLeft:8 }}>{l.response_status} · {l.duration_ms}ms</span>
               </div>
-              <span style={{ fontSize:11, color:"#6b6b76" }}>{new Date(l.created_at).toLocaleTimeString("tr-TR")}</span>
+              <span style={{ fontSize:11, color:"var(--adm-text-muted)" }}>{new Date(l.created_at).toLocaleTimeString("tr-TR")}</span>
             </div>
           ))}
         </div>

@@ -88,22 +88,22 @@ export default function Dashboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [range]);
 
-  const cardStyle: React.CSSProperties = { background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 };
+  const cardStyle: React.CSSProperties = { background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:10, padding:20 };
 
   return (
     <div style={{ padding:24 }}>
       {/* Header */}
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:28 }}>
         <div>
-          <h1 style={{ fontSize:22, fontWeight:700, color:"#f2f2f3", margin:0 }}>Dashboard</h1>
-          <p style={{ fontSize:13, color:"#6b6b76", margin:"4px 0 0" }}>Mağaza genel bakışı</p>
+          <h1 style={{ fontSize:22, fontWeight:700, color:"var(--adm-text)", margin:0 }}>Dashboard</h1>
+          <p style={{ fontSize:13, color:"var(--adm-text-muted)", margin:"4px 0 0" }}>Mağaza genel bakışı</p>
         </div>
         <div style={{ display:"flex", gap:6 }}>
           {["7","30","90","365"].map(r => (
             <button key={r} onClick={() => setRange(r)}
               style={{ padding:"6px 14px", borderRadius:8, border: range===r ? "1px solid #c8a26b":"1px solid rgba(255,255,255,0.08)",
                 background: range===r ? "rgba(200,162,107,0.12)":"transparent",
-                color: range===r ? "#c8a26b":"#9b9ba4", cursor:"pointer", fontSize:13 }}>
+                color: range===r ? "#c8a26b":"var(--adm-text-muted)", cursor:"pointer", fontSize:13 }}>
               {r}g
             </button>
           ))}
@@ -122,9 +122,9 @@ export default function Dashboard() {
             <div key={i} style={cardStyle}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
                 <div>
-                  <p style={{ fontSize:12, color:"#6b6b76", margin:"0 0 8px" }}>{k.label}</p>
+                  <p style={{ fontSize:12, color:"var(--adm-text-muted)", margin:"0 0 8px" }}>{k.label}</p>
                   <p style={{ fontSize:26, fontWeight:700, color:k.color, margin:0 }}>{k.value}</p>
-                  <p style={{ fontSize:12, color:"#6b6b76", margin:"4px 0 0" }}>{k.sub}</p>
+                  <p style={{ fontSize:12, color:"var(--adm-text-muted)", margin:"4px 0 0" }}>{k.sub}</p>
                 </div>
                 <div style={{ color:k.color, opacity:.6 }}>{k.icon}</div>
               </div>
@@ -145,7 +145,7 @@ export default function Dashboard() {
             <div key={i} style={{ ...cardStyle, padding:"14px 18px" }}>
               <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
                 <span style={{ color:k.color }}>{k.icon}</span>
-                <span style={{ fontSize:12, color:"#6b6b76" }}>{k.label}</span>
+                <span style={{ fontSize:12, color:"var(--adm-text-muted)" }}>{k.label}</span>
               </div>
               <span style={{ fontSize:20, fontWeight:700, color:k.color }}>{k.value}</span>
             </div>
@@ -156,14 +156,14 @@ export default function Dashboard() {
       <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:20, marginBottom:20 }}>
         {/* Satış Grafiği */}
         <div style={cardStyle}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:16 }}>Satış Trendi</p>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:16 }}>Satış Trendi</p>
           {loading ? <SkeletonCard lines={5} /> : (
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={salesChart}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="date" tick={{ fill:"#6b6b76", fontSize:11 }} tickFormatter={d => d.slice(5)} />
-                <YAxis tick={{ fill:"#6b6b76", fontSize:11 }} />
-                <Tooltip contentStyle={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:12 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.02)" />
+                <XAxis dataKey="date" tick={{ fill:"var(--adm-text-muted)", fontSize:11 }} tickFormatter={d => d.slice(5)} />
+                <YAxis tick={{ fill:"var(--adm-text-muted)", fontSize:11 }} />
+                <Tooltip contentStyle={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:8, fontSize:12 }} />
                 <Line type="monotone" dataKey="total" stroke="#c8a26b" strokeWidth={2} dot={false} name="Gelir (₺)" />
                 <Line type="monotone" dataKey="orders" stroke="#60a5fa" strokeWidth={2} dot={false} name="Sipariş" />
               </LineChart>
@@ -173,15 +173,15 @@ export default function Dashboard() {
 
         {/* Düşük Stok */}
         <div style={cardStyle}>
-          <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>
+          <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>
             <AlertTriangle size={14} style={{ display:"inline", marginRight:6, color:"#f87171" }} />
             Kritik Stok
           </p>
           {loading ? <SkeletonCard lines={5} /> : lowStock.length === 0 ? (
-            <p style={{ fontSize:13, color:"#6b6b76" }}>Stok sorunu yok 🎉</p>
+            <p style={{ fontSize:13, color:"var(--adm-text-muted)" }}>Stok sorunu yok 🎉</p>
           ) : lowStock.map(p => (
             <div key={p.id} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:13 }}>
-              <span style={{ color:"#f2f2f3" }}>{p.name}</span>
+              <span style={{ color:"var(--adm-text)" }}>{p.name}</span>
               <span style={{ color:"#f87171", fontWeight:600 }}>Düşük</span>
             </div>
           ))}
@@ -190,30 +190,30 @@ export default function Dashboard() {
 
       {/* Son Siparişler */}
       <div style={cardStyle}>
-        <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Son Siparişler</p>
+        <p style={{ fontSize:14, fontWeight:600, color:"var(--adm-text)", marginBottom:14 }}>Son Siparişler</p>
         {loading ? <SkeletonCard lines={8} /> : (
           <table style={{ width:"100%", borderCollapse:"collapse" }}>
             <thead>
               <tr>
                 {["Sipariş No","Müşteri","Tutar","Durum","Tarih"].map(h => (
-                  <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:11, color:"#6b6b76", borderBottom:"1px solid rgba(255,255,255,0.06)", fontWeight:500 }}>{h}</th>
+                  <th key={h} style={{ textAlign:"left", padding:"8px 12px", fontSize:11, color:"var(--adm-text-muted)", borderBottom:"1px solid rgba(255,255,255,0.06)", fontWeight:500 }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {recentOrders.length === 0 ? (
-                <tr><td colSpan={5} style={{ padding:24, textAlign:"center", color:"#6b6b76", fontSize:13 }}>Sipariş bulunamadı.</td></tr>
+                <tr><td colSpan={5} style={{ padding:24, textAlign:"center", color:"var(--adm-text-muted)", fontSize:13 }}>Sipariş bulunamadı.</td></tr>
               ) : recentOrders.map(o => (
                 <tr key={o.id} style={{ borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
                   <td style={{ padding:"10px 12px", fontFamily:"monospace", fontSize:12, color:"#c8a26b" }}>{o.order_number}</td>
-                  <td style={{ padding:"10px 12px", fontSize:13, color:"#f2f2f3" }}>{o.full_name}</td>
-                  <td style={{ padding:"10px 12px", fontSize:13, fontWeight:600, color:"#f2f2f3" }}>₺{Number(o.total).toFixed(2)}</td>
+                  <td style={{ padding:"10px 12px", fontSize:13, color:"var(--adm-text)" }}>{o.full_name}</td>
+                  <td style={{ padding:"10px 12px", fontSize:13, fontWeight:600, color:"var(--adm-text)" }}>₺{Number(o.total).toFixed(2)}</td>
                   <td style={{ padding:"10px 12px" }}>
-                    <span style={{ fontSize:11, fontWeight:600, color:STATUS_C[o.status]??"#9b9ba4", background:`${STATUS_C[o.status]??"#9b9ba4"}18`, padding:"2px 8px", borderRadius:20 }}>
+                    <span style={{ fontSize:11, fontWeight:600, color:STATUS_C[o.status]??"var(--adm-text-muted)", background:`${STATUS_C[o.status]??"var(--adm-text-muted)"}18`, padding:"2px 8px", borderRadius:20 }}>
                       {STATUS_TR[o.status] ?? o.status}
                     </span>
                   </td>
-                  <td style={{ padding:"10px 12px", fontSize:12, color:"#6b6b76" }}>{new Date(o.created_at).toLocaleDateString("tr-TR")}</td>
+                  <td style={{ padding:"10px 12px", fontSize:12, color:"var(--adm-text-muted)" }}>{new Date(o.created_at).toLocaleDateString("tr-TR")}</td>
                 </tr>
               ))}
             </tbody>

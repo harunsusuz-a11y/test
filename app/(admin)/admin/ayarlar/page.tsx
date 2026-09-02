@@ -69,12 +69,12 @@ function ApiKeysSection() {
         VERCEL_TOKEN env değişkeni de Vercel&apos;e elle girilmelidir (bir kerelik).
       </div>
       {ENV_KEYS.map(({ key, label, hint }) => (
-        <div key={key} style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
+        <div key={key} style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
           <div style={{ marginBottom:8 }}>
-            <span style={{ fontSize:13, fontWeight:600, color:"#f2f2f3" }}>{label}</span>
-            <code style={{ marginLeft:8, fontSize:11, color:"#6b6b76", background:"rgba(255,255,255,0.05)", padding:"2px 6px", borderRadius:4 }}>{key}</code>
+            <span style={{ fontSize:13, fontWeight:600, color:"var(--adm-text)" }}>{label}</span>
+            <code style={{ marginLeft:8, fontSize:11, color:"var(--adm-text-muted)", background:"rgba(0,0,0,0.03)", padding:"2px 6px", borderRadius:4 }}>{key}</code>
           </div>
-          <p style={{ fontSize:12, color:"#6b6b76", marginBottom:12 }}>{hint}</p>
+          <p style={{ fontSize:12, color:"var(--adm-text-muted)", marginBottom:12 }}>{hint}</p>
           <div style={{ display:"flex", gap:8 }}>
             <input
               type="password"
@@ -82,7 +82,7 @@ function ApiKeysSection() {
               value={values[key] || ""}
               onChange={e => setValues(v => ({ ...v, [key]: e.target.value }))}
               onKeyDown={e => e.key === "Enter" && save(key)}
-              style={{ flex:1, background:"#151518", border:"1px solid rgba(255,255,255,0.10)", borderRadius:7, color:"#f2f2f3", fontSize:13, padding:"8px 12px", outline:"none" }}
+              style={{ flex:1, background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.10)", borderRadius:7, color:"var(--adm-text)", fontSize:13, padding:"8px 12px", outline:"none" }}
             />
             <button
               onClick={() => save(key)}
@@ -99,9 +99,9 @@ function ApiKeysSection() {
           )}
         </div>
       ))}
-      <div style={{ background:"#1a1a1f", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
-        <p style={{ fontSize:13, fontWeight:600, color:"#f2f2f3", marginBottom:8 }}>Redeploy</p>
-        <p style={{ fontSize:12, color:"#6b6b76", marginBottom:12 }}>Env değişkenlerini kaydettikten sonra yeni deploy başlatın.</p>
+      <div style={{ background:"var(--adm-surface)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, padding:20 }}>
+        <p style={{ fontSize:13, fontWeight:600, color:"var(--adm-text)", marginBottom:8 }}>Redeploy</p>
+        <p style={{ fontSize:12, color:"var(--adm-text-muted)", marginBottom:12 }}>Env değişkenlerini kaydettikten sonra yeni deploy başlatın.</p>
         <a
           href="https://vercel.com/urlll/test/deployments"
           target="_blank"

@@ -45,7 +45,7 @@ export function CategorySortable({ categories: initial, onSaved }: Props) {
   return (
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
-        <p style={{ fontSize:13, color:"#6b6b76", margin:0 }}>Sıralamayı değiştirmek için sürükle-bırak yapın.</p>
+        <p style={{ fontSize:13, color:"var(--adm-text-muted)", margin:0 }}>Sıralamayı değiştirmek için sürükle-bırak yapın.</p>
         <button onClick={saveOrder} disabled={saving}
           style={{ display:"flex", alignItems:"center", gap:6, padding:"7px 16px", borderRadius:7, background:"#c8a26b", border:"none", color:"#000", cursor:saving ? "not-allowed":"pointer", fontWeight:700, fontSize:13, opacity:saving ? .7:1 }}>
           {saving ? <Loader2 size={13} style={{ animation:"spin 1s linear infinite" }}/> : <Save size={13}/>}
@@ -63,16 +63,16 @@ export function CategorySortable({ categories: initial, onSaved }: Props) {
             onDragEnd={() => { setDragging(null); setDragOver(null); }}
             style={{
               display:"flex", alignItems:"center", gap:12,
-              background: dragging===item.id ? "rgba(200,162,107,0.08)" : dragOver===item.id ? "rgba(200,162,107,0.12)" : "#1a1a1f",
+              background: dragging===item.id ? "rgba(200,162,107,0.08)" : dragOver===item.id ? "rgba(200,162,107,0.12)" : "var(--adm-surface)",
               border: `1px solid ${dragOver===item.id ? "rgba(200,162,107,0.4)" : "rgba(255,255,255,0.07)"}`,
               borderRadius:9, padding:"11px 14px", cursor:"grab",
               transition:"all .15s", opacity: dragging===item.id ? .5 : 1,
               userSelect:"none" as "none",
             }}>
             <GripVertical size={16} color="#3a3a45" style={{ flexShrink:0 }} />
-            <span style={{ fontSize:13, color:"#6b6b76", minWidth:24, fontFamily:"monospace" }}>{idx+1}</span>
-            <span style={{ flex:1, fontSize:14, fontWeight:500, color:"#f2f2f3" }}>{item.name}</span>
-            <span style={{ fontSize:11, color:"#6b6b76", fontFamily:"monospace" }}>{item.slug}</span>
+            <span style={{ fontSize:13, color:"var(--adm-text-muted)", minWidth:24, fontFamily:"monospace" }}>{idx+1}</span>
+            <span style={{ flex:1, fontSize:14, fontWeight:500, color:"var(--adm-text)" }}>{item.name}</span>
+            <span style={{ fontSize:11, color:"var(--adm-text-muted)", fontFamily:"monospace" }}>{item.slug}</span>
           </div>
         ))}
       </div>
