@@ -15,7 +15,7 @@ const SECTIONS = [
 ];
 
 const DEFAULTS: Record<string,any> = {
-  site_name:"Venti-Ate", site_email:"info@ventiateprotein.com",
+  site_name:"Venti-Ate", site_email:"info@venti-ate.com",
   site_phone:"", site_address:"Bursa, Türkiye",
   currency:"TRY", timezone:"Europe/Istanbul",
   free_shipping_threshold:300, standard_shipping_cost:29.9,

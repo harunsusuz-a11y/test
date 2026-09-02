@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       const { Resend } = await import("resend");
       const resend = new Resend(apiKey);
       await resend.emails.send({
-        from: "Venti-Ate <merhaba@ventiate.com>",
+        from: "Venti-Ate <info@venti-ate.com>",
         to: email,
         subject: "Venti Kulübü'ne Hoş Geldin",
         html: `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;background:#FFF6F0;padding:32px;">

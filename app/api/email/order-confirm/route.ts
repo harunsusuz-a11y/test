@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     ).join("");
 
     const { error } = await resend.emails.send({
-      from: "Venti-Ate <siparis@ventiate.com>",
+      from: "Venti-Ate <siparis@venti-ate.com>",
       to: email,
       subject: `Siparişiniz Alındı — ${orderId}`,
       html: `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;background:#FFF6F0;padding:32px;">
