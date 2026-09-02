@@ -52,7 +52,7 @@ export default async function IletisimPage() {
               <div>
                 <p className="text-xs text-brown/50 uppercase tracking-widest mb-1">Instagram</p>
                 <a href={instagram} target="_blank" rel="noopener noreferrer" className="text-brown hover:text-green transition-colors font-medium">
-                  @ventiate
+                  @ventiate.co
                 </a>
               </div>
             </div>
