@@ -154,7 +154,7 @@ export default function TemaPage() {
       const { createClient } = await import("@/lib/supabase/client");
       const supabase = createClient();
       const ext = file.name.split(".").pop();
-      const path = \`logo/logo-\${Date.now()}.\${ext}\`;
+      const path = `logo/logo-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("media").upload(path, file, { upsert: true });
       if (upErr) throw upErr;
       const { data } = supabase.storage.from("media").getPublicUrl(path);
