@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/admin/ui/Toast";
 import { Palette, Save, RefreshCw, Eye, EyeOff, GripVertical, Plus, Trash2, X } from "lucide-react";
@@ -37,6 +37,8 @@ export default function TemaPage() {
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const logoFileRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState<string | null>(null);
   const [newItem, setNewItem] = useState<{ label: string; url: string; menu: "header" | "footer" } | null>(null);
   const supabase = createClient();
@@ -319,6 +321,17 @@ export default function TemaPage() {
         <div>
           <div style={card}>
             <p style={{ fontSize:14, fontWeight:600, color:"#f2f2f3", marginBottom:14 }}>Logo</p>
+            <div style={{ display:"flex", gap:8, marginBottom:12 }}>
+              <button
+                type="button"
+                onClick={() => logoFileRef.current?.click()}
+                disabled={logoUploading}
+                style={{ padding:"8px 16px", background:"#415D1F", color:"#fff", border:"none", borderRadius:6, fontSize:13, cursor:"pointer", opacity: logoUploading ? 0.6 : 1 }}
+              >
+                {logoUploading ? "Yükleniyor..." : "📁 Dosyadan Yükle"}
+              </button>
+              <input ref={logoFileRef} type="file" accept="image/*" style={{ display:"none" }} onChange={handleLogoUpload} />
+            </div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
               <div>
                 <label style={label}>Logo URL</label>
