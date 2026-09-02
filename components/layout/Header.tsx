@@ -23,7 +23,15 @@ export function Header() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    fetch("/api/settings/content?keys=logo_url")
+      .then((r) => r.json())
+      .then((s: { logo_url?: string }) => { if (s?.logo_url) setLogoUrl(s.logo_url); })
+      .catch(() => {});
+  }, []);
+
   const [open, setOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string>("");
   const [count, setCount] = useState(0);
   const openCartDrawer = useUiStore((s) => s.openCartDrawer);
   const pathname = usePathname();
