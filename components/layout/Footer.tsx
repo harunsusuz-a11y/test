@@ -173,7 +173,7 @@ export function Footer() {
             <Link href="/gizlilik" className="hover:text-cream/60 transition-colors">Gizlilik</Link>
             <Link href="/kvkk" className="hover:text-cream/60 transition-colors">KVKK</Link>
             <Link href="/cerez-politikasi" className="hover:text-cream/60 transition-colors">Çerez</Link>
-            <a href="mailto:info@ventiate.com" className="hover:text-cream/60 transition-colors">info@ventiate.com</a>
+            <a href="mailto:info@venti-ate.com" className="hover:text-cream/60 transition-colors">info@venti-ate.com</a>
           </div>
         </div>
       </div>
