@@ -106,7 +106,7 @@ export function Footer() {
           </div>
           {footerNav.map((group) => (
             <div key={group.title} className="flex flex-col gap-4">
-              <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-cream/30">{group.title}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-cream/30">{group.title}</p>
               <ul className="flex flex-col gap-2.5">
                 {group.links.map((link) => (
                   <li key={link.href}>

@@ -46,6 +46,10 @@
 
 /* tracking-widest2 sitede TÜM eyebrow/etiket metinlerinin ortak sınıfıdır (30+ kullanım).
    Tek bir kuralla tüm siteye yeni bir tipografik imza kazandırır. */
+.font-accent {
+  font-family: var(--font-accent);
+}
+
 .tracking-widest2 {
   font-family: var(--font-accent);
   font-weight: 800;

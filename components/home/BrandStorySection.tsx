@@ -36,7 +36,7 @@ export function BrandStorySection() {
           </div>
           {/* Badge */}
           <div className="absolute -bottom-6 -left-6 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-[#415D1F] text-center text-[#FFF6F0]">
-            <span className="text-2xl font-extrabold leading-none">%25</span>
+            <span className="text-2xl font-bold leading-none">%25</span>
             <span className="text-[9px] font-semibold uppercase tracking-widest">Protein</span>
             <span className="mt-0.5 text-[9px] opacity-70">Bar başına</span>
           </div>
