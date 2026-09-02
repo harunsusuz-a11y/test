@@ -15,7 +15,7 @@ export async function FeaturedProducts() {
         <div className="flex items-end justify-between mb-12">
           <div>
             <p className="text-xs uppercase tracking-widest text-brown/50 mb-2">Ürünler</p>
-            <h2 className="font-display text-3xl md:text-4xl text-brown">Öne Çıkanlar</h2>
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-brown">Öne Çıkanlar</h2>
           </div>
           <Link
             href="/magaza"

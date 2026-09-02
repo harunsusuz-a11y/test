@@ -68,7 +68,7 @@ export default async function IletisimPage() {
         </div>
 
         <div className="bg-cream rounded-2xl p-8">
-          <h2 className="font-display text-xl text-brown mb-4">Hızlı İletişim</h2>
+          <h2 className="font-display font-bold text-xl text-brown mb-4">Hızlı İletişim</h2>
           <p className="text-brown/70 text-sm leading-relaxed mb-6">
             Sipariş soruları, kurumsal alım veya iş birliği teklifleri için e-posta gönderebilir
             ya da Instagram'dan mesaj atabilirsin. 24 saat içinde yanıt veriyoruz.

@@ -18,7 +18,7 @@ export function BrandStory() {
     <section className="py-24 px-6 bg-cream">
       <div className="max-w-4xl mx-auto text-center space-y-6">
         <p className="text-xs uppercase tracking-widest text-brown/50">Hikayemiz</p>
-        <p className="font-display text-2xl md:text-3xl text-brown leading-relaxed">{story}</p>
+        <p className="font-display font-bold text-2xl md:text-3xl text-brown leading-relaxed">{story}</p>
       </div>
     </section>
   );

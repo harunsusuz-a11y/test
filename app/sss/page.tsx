@@ -19,7 +19,7 @@ export default async function SSSPage() {
     <main>
       <section className="pt-32 pb-6 px-6 max-w-3xl mx-auto">
         <p className="text-xs uppercase tracking-widest text-brown/50 mb-2">Destek</p>
-        <h1 className="font-display text-3xl text-brown">Sıkça Sorulan Sorular</h1>
+        <h1 className="font-display font-bold text-3xl text-brown">Sıkça Sorulan Sorular</h1>
       </section>
       <section className="max-w-3xl mx-auto px-6 py-12 space-y-8">
         {faqs.map((faq, i) => (
