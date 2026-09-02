@@ -12,7 +12,7 @@ const demoGallery = [
 ];
 
 export function Community() {
-  const handle = brand.social.instagram.startsWith("[") ? "@ventiate" : brand.social.instagram;
+  const handle = brand.social.instagram.startsWith("[") ? "@ventiate.co" : brand.social.instagram;
 
   return (
     <section aria-labelledby="community-heading" className="mx-auto max-w-6xl px-5 py-28">
