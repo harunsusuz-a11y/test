@@ -8,8 +8,7 @@ export function BrandStorySection() {
         {/* Metin */}
         <div>
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#415D1F]">Kimiz?</p>
-          <h2 className="font-display mb-6 text-4xl font-bold leading-tight text-[#56312D] md:text-5xl"
-            style={{ fontFamily: "var(--font-fraunces, Georgia, serif)" }}>
+          <h2 className="font-display mb-6 text-4xl font-bold leading-tight text-[#56312D] md:text-5xl">
             Fındığı Merkeze<br />Aldık.
           </h2>
           <p className="mb-4 text-base leading-relaxed text-[#2D1A0E]/70">

@@ -69,8 +69,7 @@ export function HeroSlider() {
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#F9C89E]">
           {slide.eyebrow}
         </p>
-        <h1 className="font-display mb-4 whitespace-pre-line text-4xl font-bold leading-tight text-[#FFF6F0] md:text-6xl lg:text-7xl"
-          style={{ fontFamily: "var(--font-fraunces, Georgia, serif)" }}>
+        <h1 className="font-display mb-4 whitespace-pre-line text-4xl font-bold leading-tight text-[#FFF6F0] md:text-6xl lg:text-7xl">
           {slide.title}
         </h1>
         <p className="mb-8 max-w-md text-sm text-[#FFF6F0]/75 md:text-base">{slide.subtitle}</p>

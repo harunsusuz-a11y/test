@@ -29,8 +29,7 @@ export function ProcessSteps() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-14 flex flex-col items-center text-center">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#F9C89E]">Nasıl Üretilir?</p>
-          <h2 className="font-display text-3xl font-bold text-[#FFF6F0] md:text-4xl"
-            style={{ fontFamily: "var(--font-fraunces, Georgia, serif)" }}>
+          <h2 className="font-display text-3xl font-bold text-[#FFF6F0] md:text-4xl">
             Fındıktan Çantana
           </h2>
         </div>
