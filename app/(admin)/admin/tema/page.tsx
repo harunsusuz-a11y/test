@@ -145,7 +145,28 @@ export default function TemaPage() {
   const label: React.CSSProperties = { fontSize:12, color:"#6b6b76", display:"block", marginBottom:4 };
 
   function NavEditor({ items, setItems, menu }: { items: NavItem[]; setItems: (i: NavItem[]) => void; menu: "header" | "footer" }) {
-    return (
+  
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoUploading(true);
+    try {
+      const { createClient } = await import("@/lib/supabase/client");
+      const supabase = createClient();
+      const ext = file.name.split(".").pop();
+      const path = \`logo/logo-\${Date.now()}.\${ext}\`;
+      const { error: upErr } = await supabase.storage.from("media").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from("media").getPublicUrl(path);
+      T("logo_url", data.publicUrl);
+    } catch (err: unknown) {
+      console.error(err);
+    } finally {
+      setLogoUploading(false);
+    }
+  }
+
+  return (
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
           <span style={{ fontSize:14, fontWeight:600, color:"#f2f2f3" }}>
